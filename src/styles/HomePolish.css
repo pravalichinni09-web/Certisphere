@@ -1,0 +1,49 @@
+/* =============================================================
+   GLOBAL-PRODUCT POLISH PASS — calmer spacing, tighter type,
+   uniform card heights, more breathing room between sections.
+   ============================================================= */
+
+.cs-home-bento .cs-bento-wrap { padding: 32px 28px 56px !important; }
+.cs-home .cs-bento-section,
+.cs-home .cs-brand-showcase { margin-top: 72px !important; }
+.cs-home-header-inner { padding: 16px 32px !important; }
+.cs-home-brand-plate img { height: 40px !important; }
+.bento-hero-text { padding: 44px 40px !important; }
+.cs-home-title { font-size: 54px !important; line-height: 1.1 !important; margin-bottom: 18px !important; }
+@media (max-width: 720px) { .cs-home-title { font-size: 36px !important; } }
+.cs-home-sub { font-size: 15.5px !important; line-height: 1.7 !important; margin-bottom: 28px !important; max-width: 580px; }
+.cs-home-sub strong { color: #FFD700 !important; font-weight: 800; }
+.cs-home-cta-row { margin-bottom: 26px !important; }
+.cs-home-trust { gap: 22px !important; }
+.cs-home-trust li { font-size: 12.5px !important; }
+.cs-home-trust li svg { color: #FFD700 !important; }
+.cs-home-cta-primary { padding: 13px 26px !important; font-size: 14px !important; font-weight: 800 !important; }
+.cs-home-cta-secondary { padding: 13px 22px !important; font-size: 14px !important; }
+.bento-stat strong { font-size: 40px !important; }
+.bento-stat span { font-size: 11px !important; letter-spacing: 0.3px; }
+.bento-orbital { padding: 26px !important; }
+.cs-orbital-outer { border-width: 1.5px !important; }
+.bento-marquee { padding: 12px 0 !important; }
+.bento-marquee-item { font-size: 12px !important; opacity: 0.85; gap: 8px !important; }
+.cs-brand-showcase-inner { padding: 28px 48px !important; }
+.cs-brand-showcase-img { max-width: 480px !important; }
+.cs-brand-showcase-tag { font-size: 12px !important; letter-spacing: 0.6px; }
+.cs-bento-section-head { margin-bottom: 28px !important; }
+.cs-bento-section-head .cs-home-section-title { font-size: 32px !important; }
+.cs-bento-section-head .cs-home-section-title::after { margin-top: 16px !important; width: 72px !important; }
+.cs-bento-modules .bento-mod { min-height: 200px; display: flex; flex-direction: column; gap: 6px; }
+.cs-bento-modules .bento-mod p { flex: 1; line-height: 1.55; }
+.bento-mod:hover { transform: translateY(-5px) rotateX(1.5deg) rotateY(-1.5deg) !important; }
+.bento-mod-demo { padding: 3px 8px !important; font-size: 9.5px !important; letter-spacing: 0.4px; }
+.cs-bento-benefits .bento-benefit { padding: 22px !important; min-height: 180px; display: flex; flex-direction: column; gap: 4px; }
+.cs-founder-bio { padding: 32px 36px !important; }
+.cs-founder-bio p { line-height: 1.8 !important; font-size: 13.5px !important; }
+.cs-founder-side { padding: 32px 22px !important; }
+.cs-prefooter { margin-top: 88px !important; padding: 72px 28px !important; }
+.cs-prefooter-title { font-size: 34px !important; }
+.cs-prefooter-sub { font-size: 15px !important; line-height: 1.7 !important; }
+.cs-home-footer { padding: 64px 28px 28px !important; }
+.cs-footer-grid { gap: 48px !important; }
+.cs-footer-col h4 { margin-bottom: 14px !important; letter-spacing: 0.8px; }
+.cs-footer-col a, .cs-footer-col button { font-size: 13px !important; line-height: 1.6; }
+.cs-footer-tagline { line-height: 1.7 !important; }

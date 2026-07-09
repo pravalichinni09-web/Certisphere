@@ -1,0 +1,1356 @@
+/* =============================================================
+   CertiSphere Home HERO — MONOCHROME NOIR & GOLD skin
+   Trendy-classic: serif display type, gold on black, animated.
+   Loads LAST so it wins over HomeColors/HomeLight theme layers.
+   Scope: #about (hero text card + Modules-in-Orbit card).
+   ============================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;0,900;1,500;1,700&family=Outfit:wght@300;400;500;600;700&display=swap');
+
+/* ------------------ HERO TEXT CARD — noir stage ------------------ */
+#about .bento-hero-text,
+[data-theme="light"] #about .bento-hero-text,
+[data-theme="dark"]  #about .bento-hero-text {
+  background:
+    radial-gradient(80% 60% at 20% 0%, rgba(212, 175, 55, 0.10) 0%, transparent 60%),
+    linear-gradient(165deg, #16130c 0%, #090806 55%, #0e0c08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(247, 216, 120, 0.12) !important;
+  animation: nxh-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes nxh-rise {
+  from { opacity: 0; transform: translateY(26px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* Gold spotlight follows the mouse */
+#about .bento-hero-text::before {
+  background: radial-gradient(circle at var(--spot-x) var(--spot-y),
+    rgba(212, 175, 55, 0.16) 0%,
+    rgba(212, 175, 55, 0.05) 35%,
+    transparent 65%) !important;
+}
+/* Classic corner frame accents */
+#about .bento-hero-text::after {
+  content: '';
+  position: absolute;
+  inset: 12px;
+  border-radius: 12px;
+  pointer-events: none;
+  background:
+    linear-gradient(rgba(212,175,55,0.5), rgba(212,175,55,0.5)) top left    / 26px 1px,
+    linear-gradient(rgba(212,175,55,0.5), rgba(212,175,55,0.5)) top left    / 1px 26px,
+    linear-gradient(rgba(212,175,55,0.5), rgba(212,175,55,0.5)) bottom right/ 26px 1px,
+    linear-gradient(rgba(212,175,55,0.5), rgba(212,175,55,0.5)) bottom right/ 1px 26px;
+  background-repeat: no-repeat;
+  opacity: 0.8;
+}
+
+/* ------------------------- Tag pill ------------------------- */
+#about .cs-home-tag,
+[data-theme="light"] #about .cs-home-tag,
+[data-theme="dark"]  #about .cs-home-tag {
+  background: rgba(212, 175, 55, 0.07) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  letter-spacing: 2.6px;
+  text-transform: uppercase;
+  animation: nxh-fade-up 0.7s ease-out 0.15s both;
+}
+#about .cs-home-tag-dot,
+[data-theme="light"] #about .cs-home-tag-dot,
+[data-theme="dark"]  #about .cs-home-tag-dot {
+  background: #f6d878 !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.20) !important;
+  animation: nxh-dot-pulse 2.2s ease-in-out infinite;
+}
+@keyframes nxh-dot-pulse {
+  0%, 100% { box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25); }
+  50%      { box-shadow: 0 0 0 7px rgba(212, 175, 55, 0.06); }
+}
+@keyframes nxh-fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ------------------------ Headline ------------------------ */
+#about .cs-home-title,
+[data-theme="light"] #about .cs-home-title,
+[data-theme="dark"]  #about .cs-home-title {
+  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+  color: #f7f2e2 !important;
+  letter-spacing: 0 !important;
+  animation: nxh-fade-up 0.8s ease-out 0.25s both;
+}
+#about .cs-home-title em,
+[data-theme="light"] #about .cs-home-title em,
+[data-theme="dark"]  #about .cs-home-title em {
+  font-style: italic;
+  background: linear-gradient(100deg, #f7f2e2 0%, #f6d878 30%, #d4af37 60%, #96772a 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: nxh-sheen 7s ease-in-out infinite;
+}
+@keyframes nxh-sheen {
+  0%, 100% { background-position: 0% center; }
+  50%      { background-position: 100% center; }
+}
+/* Gold rule + diamond under the headline */
+#about .cs-home-title::after {
+  content: '';
+  display: block;
+  width: 90px;
+  height: 1px;
+  margin-top: 18px;
+  background: linear-gradient(90deg, #d4af37, rgba(212, 175, 55, 0.1));
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+  animation: nxh-rule-grow 1s cubic-bezier(0.22, 1, 0.36, 1) 0.7s both;
+}
+@keyframes nxh-rule-grow {
+  from { width: 0; opacity: 0; }
+  to   { width: 90px; opacity: 1; }
+}
+
+/* ------------------------ Sub copy ------------------------ */
+#about .cs-home-sub,
+[data-theme="light"] #about .cs-home-sub,
+[data-theme="dark"]  #about .cs-home-sub {
+  color: rgba(247, 242, 226, 0.62) !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 300;
+  animation: nxh-fade-up 0.8s ease-out 0.38s both;
+}
+#about .cs-home-sub strong,
+[data-theme="light"] #about .cs-home-sub strong,
+[data-theme="dark"]  #about .cs-home-sub strong {
+  color: #f6d878 !important;
+  font-weight: 500 !important;
+}
+
+/* --------------- CTAs — restore & gild the buttons --------------- */
+#about .cs-home-cta-row { animation: nxh-fade-up 0.8s ease-out 0.5s both; }
+
+#about .cs-home-cta[aria-hidden="true"],
+[data-theme="light"] #about .cs-home-cta[aria-hidden="true"],
+[data-theme="dark"]  #about .cs-home-cta[aria-hidden="true"] {
+  padding: 12px 26px !important;
+  border-radius: 10px !important;
+  cursor: pointer !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+}
+#about .cs-home-cta-primary,
+[data-theme="light"] #about .cs-home-cta-primary,
+[data-theme="dark"]  #about .cs-home-cta-primary {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 45%, #96772a 100%) !important;
+  color: #0c0b09 !important;
+  border-color: transparent !important;
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.30), inset 0 1px 0 rgba(255, 240, 200, 0.6) !important;
+}
+#about .cs-home-cta-primary::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 20%, rgba(255,255,255,0.5) 50%, transparent 80%) !important;
+  transform: skewX(-18deg);
+  animation: nxh-btn-shine 4.5s ease-in-out 2s infinite;
+  pointer-events: none;
+  opacity: 1 !important;
+}
+@keyframes nxh-btn-shine {
+  0%   { left: -80%; }
+  35%  { left: 130%; }
+  100% { left: 130%; }
+}
+#about .cs-home-cta-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 18px 42px rgba(212, 175, 55, 0.45) !important;
+}
+#about .cs-home-cta-secondary,
+[data-theme="light"] #about .cs-home-cta-secondary,
+[data-theme="dark"]  #about .cs-home-cta-secondary {
+  background: transparent !important;
+  color: #f7f2e2 !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
+  transition: all 0.25s ease;
+}
+#about .cs-home-cta-secondary:hover {
+  transform: translateY(-2px) !important;
+  background: rgba(212, 175, 55, 0.10) !important;
+  border-color: #d4af37 !important;
+  color: #f6d878 !important;
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.16) !important;
+}
+
+/* ----------------------- Trust list ----------------------- */
+#about .cs-home-trust li,
+[data-theme="light"] #about .cs-home-trust li,
+[data-theme="dark"]  #about .cs-home-trust li {
+  color: rgba(247, 242, 226, 0.72) !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 400 !important;
+  font-size: 12.5px !important;
+  letter-spacing: 0.6px;
+  animation: nxh-fade-up 0.7s ease-out both;
+}
+#about .cs-home-trust li:nth-child(1) { animation-delay: 0.62s; }
+#about .cs-home-trust li:nth-child(2) { animation-delay: 0.72s; }
+#about .cs-home-trust li:nth-child(3) { animation-delay: 0.82s; }
+#about .cs-home-trust li svg,
+[data-theme="light"] #about .cs-home-trust li svg,
+[data-theme="dark"]  #about .cs-home-trust li svg {
+  color: #d4af37 !important;
+}
+
+/* ============ MODULES IN ORBIT — noir & gold card ============ */
+#about .bento-orbital,
+[data-theme="light"] #about .bento-orbital,
+[data-theme="dark"]  #about .bento-orbital {
+  background:
+    radial-gradient(70% 55% at 50% 45%, rgba(212, 175, 55, 0.08) 0%, transparent 70%),
+    linear-gradient(165deg, #14110b 0%, #080706 60%, #0d0b07 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow:
+    0 30px 70px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(247, 216, 120, 0.10) !important;
+  animation: nxh-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+#about .bento-card-label,
+[data-theme="light"] #about .bento-card-label,
+[data-theme="dark"]  #about .bento-card-label {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 600 !important;
+  letter-spacing: 2.2px !important;
+}
+/* Outer dashed orbit — pure gold, slow counter-spin shimmer */
+#about .cs-orbital-outer,
+[data-theme="light"] #about .cs-orbital-outer,
+[data-theme="dark"]  #about .cs-orbital-outer {
+  border: 1.5px dashed rgba(212, 175, 55, 0.35) !important;
+  box-shadow:
+    inset 0 0 60px rgba(212, 175, 55, 0.08),
+    0 0 40px rgba(0, 0, 0, 0.35) !important;
+  background: radial-gradient(ellipse at center,
+    rgba(212, 175, 55, 0.07) 0%,
+    rgba(212, 175, 55, 0.03) 55%,
+    transparent 85%) !important;
+  animation: nxh-outer-breathe 5s ease-in-out infinite;
+}
+@keyframes nxh-outer-breathe {
+  0%, 100% { box-shadow: inset 0 0 60px rgba(212,175,55,0.08), 0 0 40px rgba(0,0,0,0.35); }
+  50%      { box-shadow: inset 0 0 80px rgba(212,175,55,0.14), 0 0 50px rgba(0,0,0,0.4); }
+}
+/* Satellite circles — gold monochrome */
+#about .cs-orbital-circle,
+[data-theme="light"] #about .cs-orbital-circle,
+[data-theme="dark"]  #about .cs-orbital-circle {
+  background: linear-gradient(160deg, rgba(212, 175, 55, 0.22), rgba(150, 119, 42, 0.14)) !important;
+  border: 1.5px solid rgba(212, 175, 55, 0.6) !important;
+  color: #f6d878 !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), 0 0 14px rgba(212, 175, 55, 0.15) !important;
+}
+#about .cs-orbital-node:hover .cs-orbital-circle {
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.20), 0 8px 20px rgba(0, 0, 0, 0.6) !important;
+}
+#about .cs-orbital-label,
+[data-theme="light"] #about .cs-orbital-label,
+[data-theme="dark"]  #about .cs-orbital-label {
+  color: rgba(247, 242, 226, 0.85) !important;
+  background: rgba(8, 7, 5, 0.75) !important;
+  border: 1px solid rgba(212, 175, 55, 0.20);
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-weight: 500 !important;
+  letter-spacing: 0.6px !important;
+}
+
+/* -------------------- Reduced motion -------------------- */
+@media (prefers-reduced-motion: reduce) {
+  #about .bento-hero-text,
+  #about .bento-orbital,
+  #about .cs-home-tag,
+  #about .cs-home-tag-dot,
+  #about .cs-home-title,
+  #about .cs-home-title::after,
+  #about .cs-home-title em,
+  #about .cs-home-sub,
+  #about .cs-home-cta-row,
+  #about .cs-home-cta-primary::after,
+  #about .cs-home-trust li,
+  #about .cs-orbital-outer {
+    animation: none !important;
+  }
+}
+
+/* =============================================================
+   FULL-PAGE NOIR & GOLD — entire Home page, both app themes.
+   ============================================================= */
+
+/* ---------- Page base: warm black with gold aurora ---------- */
+.cs-home,
+[data-theme="light"] .cs-home,
+[data-theme="dark"] .cs-home {
+  background:
+    radial-gradient(50% 38% at 15% 8%,  rgba(212, 175, 55, 0.07) 0%, transparent 65%),
+    radial-gradient(55% 42% at 88% 30%, rgba(212, 175, 55, 0.05) 0%, transparent 65%),
+    radial-gradient(60% 45% at 50% 95%, rgba(150, 119, 42, 0.06) 0%, transparent 65%),
+    linear-gradient(180deg, #080706 0%, #050505 40%, #0a0806 100%) !important;
+  color: #f7f2e2 !important;
+  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+}
+.cs-home .cs-bubble,
+[data-theme="light"] .cs-home .cs-bubble,
+[data-theme="dark"] .cs-home .cs-bubble {
+  background: radial-gradient(circle at 35% 35%,
+    rgba(247, 216, 120, 0.8) 0%,
+    rgba(212, 175, 55, 0.35) 50%,
+    transparent 78%) !important;
+  box-shadow: 0 0 10px 2px rgba(212, 175, 55, 0.2);
+  opacity: 0.5 !important;
+}
+
+/* --------------------------- Header --------------------------- */
+.cs-home-header,
+[data-theme="light"] .cs-home-header,
+[data-theme="dark"] .cs-home-header {
+  background: rgba(5, 5, 5, 0.92) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.30) !important;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+.cs-home-nav a,
+[data-theme="light"] .cs-home-nav a,
+[data-theme="dark"] .cs-home-nav a {
+  color: rgba(247, 242, 226, 0.72) !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.8px;
+  transition: color 0.2s ease;
+}
+.cs-home-nav a:hover,
+[data-theme="light"] .cs-home-nav a:hover,
+[data-theme="dark"] .cs-home-nav a:hover { color: #f6d878 !important; }
+.cs-home-signin,
+[data-theme="light"] .cs-home-signin,
+[data-theme="dark"] .cs-home-signin {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 45%, #96772a 100%) !important;
+  color: #0c0b09 !important;
+  border: none !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  font-size: 12px;
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.28) !important;
+  transition: transform 0.2s ease, box-shadow 0.25s ease;
+}
+.cs-home-signin:hover,
+[data-theme="light"] .cs-home-signin:hover,
+[data-theme="dark"] .cs-home-signin:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 38px rgba(212, 175, 55, 0.42) !important;
+}
+
+/* --------------------------- Marquee --------------------------- */
+.bento-marquee,
+[data-theme="light"] .bento-marquee,
+[data-theme="dark"] .bento-marquee {
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(212, 175, 55, 0.07) 30%,
+    rgba(212, 175, 55, 0.07) 70%,
+    transparent 100%) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.22) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.22) !important;
+}
+.bento-marquee-item, .bento-marquee-name,
+[data-theme="light"] .bento-marquee-item,
+[data-theme="light"] .bento-marquee-name,
+[data-theme="dark"] .bento-marquee-item,
+[data-theme="dark"] .bento-marquee-name {
+  color: rgba(247, 242, 226, 0.7) !important;
+  font-weight: 500 !important;
+  letter-spacing: 1px;
+}
+
+/* --------------------- Bento cards (global) --------------------- */
+.cs-home .bento-card,
+[data-theme="light"] .cs-home .bento-card,
+[data-theme="dark"] .cs-home .bento-card {
+  background:
+    radial-gradient(70% 50% at 30% 0%, rgba(212, 175, 55, 0.07) 0%, transparent 60%),
+    linear-gradient(165deg, #14110b 0%, #090806 55%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.22) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(247, 216, 120, 0.10) !important;
+}
+.cs-home .bento-card:hover,
+[data-theme="light"] .cs-home .bento-card:hover,
+[data-theme="dark"] .cs-home .bento-card:hover {
+  border-color: rgba(212, 175, 55, 0.5) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(212, 175, 55, 0.22) inset !important;
+}
+.cs-home .bento-card-label,
+[data-theme="light"] .cs-home .bento-card-label,
+[data-theme="dark"] .cs-home .bento-card-label {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+  letter-spacing: 2.2px !important;
+  font-weight: 600 !important;
+}
+
+/* Stats / workflow / pulse text */
+.bento-stat strong,
+[data-theme="light"] .bento-stat strong,
+[data-theme="dark"] .bento-stat strong {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  background: linear-gradient(135deg, #f7f2e2 0%, #f6d878 45%, #d4af37 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+.bento-stat span,
+.bento-pulse-meta span,
+.bento-workflow-stages span,
+[data-theme="light"] .bento-stat span,
+[data-theme="light"] .bento-pulse-meta span,
+[data-theme="light"] .bento-workflow-stages span,
+[data-theme="dark"] .bento-stat span,
+[data-theme="dark"] .bento-pulse-meta span,
+[data-theme="dark"] .bento-workflow-stages span {
+  color: rgba(247, 242, 226, 0.60) !important;
+}
+.bento-pulse-meta strong,
+[data-theme="light"] .bento-pulse-meta strong,
+[data-theme="dark"] .bento-pulse-meta strong { color: #f6d878 !important; }
+.bento-workflow-ring, .bento-pulse-ring,
+[data-theme="light"] .bento-workflow-ring,
+[data-theme="light"] .bento-pulse-ring,
+[data-theme="dark"] .bento-workflow-ring,
+[data-theme="dark"] .bento-pulse-ring {
+  border-color: rgba(212, 175, 55, 0.4) !important;
+}
+.bento-workflow-dot,
+[data-theme="light"] .bento-workflow-dot,
+[data-theme="dark"] .bento-workflow-dot { background: #d4af37 !important; }
+
+/* -------------------- Section headings -------------------- */
+.cs-home-section-title,
+.cs-bento-section-head .cs-home-section-title,
+[data-theme="light"] .cs-home-section-title,
+[data-theme="light"] .cs-bento-section-head .cs-home-section-title,
+[data-theme="dark"] .cs-home-section-title,
+[data-theme="dark"] .cs-bento-section-head .cs-home-section-title {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #f7f2e2 !important;
+}
+.cs-home-section-title em,
+[data-theme="light"] .cs-home-section-title em,
+[data-theme="dark"] .cs-home-section-title em {
+  background: linear-gradient(100deg, #f6d878 0%, #d4af37 50%, #96772a 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+.cs-bento-section-head .cs-home-section-title::after,
+[data-theme="light"] .cs-bento-section-head .cs-home-section-title::after,
+[data-theme="dark"] .cs-bento-section-head .cs-home-section-title::after {
+  background: linear-gradient(90deg, #d4af37, rgba(212, 175, 55, 0.1)) !important;
+  box-shadow: 0 0 12px rgba(212, 175, 55, 0.35);
+}
+.cs-home-section-sub,
+[data-theme="light"] .cs-home-section-sub,
+[data-theme="dark"] .cs-home-section-sub {
+  color: rgba(247, 242, 226, 0.58) !important;
+  font-weight: 300 !important;
+}
+.cs-home .cs-home-tag,
+#modules .cs-home-tag,
+[data-theme="light"] .cs-home .cs-home-tag,
+[data-theme="light"] #modules .cs-home-tag,
+[data-theme="dark"] .cs-home .cs-home-tag,
+[data-theme="dark"] #modules .cs-home-tag {
+  background: rgba(212, 175, 55, 0.07) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+  letter-spacing: 2.4px;
+  text-transform: uppercase;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+}
+.cs-home .cs-home-tag-dot,
+#modules .cs-home-tag-dot,
+[data-theme="light"] .cs-home .cs-home-tag-dot,
+[data-theme="light"] #modules .cs-home-tag-dot,
+[data-theme="dark"] .cs-home .cs-home-tag-dot,
+[data-theme="dark"] #modules .cs-home-tag-dot {
+  background: #f6d878 !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.18) !important;
+  animation: nxh-dot-pulse 2.2s ease-in-out infinite;
+}
+
+/* ----------------------- Modules cards ----------------------- */
+.bento-mod,
+[data-theme="light"] .bento-mod, [data-theme="light"] #modules .bento-mod,
+[data-theme="dark"] .bento-mod {
+  background: linear-gradient(165deg, #14110b 0%, #090806 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.20) !important;
+}
+.bento-mod:hover,
+[data-theme="light"] .bento-mod:hover, [data-theme="light"] #modules .bento-mod:hover,
+[data-theme="dark"] .bento-mod:hover {
+  border-color: rgba(212, 175, 55, 0.55) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 24px rgba(212, 175, 55, 0.10) !important;
+  transform: translateY(-4px);
+}
+.bento-mod h3,
+[data-theme="light"] .bento-mod h3, [data-theme="light"] #modules .bento-mod h3,
+[data-theme="dark"] .bento-mod h3 { color: #f7f2e2 !important; }
+.bento-mod p,
+[data-theme="light"] .bento-mod p, [data-theme="light"] #modules .bento-mod p,
+[data-theme="dark"] .bento-mod p { color: rgba(247, 242, 226, 0.55) !important; }
+.bento-mod-icon,
+[data-theme="light"] .bento-mod-icon, [data-theme="light"] #modules .bento-mod-icon,
+[data-theme="dark"] .bento-mod-icon {
+  background: rgba(212, 175, 55, 0.10) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+}
+.bento-mod-arrow,
+[data-theme="light"] .bento-mod-arrow, [data-theme="light"] #modules .bento-mod-arrow,
+[data-theme="dark"] .bento-mod-arrow { color: #d4af37 !important; }
+.bento-mod-demo,
+[data-theme="light"] .bento-mod-demo, [data-theme="light"] #modules .bento-mod-demo,
+[data-theme="dark"] .bento-mod-demo {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #f6d878 !important;
+}
+.bento-mod-featured,
+[data-theme="light"] .bento-mod-featured, [data-theme="light"] #modules .bento-mod-featured,
+[data-theme="dark"] .bento-mod-featured {
+  border: 1px solid rgba(212, 175, 55, 0.55) !important;
+  box-shadow: 0 0 34px rgba(212, 175, 55, 0.12) !important;
+}
+
+/* ----------------------- Benefits cards ----------------------- */
+.bento-benefit,
+[data-theme="light"] .bento-benefit, [data-theme="light"] #benefits .bento-benefit,
+[data-theme="dark"] .bento-benefit {
+  background: linear-gradient(165deg, #14110b 0%, #090806 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.20) !important;
+}
+.bento-benefit:hover,
+[data-theme="light"] .bento-benefit:hover, [data-theme="light"] #benefits .bento-benefit:hover,
+[data-theme="dark"] .bento-benefit:hover {
+  border-color: rgba(212, 175, 55, 0.55) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 24px rgba(212, 175, 55, 0.10) !important;
+}
+.bento-benefit h3,
+[data-theme="light"] .bento-benefit h3, [data-theme="light"] #benefits .bento-benefit h3,
+[data-theme="dark"] .bento-benefit h3 { color: #f7f2e2 !important; }
+.bento-benefit p,
+[data-theme="light"] .bento-benefit p, [data-theme="light"] #benefits .bento-benefit p,
+[data-theme="dark"] .bento-benefit p { color: rgba(247, 242, 226, 0.55) !important; }
+.bento-benefit-icon,
+[data-theme="light"] .bento-benefit-icon,
+[data-theme="dark"] .bento-benefit-icon {
+  background: rgba(212, 175, 55, 0.10) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+}
+
+/* ----------------- Certification bodies cards ----------------- */
+.cs-cert-body-card,
+[data-theme="light"] .cs-cert-body-card,
+[data-theme="dark"] .cs-cert-body-card {
+  background: linear-gradient(165deg, #14110b 0%, #090806 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.20) !important;
+}
+.cs-cert-body-card:hover,
+[data-theme="light"] .cs-cert-body-card:hover,
+[data-theme="dark"] .cs-cert-body-card:hover {
+  border-color: rgba(212, 175, 55, 0.55) !important;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.55), 0 0 24px rgba(212, 175, 55, 0.10) !important;
+}
+.cs-cert-body-name,
+[data-theme="light"] .cs-cert-body-name,
+[data-theme="dark"] .cs-cert-body-name { color: #f7f2e2 !important; }
+.cs-cert-body-desc,
+[data-theme="light"] .cs-cert-body-desc,
+[data-theme="dark"] .cs-cert-body-desc { color: rgba(247, 242, 226, 0.55) !important; }
+.cs-cert-body-code,
+[data-theme="light"] .cs-cert-body-code,
+[data-theme="dark"] .cs-cert-body-code {
+  background: rgba(212, 175, 55, 0.10) !important;
+  color: #f6d878 !important;
+  border: 1px solid rgba(212, 175, 55, 0.30) !important;
+}
+.cs-cert-body-icon,
+[data-theme="light"] .cs-cert-body-icon,
+[data-theme="dark"] .cs-cert-body-icon {
+  background: rgba(212, 175, 55, 0.10) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+}
+.cs-cert-body-cta,
+[data-theme="light"] .cs-cert-body-cta,
+[data-theme="dark"] .cs-cert-body-cta { color: #d4af37 !important; }
+.cs-cert-body-card:hover .cs-cert-body-cta,
+[data-theme="light"] .cs-cert-body-card:hover .cs-cert-body-cta,
+[data-theme="dark"] .cs-cert-body-card:hover .cs-cert-body-cta { color: #f6d878 !important; }
+
+/* ------------------- About us / founder ------------------- */
+.cs-aboutus-card,
+[data-theme="light"] .cs-aboutus-card,
+[data-theme="dark"] .cs-aboutus-card {
+  background: linear-gradient(165deg, #14110b 0%, #090806 55%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5) !important;
+}
+.cs-founder-side,
+[data-theme="light"] .cs-founder-side,
+[data-theme="dark"] .cs-founder-side {
+  background: radial-gradient(70% 60% at 50% 30%, rgba(212, 175, 55, 0.12) 0%, transparent 70%), #0a0906 !important;
+  border-right: 1px solid rgba(212, 175, 55, 0.20) !important;
+}
+.cs-founder-name,
+[data-theme="light"] .cs-founder-name, [data-theme="light"] #about-us .cs-founder-name,
+[data-theme="dark"] .cs-founder-name {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #f6d878 !important;
+}
+.cs-founder-role, .cs-founder-org,
+[data-theme="light"] .cs-founder-role, [data-theme="light"] #about-us .cs-founder-role,
+[data-theme="dark"] .cs-founder-role,
+[data-theme="dark"] .cs-founder-org { color: rgba(247, 242, 226, 0.6) !important; }
+.cs-founder-bio p,
+[data-theme="light"] .cs-founder-bio p, [data-theme="light"] #about-us .cs-founder-bio p,
+[data-theme="dark"] .cs-founder-bio p { color: rgba(247, 242, 226, 0.65) !important; }
+.cs-founder-bio p strong,
+[data-theme="light"] .cs-founder-bio p strong, [data-theme="light"] #about-us .cs-founder-bio p strong,
+[data-theme="dark"] .cs-founder-bio p strong { color: #f6d878 !important; }
+.cs-founder-exp strong,
+[data-theme="light"] .cs-founder-exp strong, [data-theme="light"] #about-us .cs-founder-exp strong,
+[data-theme="dark"] .cs-founder-exp strong { color: #d4af37 !important; }
+.cs-bio-label,
+[data-theme="light"] .cs-bio-label, [data-theme="light"] #about-us .cs-bio-label,
+[data-theme="dark"] .cs-bio-label { color: #d4af37 !important; letter-spacing: 2px; }
+.cs-bio-bar,
+[data-theme="light"] .cs-bio-bar,
+[data-theme="dark"] .cs-bio-bar { background: rgba(212, 175, 55, 0.25) !important; }
+.cs-bio-sub,
+[data-theme="light"] .cs-bio-sub,
+[data-theme="dark"] .cs-bio-sub { color: rgba(247, 242, 226, 0.55) !important; }
+.cs-expertise-pill,
+[data-theme="light"] .cs-expertise-pill, [data-theme="light"] #about-us .cs-expertise-pill,
+[data-theme="dark"] .cs-expertise-pill {
+  background: rgba(212, 175, 55, 0.07) !important;
+  border: 1px solid rgba(212, 175, 55, 0.30) !important;
+  color: rgba(247, 242, 226, 0.8) !important;
+}
+.cs-expertise-pill:hover,
+[data-theme="light"] .cs-expertise-pill:hover, [data-theme="light"] #about-us .cs-expertise-pill:hover,
+[data-theme="dark"] .cs-expertise-pill:hover {
+  background: rgba(212, 175, 55, 0.15) !important;
+  border-color: #d4af37 !important;
+  color: #f6d878 !important;
+}
+.cs-expertise-pill svg,
+[data-theme="light"] .cs-expertise-pill svg,
+[data-theme="dark"] .cs-expertise-pill svg { color: #d4af37 !important; }
+
+/* -------------------- Brand showcase strip -------------------- */
+.cs-brand-showcase-inner,
+[data-theme="light"] .cs-brand-showcase-inner,
+[data-theme="dark"] .cs-brand-showcase-inner {
+  background: linear-gradient(165deg, #14110b 0%, #080706 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+}
+.cs-brand-showcase-tag,
+[data-theme="light"] .cs-brand-showcase-tag, [data-theme="light"] #about .cs-brand-showcase-tag,
+[data-theme="dark"] .cs-brand-showcase-tag {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+}
+.cs-brand-showcase-glow,
+[data-theme="light"] .cs-brand-showcase-glow,
+[data-theme="dark"] .cs-brand-showcase-glow {
+  background: radial-gradient(ellipse at center, rgba(212, 175, 55, 0.22) 0%, transparent 70%) !important;
+}
+
+/* ------------------- Orbital center (triangle) ------------------- */
+.cs-orbital-triangle,
+[data-theme="light"] .cs-orbital-triangle,
+[data-theme="dark"] .cs-orbital-triangle {
+  background: transparent !important;
+}
+.cs-orbital-triangle::before,
+[data-theme="light"] .cs-orbital-triangle::before,
+[data-theme="dark"] .cs-orbital-triangle::before {
+  background: linear-gradient(160deg, #f6d878 0%, #d4af37 50%, #96772a 100%) !important;
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.35) !important;
+}
+.cs-orbital-triangle::after,
+[data-theme="light"] .cs-orbital-triangle::after,
+[data-theme="dark"] .cs-orbital-triangle::after {
+  background: #0c0b09 !important;
+}
+.cs-orbital-logo.cs-orbital-icon-img,
+.cs-orbital-triangle .cs-orbital-icon-img,
+[data-theme="light"] .cs-orbital-logo.cs-orbital-icon-img,
+[data-theme="light"] .cs-orbital-triangle .cs-orbital-icon-img,
+[data-theme="dark"] .cs-orbital-logo.cs-orbital-icon-img,
+[data-theme="dark"] .cs-orbital-triangle .cs-orbital-icon-img {
+  border-color: rgba(212, 175, 55, 0.6) !important;
+  box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15), 0 10px 30px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* -------------------------- Prefooter -------------------------- */
+.cs-prefooter,
+[data-theme="light"] .cs-prefooter,
+[data-theme="dark"] .cs-prefooter {
+  background:
+    radial-gradient(70% 80% at 50% 0%, rgba(212, 175, 55, 0.12) 0%, transparent 70%),
+    linear-gradient(165deg, #14110b 0%, #080706 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
+}
+.cs-prefooter-title,
+[data-theme="light"] .cs-prefooter-title,
+[data-theme="dark"] .cs-prefooter-title {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #f7f2e2 !important;
+}
+.cs-prefooter-title em,
+[data-theme="light"] .cs-prefooter-title em,
+[data-theme="dark"] .cs-prefooter-title em {
+  background: linear-gradient(100deg, #f6d878 0%, #d4af37 55%, #96772a 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+.cs-prefooter-sub,
+[data-theme="light"] .cs-prefooter-sub,
+[data-theme="dark"] .cs-prefooter-sub { color: rgba(247, 242, 226, 0.6) !important; }
+.cs-prefooter-cta,
+[data-theme="light"] .cs-prefooter-cta,
+[data-theme="dark"] .cs-prefooter-cta {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 45%, #96772a 100%) !important;
+  color: #0c0b09 !important;
+  border: none !important;
+  box-shadow: 0 12px 30px rgba(212, 175, 55, 0.3) !important;
+}
+
+/* Contact detail links — quiet gold text, no button chrome */
+.cs-prefooter a[href^="tel"], .cs-prefooter a[href*="qmicssolutions"],
+.cs-prefooter a[href*="qcertisphere"], .cs-prefooter .cs-contact-address,
+[data-theme="light"] .cs-prefooter a[href^="tel"],
+[data-theme="light"] .cs-prefooter a[href*="qmicssolutions"],
+[data-theme="light"] .cs-prefooter a[href*="qcertisphere"],
+[data-theme="light"] .cs-prefooter .cs-contact-address,
+[data-theme="dark"] .cs-prefooter a[href^="tel"],
+[data-theme="dark"] .cs-prefooter a[href*="qmicssolutions"],
+[data-theme="dark"] .cs-prefooter a[href*="qcertisphere"],
+[data-theme="dark"] .cs-prefooter .cs-contact-address {
+  background: transparent !important;
+  color: #f6d878 !important;
+  border: none !important;
+  box-shadow: none !important;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+.cs-prefooter .cs-contact-address,
+[data-theme="light"] .cs-prefooter .cs-contact-address,
+[data-theme="dark"] .cs-prefooter .cs-contact-address {
+  color: rgba(247, 242, 226, 0.78) !important;
+}
+.cs-prefooter .cs-contact-address strong { color: #f6d878 !important; }
+.cs-prefooter .cs-contact-address:hover {
+  color: #f7f2e2 !important;
+  transform: translateY(-1px);
+}
+.cs-prefooter .cs-contact-address:hover strong {
+  color: #ffe79a !important;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.cs-prefooter a[href^="tel"]:hover,
+.cs-prefooter a[href*="qmicssolutions"]:hover,
+.cs-prefooter a[href*="qcertisphere"]:hover {
+  color: #ffe79a !important;
+}
+
+/* --------------------------- Footer --------------------------- */
+.cs-footer-static, .cs-home-footer,
+[data-theme="light"] .cs-footer-static, [data-theme="light"] .cs-home-footer,
+[data-theme="dark"] .cs-footer-static, [data-theme="dark"] .cs-home-footer {
+  background: #050505 !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.25) !important;
+  color: rgba(247, 242, 226, 0.6) !important;
+}
+.cs-footer-col h4,
+[data-theme="light"] .cs-footer-col h4,
+[data-theme="dark"] .cs-footer-col h4 {
+  color: #d4af37 !important;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  font-size: 11px;
+}
+.cs-footer-col a, .cs-footer-col button,
+[data-theme="light"] .cs-footer-col a, [data-theme="light"] .cs-footer-col button,
+[data-theme="dark"] .cs-footer-col a, [data-theme="dark"] .cs-footer-col button {
+  color: rgba(247, 242, 226, 0.62) !important;
+}
+.cs-footer-col a:hover, .cs-footer-col button:hover,
+[data-theme="light"] .cs-footer-col a:hover, [data-theme="light"] .cs-footer-col button:hover,
+[data-theme="dark"] .cs-footer-col a:hover, [data-theme="dark"] .cs-footer-col button:hover {
+  color: #f6d878 !important;
+}
+.cs-footer-tagline, .cs-footer-slogan,
+[data-theme="light"] .cs-footer-tagline, [data-theme="light"] .cs-footer-slogan,
+[data-theme="dark"] .cs-footer-tagline, [data-theme="dark"] .cs-footer-slogan {
+  color: rgba(247, 242, 226, 0.5) !important;
+}
+.cs-footer-bottom,
+[data-theme="light"] .cs-footer-bottom,
+[data-theme="dark"] .cs-footer-bottom {
+  border-top: 1px solid rgba(212, 175, 55, 0.15) !important;
+  color: rgba(247, 242, 226, 0.45) !important;
+}
+
+/* =============================================================
+   READABILITY PASS — every piece of text light on the dark stage
+   (catch-all first, gold accents re-asserted after)
+   ============================================================= */
+
+/* 1 ▸ Catch-all: headings bright cream, body copy soft cream */
+.cs-home :where(h1, h2, h3, h4, h5, h6),
+[data-theme="light"] .cs-home :where(h1, h2, h3, h4, h5, h6),
+[data-theme="dark"] .cs-home :where(h1, h2, h3, h4, h5, h6) {
+  color: #f7f2e2 !important;
+}
+.cs-home :where(p, li, dd, dt, td, th, label, figcaption),
+[data-theme="light"] .cs-home :where(p, li, dd, dt, td, th, label, figcaption),
+[data-theme="dark"] .cs-home :where(p, li, dd, dt, td, th, label, figcaption) {
+  color: rgba(247, 242, 226, 0.68) !important;
+}
+.cs-home .bento-card, .cs-home .cs-founder-bio,
+[data-theme="light"] .cs-home .bento-card,
+[data-theme="light"] .cs-home .cs-founder-bio,
+[data-theme="dark"] .cs-home .bento-card,
+[data-theme="dark"] .cs-home .cs-founder-bio {
+  color: rgba(247, 242, 226, 0.68) !important;
+}
+
+/* 2 ▸ Re-assert gold accents that the catch-all must not flatten */
+.cs-home .cs-home-tag, .cs-home .cs-home-tag *,
+[data-theme="light"] .cs-home .cs-home-tag, [data-theme="light"] .cs-home .cs-home-tag *,
+[data-theme="dark"] .cs-home .cs-home-tag, [data-theme="dark"] .cs-home .cs-home-tag * {
+  color: #d4af37 !important;
+}
+.cs-home .bento-card-label,
+[data-theme="light"] .cs-home .bento-card-label,
+[data-theme="dark"] .cs-home .bento-card-label { color: #d4af37 !important; }
+.cs-home .cs-bio-label,
+[data-theme="light"] .cs-home .cs-bio-label,
+[data-theme="dark"] .cs-home .cs-bio-label { color: #d4af37 !important; }
+.cs-home .cs-footer-col h4,
+[data-theme="light"] .cs-home .cs-footer-col h4,
+[data-theme="dark"] .cs-home .cs-footer-col h4 { color: #d4af37 !important; }
+.cs-home .cs-founder-name,
+[data-theme="light"] .cs-home .cs-founder-name,
+[data-theme="dark"] .cs-home .cs-founder-name {
+  color: #f6d878 !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+}
+.cs-home .cs-founder-bio p strong,
+[data-theme="light"] .cs-home .cs-founder-bio p strong,
+[data-theme="dark"] .cs-home .cs-founder-bio p strong { color: #f6d878 !important; }
+.cs-home .cs-home-sub strong,
+[data-theme="light"] .cs-home .cs-home-sub strong,
+[data-theme="dark"] .cs-home .cs-home-sub strong { color: #f6d878 !important; }
+.cs-home .bento-pulse-meta strong,
+[data-theme="light"] .cs-home .bento-pulse-meta strong,
+[data-theme="dark"] .cs-home .bento-pulse-meta strong { color: #f6d878 !important; }
+.cs-home .cs-cert-body-code,
+[data-theme="light"] .cs-home .cs-cert-body-code,
+[data-theme="dark"] .cs-home .cs-cert-body-code { color: #f6d878 !important; }
+.cs-home .cs-cert-body-cta,
+[data-theme="light"] .cs-home .cs-cert-body-cta,
+[data-theme="dark"] .cs-home .cs-cert-body-cta { color: #d4af37 !important; }
+.cs-home .bento-mod-demo,
+[data-theme="light"] .cs-home .bento-mod-demo,
+[data-theme="dark"] .cs-home .bento-mod-demo { color: #f6d878 !important; }
+
+/* Dark text stays dark ONLY on gold surfaces (buttons, ribbons, stars) */
+.cs-home .cs-home-cta-primary, .cs-home .cs-home-signin,
+.cs-home .cs-prefooter-cta, .cs-home .cs-prefooter a,
+.cs-home .cs-founder-star, .cs-home .cs-link-primary,
+[data-theme="light"] .cs-home .cs-home-cta-primary,
+[data-theme="light"] .cs-home .cs-home-signin,
+[data-theme="light"] .cs-home .cs-prefooter-cta,
+[data-theme="light"] .cs-home .cs-prefooter a,
+[data-theme="light"] .cs-home .cs-founder-star,
+[data-theme="dark"] .cs-home .cs-home-cta-primary,
+[data-theme="dark"] .cs-home .cs-home-signin,
+[data-theme="dark"] .cs-home .cs-prefooter-cta,
+[data-theme="dark"] .cs-home .cs-prefooter a,
+[data-theme="dark"] .cs-home .cs-founder-star {
+  color: #0c0b09 !important;
+}
+
+/* 3 ▸ Pieces the first pass missed */
+.cs-home .cs-prefooter-note,
+[data-theme="light"] .cs-home .cs-prefooter-note,
+[data-theme="dark"] .cs-home .cs-prefooter-note { color: rgba(247, 242, 226, 0.6) !important; }
+
+.cs-home .cs-founder-bio a, .cs-home .cs-founder-bio button,
+.cs-home .cs-profile-link-btn,
+[data-theme="light"] .cs-home .cs-founder-bio a,
+[data-theme="light"] .cs-home .cs-founder-bio button,
+[data-theme="light"] .cs-home .cs-profile-link-btn,
+[data-theme="dark"] .cs-home .cs-founder-bio a,
+[data-theme="dark"] .cs-home .cs-founder-bio button,
+[data-theme="dark"] .cs-home .cs-profile-link-btn {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.40) !important;
+  color: #f6d878 !important;
+}
+.cs-home .cs-founder-bio a:hover, .cs-home .cs-founder-bio button:hover,
+.cs-home .cs-profile-link-btn:hover,
+[data-theme="light"] .cs-home .cs-founder-bio a:hover,
+[data-theme="light"] .cs-home .cs-founder-bio button:hover,
+[data-theme="dark"] .cs-home .cs-founder-bio a:hover,
+[data-theme="dark"] .cs-home .cs-founder-bio button:hover {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 60%) !important;
+  color: #0c0b09 !important;
+  border-color: transparent !important;
+}
+
+.cs-home .cs-home-theme-toggle,
+[data-theme="light"] .cs-home .cs-home-theme-toggle,
+[data-theme="dark"] .cs-home .cs-home-theme-toggle {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  color: #d4af37 !important;
+}
+
+/* "Featured" ribbon on the highlighted module */
+.cs-home .bento-mod-featured::before,
+[data-theme="light"] .cs-home .bento-mod-featured::before, [data-theme="light"] #modules .bento-mod-featured::before,
+[data-theme="dark"] .cs-home .bento-mod-featured::before {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 60%) !important;
+  color: #0c0b09 !important;
+}
+
+/* Workflow stage chips */
+.cs-home .bento-workflow-stages span,
+[data-theme="light"] .cs-home .bento-workflow-stages span,
+[data-theme="dark"] .cs-home .bento-workflow-stages span {
+  color: rgba(247, 242, 226, 0.72) !important;
+}
+
+/* Orbital labels & satellite icons re-asserted over the catch-all */
+.cs-home .cs-orbital-label,
+[data-theme="light"] .cs-home .cs-orbital-label,
+[data-theme="dark"] .cs-home .cs-orbital-label { color: rgba(247, 242, 226, 0.88) !important; }
+.cs-home .cs-orbital-circle,
+[data-theme="light"] .cs-home .cs-orbital-circle,
+[data-theme="dark"] .cs-home .cs-orbital-circle { color: #f6d878 !important; }
+
+/* Footer body text */
+.cs-home .cs-footer-static, .cs-home .cs-footer-static p,
+.cs-home .cs-footer-tagline, .cs-home .cs-footer-slogan, .cs-home .cs-footer-bottom,
+[data-theme="light"] .cs-home .cs-footer-static,
+[data-theme="light"] .cs-home .cs-footer-static p,
+[data-theme="light"] .cs-home .cs-footer-bottom,
+[data-theme="dark"] .cs-home .cs-footer-static,
+[data-theme="dark"] .cs-home .cs-footer-static p,
+[data-theme="dark"] .cs-home .cs-footer-bottom {
+  color: rgba(247, 242, 226, 0.55) !important;
+}
+.cs-home .cs-footer-col a, .cs-home .cs-footer-col button,
+[data-theme="light"] .cs-home .cs-footer-col a,
+[data-theme="light"] .cs-home .cs-footer-col button,
+[data-theme="dark"] .cs-home .cs-footer-col a,
+[data-theme="dark"] .cs-home .cs-footer-col button {
+  color: rgba(247, 242, 226, 0.62) !important;
+}
+.cs-home .cs-footer-col a:hover, .cs-home .cs-footer-col button:hover,
+[data-theme="light"] .cs-home .cs-footer-col a:hover,
+[data-theme="light"] .cs-home .cs-footer-col button:hover,
+[data-theme="dark"] .cs-home .cs-footer-col a:hover,
+[data-theme="dark"] .cs-home .cs-footer-col button:hover {
+  color: #f6d878 !important;
+}
+
+/* Hero trust list + subtitle re-asserted (readable soft cream) */
+.cs-home .cs-home-trust li,
+[data-theme="light"] .cs-home .cs-home-trust li,
+[data-theme="dark"] .cs-home .cs-home-trust li { color: rgba(247, 242, 226, 0.75) !important; }
+.cs-home .cs-home-trust li svg, .cs-home .cs-home-trust svg,
+[data-theme="light"] .cs-home .cs-home-trust li svg,
+[data-theme="light"] .cs-home .cs-home-trust svg,
+[data-theme="dark"] .cs-home .cs-home-trust li svg { color: #d4af37 !important; }
+.cs-home .cs-home-sub,
+[data-theme="light"] .cs-home .cs-home-sub,
+[data-theme="dark"] .cs-home .cs-home-sub { color: rgba(247, 242, 226, 0.66) !important; }
+.cs-home .cs-home-section-sub,
+[data-theme="light"] .cs-home .cs-home-section-sub,
+[data-theme="dark"] .cs-home .cs-home-section-sub { color: rgba(247, 242, 226, 0.60) !important; }
+
+/* =============================================================
+   FOUNDER BIO PANEL + SECTION TITLE GRADIENTS — final fixes
+   ============================================================= */
+
+/* Bio panel was white — now noir glass with a gold hairline */
+.cs-founder-bio,
+[data-theme="light"] .cs-founder-bio,
+[data-theme="dark"] .cs-founder-bio {
+  background:
+    radial-gradient(70% 50% at 20% 0%, rgba(212, 175, 55, 0.06) 0%, transparent 60%),
+    linear-gradient(165deg, #12100a 0%, #0a0906 60%, #0d0b08 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.20) !important;
+  box-shadow: inset 0 1px 0 rgba(247, 216, 120, 0.08) !important;
+}
+
+/* Expertise pills — dark chips, gold left rule */
+.cs-expertise-pill,
+[data-theme="light"] .cs-expertise-pill,
+[data-theme="light"] #about-us .cs-expertise-pill,
+[data-theme="dark"] .cs-expertise-pill {
+  background: rgba(212, 175, 55, 0.06) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  border-left: 3px solid #d4af37 !important;
+  color: rgba(247, 242, 226, 0.85) !important;
+  box-shadow: none !important;
+}
+.cs-expertise-pill:hover,
+[data-theme="light"] .cs-expertise-pill:hover,
+[data-theme="light"] #about-us .cs-expertise-pill:hover,
+[data-theme="dark"] .cs-expertise-pill:hover {
+  background: rgba(212, 175, 55, 0.14) !important;
+  border-color: #d4af37 !important;
+  color: #f6d878 !important;
+  transform: translateY(-2px);
+}
+
+/* Founder avatar fallback — noir plate, gold ring, gold initials */
+.cs-founder-photo-fallback,
+[data-theme="light"] .cs-founder-photo-fallback,
+[data-theme="dark"] .cs-founder-photo-fallback {
+  background: radial-gradient(60% 60% at 35% 30%, rgba(212, 175, 55, 0.18) 0%, transparent 70%), #0c0b09 !important;
+  border: 2px solid #d4af37 !important;
+  color: #f6d878 !important;
+  box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.10), 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+}
+
+/* Section titles that had a blue text-clip gradient → cream/gold sheen */
+#about-us .cs-home-section-title,
+#certification-bodies .cs-home-section-title,
+#benefits .cs-home-section-title,
+#modules .cs-home-section-title,
+[data-theme="light"] #about-us .cs-home-section-title,
+[data-theme="light"] #certification-bodies .cs-home-section-title,
+[data-theme="light"] #benefits .cs-home-section-title,
+[data-theme="light"] #modules .cs-home-section-title,
+[data-theme="dark"] #about-us .cs-home-section-title,
+[data-theme="dark"] #certification-bodies .cs-home-section-title,
+[data-theme="dark"] #benefits .cs-home-section-title,
+[data-theme="dark"] #modules .cs-home-section-title {
+  background: linear-gradient(90deg,
+    #f7f2e2 0%, #f6d878 30%, #d4af37 50%, #f6d878 70%, #f7f2e2 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  font-family: 'Playfair Display', Georgia, serif !important;
+  animation: nxh-sheen 8s ease-in-out infinite;
+}
+
+/* Years-of-experience badge on the identity panel */
+.cs-founder-exp,
+[data-theme="light"] .cs-founder-exp,
+[data-theme="dark"] .cs-founder-exp {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+}
+.cs-founder-exp strong,
+[data-theme="light"] .cs-founder-exp strong,
+[data-theme="dark"] .cs-founder-exp strong {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  color: #f6d878 !important;
+}
+
+/* =============================================================
+   MODULES SECTION PANEL — was a white plate, now a noir stage
+   ============================================================= */
+#modules.cs-bento-section,
+[data-theme="light"] #modules.cs-bento-section,
+[data-theme="dark"] #modules.cs-bento-section {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(212, 175, 55, 0.10) 0%, transparent 55%),
+    linear-gradient(180deg, #12100a 0%, #0a0906 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(247, 216, 120, 0.08) !important;
+}
+
+/* Final sweep leftovers */
+.cs-home .bento-workflow-icon > span,
+[data-theme="light"] .cs-home .bento-workflow-icon > span,
+[data-theme="dark"] .cs-home .bento-workflow-icon > span {
+  background: #d4af37 !important;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.5) !important;
+}
+.cs-home .cs-home-brand-plate,
+[data-theme="light"] .cs-home .cs-home-brand-plate,
+[data-theme="dark"] .cs-home .cs-home-brand-plate {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Brand showcase — compact layout */
+.cs-brand-showcase,
+[data-theme="light"] .cs-brand-showcase,
+[data-theme="dark"] .cs-brand-showcase {
+  margin: 32px auto 8px !important;
+}
+.cs-brand-showcase-inner,
+[data-theme="light"] .cs-brand-showcase-inner,
+[data-theme="dark"] .cs-brand-showcase-inner {
+  padding: 18px 34px !important;
+  border-radius: 18px !important;
+  gap: 8px;
+}
+.cs-brand-showcase-img,
+[data-theme="light"] .cs-brand-showcase-img,
+[data-theme="dark"] .cs-brand-showcase-img {
+  max-width: 300px !important;
+}
+@media (max-width: 720px) {
+  .cs-brand-showcase-inner { padding: 14px 20px !important; }
+  .cs-brand-showcase-img { max-width: 220px !important; }
+}
+
+/* Founder photo ring — noir & gold, photo fills the circle */
+.cs-founder-photo,
+[data-theme="light"] .cs-founder-photo,
+[data-theme="dark"] .cs-founder-photo {
+  background: #0c0b09 !important;
+  border: 3px solid #d4af37 !important;
+  box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.12), 0 16px 40px rgba(0, 0, 0, 0.6) !important;
+}
+.cs-founder-img { object-fit: cover; object-position: center top; }
+
+/* =============================================================
+   QMICS-PARITY ADDITIONS — hero quote, stats band, process steps
+   ============================================================= */
+
+/* Hero quote — classic serif epigraph */
+.cs-hero-quote,
+[data-theme="light"] .cs-hero-quote,
+[data-theme="dark"] .cs-hero-quote {
+  font-family: 'Playfair Display', Georgia, serif !important;
+  font-style: italic;
+  font-size: 15px;
+  letter-spacing: 0.6px;
+  color: rgba(247, 216, 120, 0.85) !important;
+  margin: 0 0 14px;
+  animation: nxh-fade-up 0.7s ease-out 0.05s both;
+}
+
+/* ---- Stats band: four animated counters ---- */
+.cs-stats-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 26px 0 6px;
+}
+@media (max-width: 900px) { .cs-stats-band { grid-template-columns: repeat(2, 1fr); } }
+.cs-stat-tile {
+  position: relative;
+  text-align: center;
+  padding: 22px 12px 18px;
+  border-radius: 16px;
+  background:
+    radial-gradient(70% 60% at 50% 0%, rgba(212, 175, 55, 0.09) 0%, transparent 65%),
+    linear-gradient(165deg, #14110b 0%, #090806 60%, #0d0b08 100%);
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(247, 216, 120, 0.1);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease;
+}
+.cs-stat-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(212, 175, 55, 0.5);
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.5), 0 0 22px rgba(212, 175, 55, 0.1);
+}
+.cs-stat-tile strong {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.05;
+  background: linear-gradient(135deg, #f7f2e2 0%, #f6d878 45%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.cs-stat-tile span {
+  display: block;
+  margin-top: 6px;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  color: rgba(247, 242, 226, 0.6) !important;
+}
+
+/* ---- Certification process: 5-step gold timeline ---- */
+.cs-process-track {
+  list-style: none;
+  margin: 34px 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  position: relative;
+}
+/* connecting hairline behind the numbers */
+.cs-process-track::before {
+  content: '';
+  position: absolute;
+  top: 26px;
+  left: 6%;
+  right: 6%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent, rgba(212, 175, 55, 0.45) 12%,
+    rgba(212, 175, 55, 0.45) 88%, transparent);
+  z-index: 0;
+}
+@media (max-width: 1024px) {
+  .cs-process-track { grid-template-columns: 1fr; gap: 10px; }
+  .cs-process-track::before {
+    left: 26px; right: auto; top: 6%; bottom: 6%;
+    width: 1px; height: auto;
+    background: linear-gradient(180deg,
+      transparent, rgba(212, 175, 55, 0.45) 12%,
+      rgba(212, 175, 55, 0.45) 88%, transparent);
+  }
+}
+.cs-process-step {
+  position: relative;
+  z-index: 1;
+  padding: 0 8px;
+}
+@media (max-width: 1024px) {
+  .cs-process-step {
+    display: grid;
+    grid-template-columns: 52px 1fr;
+    grid-template-areas: "num title" "num desc";
+    column-gap: 14px;
+    align-items: start;
+  }
+  .cs-process-step .cs-process-num { grid-area: num; }
+  .cs-process-step h3 { grid-area: title; margin-top: 4px !important; }
+  .cs-process-step p  { grid-area: desc; }
+}
+.cs-process-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 19px;
+  font-weight: 700;
+  color: #f6d878;
+  background: #0c0b09;
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  box-shadow: 0 0 0 5px rgba(212, 175, 55, 0.08), 0 10px 26px rgba(0, 0, 0, 0.5);
+  transition: all 0.25s ease;
+}
+.cs-process-step:hover .cs-process-num {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 60%, #96772a 100%);
+  color: #0c0b09;
+  box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.16), 0 0 26px rgba(212, 175, 55, 0.35);
+  transform: scale(1.06);
+}
+.cs-process-step h3 {
+  margin: 14px 0 6px;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #f7f2e2 !important;
+}
+.cs-process-step p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: rgba(247, 242, 226, 0.58) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-hero-quote { animation: none !important; }
+}
+
+/* =============================================================
+   CONTACT US — force light/gold text on every link (final word)
+   ============================================================= */
+.cs-home .cs-prefooter a:not(.cs-prefooter-cta),
+[data-theme="light"] .cs-home .cs-prefooter a:not(.cs-prefooter-cta),
+[data-theme="dark"] .cs-home .cs-prefooter a:not(.cs-prefooter-cta) {
+  color: #f6d878 !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+.cs-home .cs-prefooter a:not(.cs-prefooter-cta):hover,
+[data-theme="light"] .cs-home .cs-prefooter a:not(.cs-prefooter-cta):hover,
+[data-theme="dark"] .cs-home .cs-prefooter a:not(.cs-prefooter-cta):hover {
+  color: #ffe79a !important;
+}
+/* Address block: cream body, gold company name */
+.cs-home .cs-prefooter .cs-contact-address,
+[data-theme="light"] .cs-home .cs-prefooter .cs-contact-address,
+[data-theme="dark"] .cs-home .cs-prefooter .cs-contact-address {
+  color: rgba(247, 242, 226, 0.82) !important;
+}
+.cs-home .cs-prefooter .cs-contact-address strong,
+[data-theme="light"] .cs-home .cs-prefooter .cs-contact-address strong,
+[data-theme="dark"] .cs-home .cs-prefooter .cs-contact-address strong {
+  color: #f6d878 !important;
+}
+/* Sub line + any stray spans stay cream */
+.cs-home .cs-prefooter-sub, .cs-home .cs-prefooter span:not(.cs-prefooter-cta),
+[data-theme="light"] .cs-home .cs-prefooter-sub,
+[data-theme="dark"] .cs-home .cs-prefooter-sub {
+  color: rgba(247, 242, 226, 0.72) !important;
+}
+/* Icon chips keep gold */
+.cs-home .cs-prefooter a svg,
+[data-theme="light"] .cs-home .cs-prefooter a svg,
+[data-theme="dark"] .cs-home .cs-prefooter a svg { color: #d4af37 !important; }

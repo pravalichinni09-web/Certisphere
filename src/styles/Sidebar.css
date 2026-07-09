@@ -1,0 +1,1262 @@
+﻿/* Top Navigation Bar - Horizontal */
+.top-navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 70px;
+  background: linear-gradient(135deg, #0a2a5f 0%, #0a2a5f 100%);
+  color: white;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  padding: 0 15px;
+  box-sizing: border-box;
+}
+
+.navbar-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  height: 100%;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.navbar-logo .logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.logo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.logo-text {
+  font-size: 12px;
+  font-weight: 700;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
+}
+
+.logo-role {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+.navbar-menu {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  gap: 0;
+  min-width: 0;
+}
+
+.menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+}
+
+.menu-list::-webkit-scrollbar {
+  height: 5px;
+}
+
+.menu-list::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+}
+
+.menu-list::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.menu-list::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  height: 36px;
+  position: relative;
+  min-width: fit-content;
+}
+
+.menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.menu-item.active {
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+}
+
+.menu-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 2px 2px 0 0;
+}
+
+.menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.menu-label {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.navbar-footer {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 7px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  height: 36px;
+  flex-shrink: 0;
+}
+
+.logout-btn:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+.menu-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  z-index: 100;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1400px) {
+  .navbar-container {
+    max-width: 100%;
+  }
+  
+  .navbar-logo {
+    min-width: auto;
+  }
+  
+  .logo-text {
+    max-width: 150px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .top-navbar {
+    padding: 0 12px;
+  }
+
+  .navbar-logo {
+    min-width: auto;
+    gap: 10px;
+  }
+
+  .navbar-logo .logo-icon {
+    width: 38px;
+    height: 38px;
+    font-size: 13px;
+  }
+
+  .logo-text {
+    font-size: 11px;
+    max-width: 120px;
+  }
+
+  .logo-role {
+    font-size: 9px;
+  }
+
+  .menu-item {
+    padding: 7px 12px;
+    font-size: 11px;
+    height: 34px;
+  }
+
+  .menu-icon {
+    width: 15px;
+    height: 15px;
+  }
+
+  .logout-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .menu-item {
+    padding: 6px 10px;
+    font-size: 10px;
+    height: 32px;
+  }
+
+  .menu-label {
+    display: none;
+  }
+
+  .menu-item:hover .menu-label {
+    display: block;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 4px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+    font-size: 11px;
+    left: 0;
+    top: 100%;
+    margin-top: 4px;
+    z-index: 1000;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .top-navbar {
+    padding: 0 12px;
+    height: 65px;
+  }
+
+  .navbar-container {
+    gap: 10px;
+    height: 100%;
+  }
+
+  .navbar-logo {
+    min-width: auto;
+    gap: 8px;
+  }
+
+  .navbar-logo .logo-icon {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .logo-role {
+    font-size: 9px;
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: 65px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100vh - 65px);
+    background: linear-gradient(135deg, #0a2a5f 0%, #0a2a5f 100%);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    z-index: 998;
+    padding: 0;
+  }
+
+  .navbar-menu.open {
+    max-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .menu-list {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px 0;
+  }
+
+  .menu-item {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    justify-content: flex-start;
+    padding: 12px 14px;
+    font-size: 13px;
+    border-radius: 6px;
+    height: auto;
+  }
+
+  .menu-label {
+    display: block !important;
+  }
+
+  .menu-item.active::after {
+    display: none;
+  }
+
+  .menu-item.active {
+    background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+    margin-left: 5px;
+    border-left: 3px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .navbar-footer {
+    width: 100%;
+    height: auto;
+    padding: 15px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .logout-btn {
+    width: calc(100% - 20px);
+    justify-content: center;
+    padding: 10px 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-toggle {
+    display: flex;
+  }
+
+  .top-navbar {
+    padding: 0 15px;
+  }
+
+  .navbar-container {
+    gap: 15px;
+  }
+
+  .navbar-logo {
+    min-width: 150px;
+  }
+
+  .logo-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 14px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .logo-role {
+    font-size: 10px;
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: 70px;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: calc(100vh - 70px);
+    background: linear-gradient(135deg, #0a2a5f 0%, #0a2a5f 100%);
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+    z-index: 998;
+  }
+
+  .navbar-menu.open {
+    max-height: 100vh;
+  }
+
+  .menu-list {
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    overflow-y: auto;
+    padding: 10px 0;
+  }
+
+  .menu-item {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    justify-content: flex-start;
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 8px;
+  }
+
+  .menu-label {
+    display: block !important;
+  }
+
+  .menu-item.active::after {
+    display: none;
+  }
+
+  .menu-item.active {
+    background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+    margin-left: 5px;
+    border-left: 3px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .navbar-footer {
+    width: 100%;
+    height: auto;
+    padding: 15px 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    position: absolute;
+    bottom: 0;
+    left: 0;
+  }
+
+  .logout-btn {
+    width: calc(100% - 20px);
+    justify-content: center;
+    padding: 10px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-navbar {
+    height: 60px;
+    padding: 0 10px;
+  }
+
+  .navbar-container {
+    gap: 10px;
+  }
+
+  .navbar-logo {
+    min-width: 120px;
+  }
+
+  .logo-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 12px;
+  }
+
+  .logo-role {
+    display: none;
+  }
+
+  .navbar-menu {
+    top: 60px;
+    height: calc(100vh - 60px);
+  }
+
+  .menu-item {
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+}
+
+/* Hide scrollbar for desktop but keep functionality */
+@media (min-width: 768px) {
+  .menu-list::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .menu-list {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+
+
+/* =====================================================
+   Vertical Sidebar (Audit Coordinator role)
+   ===================================================== */
+
+.vertical-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 260px;
+  height: 100vh;
+  background: linear-gradient(180deg, #0a2a5f 0%, #1f2d3d 100%);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 12px rgba(0, 0, 0, 0.15);
+  z-index: 999;
+  box-sizing: border-box;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.vertical-sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.vertical-sidebar-header .logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.vertical-sidebar-header .logo-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.vertical-sidebar-header .logo-text {
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vertical-sidebar-header .logo-role {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1;
+}
+
+.vertical-sidebar-nav {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px 8px 16px;
+  scrollbar-width: thin;
+}
+
+.vertical-sidebar-nav::-webkit-scrollbar {
+  width: 6px;
+}
+.vertical-sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+.vertical-sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* --- Flat vertical menu items (Lead Auditor) --- */
+.vertical-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.vertical-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  margin: 0 4px;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+}
+
+.vertical-menu-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.vertical-menu-item.active {
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  border-color: transparent;
+}
+
+.vertical-menu-item .menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.vertical-menu-item .menu-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- Collapsed section buttons (open popup flyout) --- */
+.sidebar-section-wrapper {
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.sidebar-section-button {
+  width: calc(100% - 8px);
+  margin: 0 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  color: #fff;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sidebar-section-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
+.sidebar-section-button.active {
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+  color: #fff;
+}
+
+.sidebar-section-button .menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.sidebar-section-button .menu-label {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.section-chevron {
+  transition: transform 0.25s ease;
+  opacity: 0.7;
+  flex-shrink: 0;
+}
+
+.section-chevron.rotate {
+  transform: rotate(90deg);
+  opacity: 1;
+}
+
+/* --- Popup submenu (appears inline below the section button) --- */
+.sidebar-popup {
+  position: relative;
+  width: calc(100% - 8px);
+  margin: 6px 4px 10px 4px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-radius: 10px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 8px;
+  animation: sidebarPopupSlide 0.22s ease-out;
+  overflow: hidden;
+}
+
+@keyframes sidebarPopupSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    max-height: 600px;
+  }
+}
+
+.sidebar-popup-header {
+  display: none; /* header is redundant — the button above already shows the title */
+}
+
+.sidebar-popup-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.55);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sidebar-popup-title .menu-icon {
+  color: #1f6bbf;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+}
+
+.sidebar-popup-close {
+  display: none; /* no close button needed — toggling the section button closes it */
+}
+
+.sidebar-popup-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-popup-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.sidebar-popup-item:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+}
+
+.sidebar-popup-item.active {
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3);
+}
+
+.sidebar-popup-item .menu-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+}
+
+.vertical-sidebar-footer {
+  padding: 12px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.vertical-sidebar-footer .logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #fca5a5;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vertical-sidebar-footer .logout-btn:hover {
+  background: #ef4444;
+  color: #fff;
+  border-color: #ef4444;
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.4);
+}
+
+/* Mobile toggle for vertical sidebar */
+.vertical-menu-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  width: 40px;
+  height: 40px;
+  background: #0a2a5f;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  z-index: 1001;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.vertical-sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 998;
+}
+
+@media (max-width: 1024px) {
+  .vertical-sidebar {
+    width: 240px;
+  }
+}
+
+@media (max-width: 768px) {
+  .vertical-menu-toggle {
+    display: flex;
+  }
+
+  .vertical-sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    width: 260px;
+  }
+
+  .vertical-sidebar.open {
+    transform: translateX(0);
+  }
+
+  .vertical-sidebar-backdrop {
+    display: block;
+  }
+
+}
+
+/* ========== Coordinator profile card in sidebar ========== */
+.sidebar-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  margin: 10px 14px 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  text-decoration: none;
+  color: #e2e8f0;
+  transition: all 0.2s ease;
+}
+
+.sidebar-profile-card:hover {
+  background: rgba(14, 165, 233, 0.18);
+  border-color: rgba(14, 165, 233, 0.4);
+  transform: translateY(-1px);
+}
+
+.sidebar-profile-card.active {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.25) 0%, rgba(6, 182, 212, 0.2) 100%);
+  border-color: rgba(14, 165, 233, 0.5);
+}
+
+.sidebar-profile-avatar {
+  flex-shrink: 0;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.sidebar-profile-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sidebar-profile-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.sidebar-profile-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #f1f5f9;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar-profile-role {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* Theme toggle button */
+.vertical-sidebar-footer .theme-toggle-btn,
+.navbar-footer .theme-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 9px 12px;
+  margin-bottom: 8px;
+  background: rgba(56, 189, 248, 0.12);
+  color: #7dd3fc;
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.vertical-sidebar-footer .theme-toggle-btn:hover,
+.navbar-footer .theme-toggle-btn:hover {
+  background: rgba(56, 189, 248, 0.22);
+  color: #e0f2fe;
+  border-color: rgba(56, 189, 248, 0.55);
+  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.25);
+}
+.vertical-sidebar-footer .theme-toggle-btn svg,
+.navbar-footer .theme-toggle-btn svg {
+  flex-shrink: 0;
+}
+
+
+/* ============================================================
+   Inline always-expanded coordinator sections (no popups)
+============================================================ */
+.sidebar-section-inline {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+
+.sidebar-section-heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 4px 14px;
+  color: rgba(226, 232, 240, 0.85);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+
+.sidebar-section-heading .menu-icon {
+  color: rgba(148, 163, 184, 0.95);
+}
+
+.sidebar-section-heading .menu-label {
+  color: rgba(226, 232, 240, 0.85);
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  font-size: 11px;
+}
+
+.sidebar-section-items {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.sidebar-section-items li {
+  list-style: none;
+}
+
+.sidebar-section-item {
+  padding-left: 28px !important;
+  font-size: 13px;
+}
+
+.sidebar-section-item .menu-icon {
+  margin-right: 8px;
+}
+
+/* CertiSphere logo in the sidebar header — replaces the old "CMS" tile */
+.vertical-sidebar-header .cs-sidebar-logo {
+  width: 56px;
+  height: 56px;
+  background: #ffffff;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  flex-shrink: 0;
+  /* Override the legacy gradient + text styles inherited from .logo-icon */
+  font-size: 0 !important;
+  color: transparent !important;
+}
+.vertical-sidebar-header .cs-sidebar-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+.navbar-logo .cs-sidebar-logo {
+  width: 44px;
+  height: 44px;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0 !important;
+  color: transparent !important;
+}
+.navbar-logo .cs-sidebar-logo img { width: 100%; height: 100%; object-fit: contain; }
+
+/* =============================================================
+   Transparent logo holder in the sidebar
+   ============================================================= */
+.vertical-sidebar-header .cs-sidebar-logo,
+.navbar-logo .cs-sidebar-logo {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.vertical-sidebar-header .cs-sidebar-logo img,
+.navbar-logo .cs-sidebar-logo img {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.45));
+}
+
+/* =============================================================
+   CertiSphere — professional sidebar branding (full-width logo)
+   ============================================================= */
+.vertical-sidebar-header.cs-sidebar-header-stacked {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  gap: 8px;
+  padding: 18px 14px 14px !important;
+  border-bottom: 1px solid rgba(255, 215, 0, 0.18);
+  position: relative;
+  /* Subtle gold glow behind the logo area */
+  background:
+    radial-gradient(ellipse at top,
+      rgba(255, 215, 0, 0.10) 0%,
+      rgba(31, 107, 191, 0.06) 35%,
+      transparent 70%);
+}
+
+/* The logo wordmark takes the full sidebar width — clean, no white plate */
+.cs-sidebar-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2px auto 8px;
+  padding: 12px 18px;
+  background: #000000;
+  border: 1px solid rgba(245, 193, 48, 0.38);
+  border-radius: 14px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32);
+  width: fit-content;
+  max-width: 100%;
+}
+.cs-sidebar-brand-img {
+  width: 100%;
+  max-width: 188px;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.18s ease;
+}
+.cs-sidebar-brand-img:hover {
+  transform: scale(1.02);
+}
+
+/* Meta strip under the logo: country + accreditation + role */
+.cs-sidebar-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: center;
+  padding: 0 4px;
+}
+.cs-sidebar-flag {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFD700;
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-sidebar-accred {
+  font-size: 10px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.62);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cs-sidebar-role {
+  margin-top: 4px;
+  display: inline-block;
+  align-self: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.14);
+  border: 1px solid rgba(255, 215, 0, 0.32);
+  color: #FFD700;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+}
+
+/* Horizontal navbar variant (rarely used — kept for completeness) */
+.cs-navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cs-navbar-brand {
+  background: #000000;
+  border: 1px solid rgba(245, 193, 48, 0.35);
+  border-radius: 10px;
+  padding: 6px 12px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.28);
+}
+.cs-navbar-brand-img {
+  height: 30px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+
+/* Mobile sidebar (when collapsed) — slightly smaller logo */
+@media (max-width: 768px) {
+  .cs-sidebar-brand-img { max-width: 180px; }
+}

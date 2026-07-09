@@ -1,0 +1,52 @@
+@keyframes cms-skeleton-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.cms-skeleton {
+  display: inline-block;
+  background: var(--cms-skeleton-base);
+  background-image: linear-gradient(
+    90deg,
+    var(--cms-skeleton-base) 0%,
+    var(--cms-skeleton-shine) 50%,
+    var(--cms-skeleton-base) 100%
+  );
+  background-size: 200% 100%;
+  animation: cms-skeleton-shimmer 1.4s ease-in-out infinite;
+  vertical-align: middle;
+}
+
+.cms-skeleton--text {
+  display: block;
+  margin: 6px 0;
+}
+
+.cms-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--cms-bg-surface);
+  border: 1px solid var(--cms-border-subtle);
+  box-shadow: var(--cms-shadow-sm);
+}
+
+.cms-skeleton-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--cms-border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cms-skeleton {
+    animation: none;
+  }
+}

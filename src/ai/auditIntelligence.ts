@@ -1,0 +1,361 @@
+/**
+ * Audit Intelligence — AI-assisted certification helpers.
+ *
+ * Each capability has a deterministic heuristic core (works offline, no key)
+ * plus an optional Claude refinement when an API key is configured.
+ *
+ *   1. classifyFinding        — Finding Classifier (Major / Minor / Observation)
+ *   2. generateChecklist      — Smart Checklist Generator (standard + industry)
+ *   3. predictNonConformance  — Non-Conformance Predictor (per-client risk)
+ *   4. planAudits             — AI Audit Planner (what to schedule next)
+ *
+ * The heuristics read the app's real findings store so results reflect actual data.
+ */
+import { complete, isClaudeConfigured } from './claudeClient';
+import { loadFindings, AuditFinding, FindingCategory } from '../pages/shared/auditAnalysisData';
+
+const safeArr = <T,>(key: string): T[] => {
+  try {
+    const raw = localStorage.getItem(key);
+    if (!raw) return [];
+    const v = JSON.parse(raw);
+    return Array.isArray(v) ? (v as T[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+/* =========================================================================
+ * 1. FINDING CLASSIFIER
+ * =======================================================================*/
+export interface FindingClassification {
+  category: FindingCategory;
+  confidence: number; // 0..1
+  rationale: string;
+  signals: string[];
+}
+
+const MAJOR_CUES = [
+  'no procedure', 'not implemented', 'absence of', 'no evidence', 'systemic', 'repeated',
+  'recurring', 'failure', 'breach', 'non-existent', 'missing', 'not established',
+  'not maintained', 'widespread', 'critical', 'legal', 'regulatory non-compliance',
+  'safety incident', 'data breach', 'no records', 'not performed',
+];
+const MINOR_CUES = [
+  'isolated', 'single', 'one instance', 'partially', 'incomplete', 'not fully',
+  'minor gap', 'outdated', 'overdue', 'not signed', 'not dated', 'lapse', 'inconsistent',
+  'one record', 'a few',
+];
+const OBSERVATION_CUES = [
+  'could improve', 'opportunity', 'recommend', 'consider', 'suggestion', 'potential',
+  'best practice', 'might', 'observation', 'enhance', 'streamline',
+];
+
+export const classifyFinding = (text: string, standard?: string): FindingClassification => {
+  const t = (text || '').toLowerCase();
+  if (!t.trim()) {
+    return { category: 'Minor', confidence: 0, rationale: 'No finding text provided.', signals: [] };
+  }
+  const hit = (cues: string[]) => cues.filter((c) => t.includes(c));
+  const major = hit(MAJOR_CUES);
+  const minor = hit(MINOR_CUES);
+  const obs = hit(OBSERVATION_CUES);
+
+  let category: FindingCategory = 'Minor';
+  let score = 0;
+  const signals: string[] = [];
+
+  if (obs.length && obs.length >= major.length && obs.length >= minor.length) {
+    category = 'Observation';
+    score = 0.55 + Math.min(0.4, obs.length * 0.12);
+    signals.push(...obs.slice(0, 3));
+  } else if (major.length > minor.length) {
+    category = 'Major';
+    score = 0.6 + Math.min(0.38, major.length * 0.12);
+    signals.push(...major.slice(0, 3));
+  } else if (minor.length) {
+    category = 'Minor';
+    score = 0.55 + Math.min(0.4, minor.length * 0.12);
+    signals.push(...minor.slice(0, 3));
+  } else {
+    category = 'Minor';
+    score = 0.4;
+  }
+
+  const rationale =
+    category === 'Major'
+      ? 'Language indicates a systemic gap or absence of a required control — typically a Major non-conformity.'
+      : category === 'Observation'
+      ? 'Wording suggests an improvement opportunity rather than a non-conformity (OFI / Observation).'
+      : 'Appears to be an isolated or partial lapse against a requirement — typically a Minor non-conformity.';
+
+  return {
+    category,
+    confidence: Math.min(0.97, score),
+    rationale: standard ? `${rationale} (Assessed against ${standard}.)` : rationale,
+    signals,
+  };
+};
+
+export const classifyFindingWithClaude = async (
+  text: string,
+  standard?: string,
+  signal?: AbortSignal
+): Promise<FindingClassification | null> => {
+  if (!isClaudeConfigured()) return null;
+  const system =
+    'You are a lead ISO auditor classifying an audit finding. Respond ONLY as compact JSON: ' +
+    '{"category":"Major|Minor|Observation","confidence":0-1,"rationale":"one sentence","signals":["..."]}. ' +
+    'Major = systemic failure or absent required control; Minor = isolated lapse; Observation = improvement opportunity (OFI).';
+  const prompt = `Standard: ${standard || 'unspecified'}\nFinding note:\n${text}`;
+  try {
+    const out = await complete(prompt, { system, maxTokens: 300, temperature: 0.2, signal });
+    const m = out.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    const j = JSON.parse(m[0]);
+    const cat = ['Major', 'Minor', 'Observation'].includes(j.category) ? j.category : 'Minor';
+    return {
+      category: cat,
+      confidence: Math.max(0, Math.min(1, Number(j.confidence) || 0.7)),
+      rationale: String(j.rationale || '').slice(0, 240),
+      signals: Array.isArray(j.signals) ? j.signals.slice(0, 4).map(String) : [],
+    };
+  } catch {
+    return null;
+  }
+};
+
+/* =========================================================================
+ * 2. SMART CHECKLIST GENERATOR
+ * =======================================================================*/
+export interface ChecklistItem {
+  clause: string;
+  item: string;
+  focus: string;
+}
+
+type StandardKey = 'ISO 9001' | 'ISO 14001' | 'ISO 45001' | 'ISO 27001' | 'GENERIC';
+
+const normaliseStandard = (s: string): StandardKey => {
+  const u = (s || '').toUpperCase();
+  if (u.includes('9001')) return 'ISO 9001';
+  if (u.includes('14001')) return 'ISO 14001';
+  if (u.includes('45001')) return 'ISO 45001';
+  if (u.includes('27001')) return 'ISO 27001';
+  return 'GENERIC';
+};
+
+const BASE: Record<StandardKey, ChecklistItem[]> = {
+  'ISO 9001': [
+    { clause: '4.1', item: 'Context of the organization defined and monitored', focus: 'Internal/external issues register up to date' },
+    { clause: '5.1', item: 'Top-management leadership & commitment evidence', focus: 'Quality policy communicated and understood' },
+    { clause: '6.1', item: 'Risks & opportunities addressed', focus: 'Actions planned and effectiveness evaluated' },
+    { clause: '7.1.5', item: 'Monitoring & measuring resources calibrated', focus: 'Calibration records and traceability' },
+    { clause: '8.5', item: 'Production / service provision controlled', focus: 'Process controls, identification & traceability' },
+    { clause: '9.2', item: 'Internal audit programme executed', focus: 'Coverage, independence, follow-up' },
+    { clause: '10.2', item: 'Nonconformity & corrective action', focus: 'Root-cause rigor and verification of effectiveness' },
+  ],
+  'ISO 14001': [
+    { clause: '4.2', item: 'Needs of interested parties (environmental)', focus: 'Compliance obligations captured' },
+    { clause: '6.1.2', item: 'Environmental aspects & impacts evaluated', focus: 'Significance methodology and register' },
+    { clause: '6.1.3', item: 'Compliance obligations identified', focus: 'Legal register current; evaluation of compliance' },
+    { clause: '8.1', item: 'Operational planning & control', focus: 'Controls for significant aspects' },
+    { clause: '8.2', item: 'Emergency preparedness & response', focus: 'Tested scenarios and records' },
+    { clause: '9.1.2', item: 'Evaluation of compliance', focus: 'Frequency and corrective follow-up' },
+  ],
+  'ISO 45001': [
+    { clause: '5.4', item: 'Worker consultation & participation', focus: 'Mechanisms and evidence of participation' },
+    { clause: '6.1.2', item: 'Hazard identification & risk assessment', focus: 'Methodology, coverage, residual risk' },
+    { clause: '8.1.2', item: 'Eliminating hazards / reducing OH&S risks', focus: 'Hierarchy of controls applied' },
+    { clause: '8.2', item: 'Emergency preparedness & response', focus: 'Drills, equipment, records' },
+    { clause: '9.1', item: 'Monitoring, measurement & evaluation', focus: 'Incident metrics and leading indicators' },
+    { clause: '10.2', item: 'Incident, nonconformity & corrective action', focus: 'Investigation depth and timeliness' },
+  ],
+  'ISO 27001': [
+    { clause: 'A.5', item: 'Information security policies', focus: 'Approved, communicated, reviewed' },
+    { clause: 'A.6', item: 'Organization of information security', focus: 'Roles, segregation of duties' },
+    { clause: 'A.8', item: 'Asset management', focus: 'Inventory, classification, handling' },
+    { clause: 'A.9', item: 'Access control', focus: 'Least privilege, reviews, MFA' },
+    { clause: 'A.12', item: 'Operations security', focus: 'Logging, malware, backups' },
+    { clause: 'A.16', item: 'Incident management', focus: 'Detection, response, lessons learned' },
+    { clause: '9.3', item: 'Management review', focus: 'Inputs/outputs including risk treatment' },
+  ],
+  GENERIC: [
+    { clause: '5.1', item: 'Leadership & commitment', focus: 'Policy and objectives evidence' },
+    { clause: '6.1', item: 'Risk-based planning', focus: 'Risks/opportunities and actions' },
+    { clause: '7.2', item: 'Competence & training', focus: 'Records and effectiveness' },
+    { clause: '9.2', item: 'Internal audit', focus: 'Programme and follow-up' },
+    { clause: '10.2', item: 'Corrective action', focus: 'Root cause and verification' },
+  ],
+};
+
+const INDUSTRY_FOCUS: { match: string[]; items: ChecklistItem[] }[] = [
+  { match: ['software', 'it', 'tech', 'saas'], items: [
+    { clause: 'A.14', item: 'Secure development lifecycle', focus: 'Code review, SAST/DAST, change control' },
+    { clause: '8.5', item: 'Release & deployment control', focus: 'CI/CD approvals and rollback' },
+  ]},
+  { match: ['manufactur', 'factory', 'production', 'plant'], items: [
+    { clause: '7.1.5', item: 'Equipment calibration & maintenance', focus: 'Preventive maintenance records' },
+    { clause: '8.6', item: 'Release of products', focus: 'Inspection & test acceptance criteria' },
+  ]},
+  { match: ['food', 'beverage', 'agri'], items: [
+    { clause: '8.5.1', item: 'Hygiene & contamination controls', focus: 'HACCP linkage, cleaning records' },
+  ]},
+  { match: ['health', 'hospital', 'pharma', 'medical'], items: [
+    { clause: '8.5', item: 'Patient/sample handling controls', focus: 'Traceability and sterilisation records' },
+  ]},
+  { match: ['construct', 'energy', 'oil', 'mining'], items: [
+    { clause: '8.1.2', item: 'High-risk work permits', focus: 'Permit-to-work and contractor control' },
+  ]},
+];
+
+export const generateChecklist = (standard: string, industry?: string): ChecklistItem[] => {
+  const key = normaliseStandard(standard);
+  const base = [...BASE[key]];
+  const ind = (industry || '').toLowerCase();
+  if (ind) {
+    for (const grp of INDUSTRY_FOCUS) {
+      if (grp.match.some((m) => ind.includes(m))) base.push(...grp.items);
+    }
+  }
+  return base;
+};
+
+export const generateChecklistWithClaude = async (
+  standard: string,
+  industry?: string,
+  signal?: AbortSignal
+): Promise<ChecklistItem[] | null> => {
+  if (!isClaudeConfigured()) return null;
+  const system =
+    'You are an ISO lead auditor. Produce a focused audit checklist as JSON array only: ' +
+    '[{"clause":"x.x","item":"what to audit","focus":"what evidence to seek"}]. 8-12 rows, specific to the standard and industry.';
+  const prompt = `Standard: ${standard}\nClient industry: ${industry || 'general'}`;
+  try {
+    const out = await complete(prompt, { system, maxTokens: 1100, temperature: 0.3, signal });
+    const m = out.match(/\[[\s\S]*\]/);
+    if (!m) return null;
+    const arr = JSON.parse(m[0]);
+    if (!Array.isArray(arr)) return null;
+    return arr
+      .filter((r: any) => r && (r.item || r.clause))
+      .slice(0, 14)
+      .map((r: any) => ({
+        clause: String(r.clause || '—'),
+        item: String(r.item || '').slice(0, 160),
+        focus: String(r.focus || '').slice(0, 160),
+      }));
+  } catch {
+    return null;
+  }
+};
+
+/* =========================================================================
+ * 3. NON-CONFORMANCE PREDICTOR
+ * =======================================================================*/
+export interface NCPrediction {
+  client: string;
+  riskScore: number; // 0..100
+  level: 'High' | 'Medium' | 'Low';
+  drivers: string[];
+  likelyAreas: string[];
+}
+
+const monthsSince = (dateStr: string): number => {
+  const d = new Date(dateStr).getTime();
+  if (isNaN(d)) return 99;
+  return (Date.now() - d) / (1000 * 60 * 60 * 24 * 30);
+};
+
+export const predictNonConformance = (findings?: AuditFinding[]): NCPrediction[] => {
+  const data = findings || loadFindings();
+  const byClient = new Map<string, AuditFinding[]>();
+  for (const f of data) {
+    if (!byClient.has(f.client)) byClient.set(f.client, []);
+    byClient.get(f.client)!.push(f);
+  }
+  const out: NCPrediction[] = [];
+  for (const [client, fs] of byClient) {
+    const total = fs.length;
+    const majors = fs.filter((f) => f.category === 'Major').length;
+    const open = fs.filter((f) => f.status !== 'Closed').length;
+    const recent = fs.filter((f) => monthsSince(f.date) <= 12).length;
+    // recurring departments / clauses
+    const deptCount = new Map<string, number>();
+    fs.forEach((f) => deptCount.set(f.department, (deptCount.get(f.department) || 0) + 1));
+    const recurringDepts = [...deptCount.entries()].filter(([, c]) => c >= 2).map(([d]) => d);
+
+    let score = 0;
+    const drivers: string[] = [];
+    if (majors > 0) { score += Math.min(40, majors * 14); drivers.push(`${majors} prior major NC${majors > 1 ? 's' : ''}`); }
+    if (open > 0) { score += Math.min(25, open * 7); drivers.push(`${open} finding(s) still open`); }
+    if (recent > 0) { score += Math.min(20, recent * 4); drivers.push(`${recent} finding(s) in last 12 months`); }
+    if (recurringDepts.length) { score += Math.min(20, recurringDepts.length * 8); drivers.push(`recurring issues in ${recurringDepts.slice(0, 2).join(', ')}`); }
+    if (total >= 5) { score += 8; }
+    score = Math.max(5, Math.min(100, Math.round(score)));
+
+    const level: NCPrediction['level'] = score >= 66 ? 'High' : score >= 36 ? 'Medium' : 'Low';
+    const likelyAreas = recurringDepts.length
+      ? recurringDepts.slice(0, 3)
+      : [...new Set(fs.map((f) => f.department))].slice(0, 3);
+
+    out.push({ client, riskScore: score, level, drivers: drivers.length ? drivers : ['Limited history — baseline risk'], likelyAreas });
+  }
+  return out.sort((a, b) => b.riskScore - a.riskScore);
+};
+
+/* =========================================================================
+ * 4. AI AUDIT PLANNER
+ * =======================================================================*/
+export interface AuditPlanItem {
+  client: string;
+  priority: 'Urgent' | 'Soon' | 'Routine';
+  suggestedWindow: string;
+  reason: string;
+  standardHint?: string;
+  suggestedAuditor?: string;
+}
+
+export const planAudits = (findings?: AuditFinding[]): AuditPlanItem[] => {
+  const data = findings || loadFindings();
+  const predictions = predictNonConformance(data);
+  const auditors = safeArr<any>('cms_auditors').concat(safeArr<any>('cms_auditors_data'));
+  const auditorNames = auditors.map((a) => a?.name).filter(Boolean) as string[];
+
+  const lastAuditByClient = new Map<string, string>();
+  const standardByClient = new Map<string, string>();
+  for (const f of data) {
+    const prev = lastAuditByClient.get(f.client);
+    if (!prev || new Date(f.date) > new Date(prev)) lastAuditByClient.set(f.client, f.date);
+    if (!standardByClient.has(f.client)) standardByClient.set(f.client, f.standard);
+  }
+
+  let ai = 0;
+  return predictions.map((p) => {
+    const last = lastAuditByClient.get(p.client);
+    const ageM = last ? monthsSince(last) : 99;
+    let priority: AuditPlanItem['priority'] = 'Routine';
+    let window = 'Next 90 days';
+    const reasons: string[] = [];
+
+    if (p.level === 'High' || ageM >= 11) { priority = 'Urgent'; window = 'Next 30 days'; }
+    else if (p.level === 'Medium' || ageM >= 8) { priority = 'Soon'; window = 'Next 60 days'; }
+
+    if (p.level !== 'Low') reasons.push(`${p.level.toLowerCase()} predicted NC risk (${p.riskScore})`);
+    if (ageM >= 8) reasons.push(`~${Math.round(ageM)} months since last audit`);
+    if (!reasons.length) reasons.push('Routine surveillance cadence');
+
+    const suggestedAuditor = auditorNames.length ? auditorNames[ai++ % auditorNames.length] : undefined;
+    return {
+      client: p.client,
+      priority,
+      suggestedWindow: window,
+      reason: reasons.join(' · '),
+      standardHint: standardByClient.get(p.client),
+      suggestedAuditor,
+    };
+  }).sort((a, b) => {
+    const rank = { Urgent: 0, Soon: 1, Routine: 2 } as const;
+    return rank[a.priority] - rank[b.priority];
+  });
+};

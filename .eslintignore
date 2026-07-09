@@ -1,0 +1,9 @@
+dist
+node_modules
+.venv
+coverage
+public
+.vscode
+*.config.js
+*.config.cjs
+*.config.ts

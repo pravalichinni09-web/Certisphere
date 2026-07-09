@@ -1,0 +1,213 @@
+/* ---------- Trigger button (field replacement) ---------- */
+.standard-picker-trigger {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  font-size: 14px;
+  color: #111827;
+  min-height: 48px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.standard-picker-trigger:hover:not(:disabled) {
+  border-color: #cbd5e1;
+}
+
+.standard-picker-trigger:focus-visible {
+  outline: none;
+  border-color: #0ea5e9;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.18);
+}
+
+.standard-picker-trigger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.standard-picker-trigger.is-empty {
+  color: #9ca3af;
+}
+
+.standard-picker-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  flex: 1;
+}
+
+.standard-picker-value strong {
+  display: block;
+  font-weight: 600;
+  color: #111827;
+  font-size: 14px;
+}
+
+.standard-picker-value small {
+  display: block;
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.standard-picker-icon {
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.standard-picker-placeholder {
+  color: #9ca3af;
+  font-size: 14px;
+}
+
+.standard-picker-caret {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+/* ---------- Modal overlay ---------- */
+.standard-picker-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1300;
+  animation: stdPickerOverlayIn 0.18s ease-out;
+}
+
+.standard-picker-modal {
+  width: min(520px, 92vw);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 24px 60px rgba(2, 6, 23, 0.35);
+  overflow: hidden;
+  animation: stdPickerModalIn 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.standard-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f1f5f9;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+}
+
+.standard-picker-header h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.standard-picker-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid #e5e7eb;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.standard-picker-close:hover {
+  background: #fff;
+  color: #0f172a;
+  transform: rotate(90deg);
+}
+
+/* ---------- Options list ---------- */
+.standard-picker-list {
+  list-style: none;
+  margin: 0;
+  padding: 10px;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.standard-picker-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  width: 100%;
+  padding: 12px 14px;
+  margin: 4px 0;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.standard-picker-option:hover {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+.standard-picker-option.selected {
+  background: linear-gradient(135deg, #e0f2fe 0%, #cffafe 100%);
+  border-color: #0ea5e9;
+}
+
+.standard-picker-option-main {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.standard-picker-option-icon {
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+.standard-picker-option-title {
+  font-weight: 600;
+  color: #0f172a;
+  font-size: 15px;
+}
+
+.standard-picker-option-sub {
+  color: #64748b;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.standard-picker-check {
+  color: #0ea5e9;
+  flex-shrink: 0;
+}
+
+@keyframes stdPickerOverlayIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes stdPickerModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

@@ -1,0 +1,63 @@
+/* Lead Auditor Layout - vertical left sidebar + main content on the right */
+.lead-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  min-height: 100vh;
+  background: var(--light-bg);
+}
+
+.lead-content {
+  flex: 1;
+  margin-top: 0;
+  margin-left: 260px;
+  transition: all 0.3s ease;
+  overflow-y: auto;
+  width: calc(100% - 260px);
+  box-sizing: border-box;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: transparent;
+  min-height: 100vh;
+}
+
+/* Main content wrapper */
+.lead-content > div {
+  width: 100%;
+  max-width: 1400px;
+}
+
+.lead-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.lead-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lead-content::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.lead-content::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 1024px) {
+  .lead-content {
+    margin-left: 240px;
+    width: calc(100% - 240px);
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .lead-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 60px 16px 16px;
+  }
+}

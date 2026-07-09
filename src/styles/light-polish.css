@@ -1,0 +1,113 @@
+/* =============================================================================
+ * light-polish.css — Light-mode-only UI refinements
+ * ---------------------------------------------------------------------------
+ * Additive, low-risk polish layered on top of the existing light theme.
+ * No layout, spacing-structure, or data changes — only visual nicety:
+ * smoother focus states, refined scrollbars, softer input focus, tidy
+ * selection colour, and a gentle hover lift on cards.
+ * Loaded last so these rules win cleanly over base styles.
+ * ===========================================================================*/
+
+/* ── Crisper text rendering ── */
+html, body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Text selection uses the brand colour ── */
+::selection {
+  background: var(--cms-brand-soft, #e0f2fe);
+  color: var(--cms-brand-strong, #0369a1);
+}
+
+/* ── Refined, lightweight scrollbars ── */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(15, 23, 42, 0.22) transparent;
+}
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(15, 23, 42, 0.18);
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 23, 42, 0.32);
+  background-clip: content-box;
+}
+
+/* ── Accessible keyboard focus ring (does not affect mouse clicks) ── */
+a:focus-visible,
+button:focus-visible,
+[role="button"]:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--cms-brand, #0ea5e9);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* ── Softer, branded focus state for form fields ── */
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  border-color: var(--cms-brand, #0ea5e9) !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.16);
+  outline: none;
+}
+
+/* ── Inputs get a slightly smoother default border transition ── */
+input, textarea, select {
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+}
+
+/* ── Gentle hover lift on common card surfaces (visual only) ── */
+.stat-card,
+.kpi-card,
+.metric-card,
+.info-card,
+.dash-card,
+.chart-card,
+.audit-card,
+.cert-number-card {
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+.stat-card:hover,
+.kpi-card:hover,
+.metric-card:hover,
+.info-card:hover,
+.dash-card:hover,
+.chart-card:hover,
+.audit-card:hover {
+  box-shadow: var(--cms-shadow-md, 0 8px 22px rgba(2, 6, 23, 0.06));
+  transform: translateY(-2px);
+}
+
+/* ── Slightly smoother button press feedback (excludes plain icon toggles) ── */
+button:not(:disabled):active {
+  transform: translateY(0.5px);
+}
+
+/* ── Tables: cleaner row hover in light mode ── */
+table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+/* ── Disabled controls read as disabled ── */
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

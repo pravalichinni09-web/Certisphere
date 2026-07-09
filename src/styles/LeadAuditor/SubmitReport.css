@@ -1,0 +1,8 @@
+.submit-report-container {
+  padding: 20px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+}
+
+.submit-report-container h1 {
+  margin: 0 0 12px 0;
+}

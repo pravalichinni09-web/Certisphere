@@ -1,0 +1,547 @@
+/* =============================================================
+   CertiSphere — CLASSY LIGHT theme for the public Home page.
+   Loaded LAST (after Home.css, HomePolish.css, HomeColors.css)
+   so it has the final word in light mode.
+   White / off-white surfaces, rich navy text, blue + gold accents.
+   ============================================================= */
+
+:root {
+  --csl-bg:          #ffffff;
+  --csl-bg-2:        #f8fafc;
+  --csl-bg-3:        #ffffff;
+  --csl-band:        #f1f5f9;
+  --csl-line:        #e7ecf3;
+  --csl-line-strong: #cdd7e3;
+  --csl-gold:        #b8860b;
+  --csl-gold-soft:   #f6efd8;
+  --csl-blue:        #2563eb;
+  --csl-blue-deep:   #1d4ed8;
+  --csl-emerald:     #10b981;
+  --csl-text:        #0f172a;
+  --csl-text-soft:   #475569;
+  --csl-muted:       #64748b;
+  --csl-shadow-sm:   0 1px 3px rgba(15,23,42,.06), 0 6px 18px rgba(15,23,42,.04);
+  --csl-shadow-md:   0 10px 30px rgba(15,23,42,.08);
+  --csl-shadow-lg:   0 24px 60px rgba(15,23,42,.10);
+}
+
+/* ===== Page base ===== */
+[data-theme="light"] .cs-home {
+  background: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%) !important;
+  color: var(--csl-text) !important;
+}
+[data-theme="light"] .cs-home .cs-bubble {
+  background: radial-gradient(circle at center,
+    rgba(37,99,235,0.06) 0%, rgba(184,134,11,0.05) 60%, transparent 80%) !important;
+  opacity: 0.45 !important;
+}
+
+/* ===== Header ===== */
+[data-theme="light"] .cs-home-header {
+  background: #000000 !important;
+  color: #e8eefc !important;
+  border-bottom: 1px solid rgba(245, 193, 48, 0.30) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.32);
+}
+[data-theme="light"] .cs-home-nav a { color: #d6e2f5 !important; font-weight: 600; }
+[data-theme="light"] .cs-home-nav a:hover { color: #f5c130 !important; }
+[data-theme="light"] .cs-home-signin {
+  background: linear-gradient(135deg, var(--csl-blue) 0%, var(--csl-blue-deep) 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 8px 20px rgba(37,99,235,0.24) !important;
+  border: none !important;
+}
+[data-theme="light"] .cs-home-signin:hover { box-shadow: 0 12px 28px rgba(37,99,235,0.32) !important; }
+
+/* ===== Marquee ===== */
+[data-theme="light"] .bento-marquee {
+  background: linear-gradient(90deg, #08203c 0%, #0c2c52 50%, #08203c 100%) !important;
+  border-top: 1px solid rgba(245,193,48,0.28) !important;
+  border-bottom: 1px solid rgba(245,193,48,0.28) !important;
+}
+[data-theme="light"] .bento-marquee-item { color: #eaf1fd !important; }
+[data-theme="light"] .bento-marquee-name { color: #f5c130 !important; font-weight: 700; }
+
+/* ===== Hero bento cards ===== */
+[data-theme="light"] .bento-card {
+  background: var(--csl-bg-3) !important;
+  border: 1px solid var(--csl-line) !important;
+  box-shadow: var(--csl-shadow-sm) !important;
+  color: var(--csl-text) !important;
+}
+[data-theme="light"] .bento-card:hover { border-color: var(--csl-blue) !important; box-shadow: var(--csl-shadow-md) !important; }
+[data-theme="light"] .bento-card-label {
+  background: #eef4ff !important; color: #1d4ed8 !important; border: 1px solid #d7e3fb !important;
+}
+
+/* ===== Hero text ===== */
+[data-theme="light"] .cs-home-tag {
+  background: #eef4ff !important; border: 1px solid #d7e3fb !important; color: var(--csl-blue) !important;
+}
+[data-theme="light"] .cs-home-tag-dot { background: #2563eb !important; box-shadow: 0 0 0 4px rgba(37,99,235,0.18) !important; }
+[data-theme="light"] .cs-home-title { color: var(--csl-text) !important; }
+[data-theme="light"] .cs-home-title em {
+  background: linear-gradient(135deg, #3a8de0 0%, #1e3a8a 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important; font-style: normal;
+}
+[data-theme="light"] .cs-home-sub { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .cs-home .cs-home-sub strong { color: #1d4ed8 !important; font-weight: 800; }
+[data-theme="light"] .cs-home-trust li { color: var(--csl-text) !important; font-weight: 600; }
+[data-theme="light"] .cs-home .cs-home-trust li svg { color: #2563eb !important; }
+
+/* ===== CTAs ===== */
+[data-theme="light"] .cs-home-cta-primary {
+  background: linear-gradient(135deg, var(--csl-blue) 0%, var(--csl-blue-deep) 100%) !important;
+  color: #ffffff !important; box-shadow: 0 10px 24px rgba(37,99,235,0.26) !important; border: none !important;
+}
+[data-theme="light"] .cs-home-cta-primary:hover { box-shadow: 0 14px 32px rgba(37,99,235,0.34) !important; }
+[data-theme="light"] .cs-home-cta-secondary {
+  background: #ffffff !important; color: var(--csl-blue) !important; border: 1.5px solid var(--csl-blue) !important;
+}
+[data-theme="light"] .cs-home-cta-secondary:hover { background: var(--csl-blue) !important; color: #ffffff !important; }
+
+/* ===== Orbital ===== */
+[data-theme="light"] .bento-orbital { background: radial-gradient(circle at 30% 20%, #f3f7ff 0%, #ffffff 70%) !important; }
+[data-theme="light"] .cs-orbital-outer {
+  border-color: var(--csl-line-strong) !important;
+  background: radial-gradient(circle at center, rgba(37,99,235,0.05) 0%, rgba(184,134,11,0.04) 60%, transparent 90%) !important;
+}
+[data-theme="light"] .cs-orbital-circle {
+  background: linear-gradient(135deg, #eef4ff, #dbe8fb) !important; border: 1.5px solid #2563eb !important; color: #1d4ed8 !important;
+}
+[data-theme="light"] .cs-orbital-label {
+  background: #ffffff !important; color: var(--csl-text) !important; border: 1px solid var(--csl-line) !important; box-shadow: var(--csl-shadow-sm) !important;
+}
+/* Orbit hub — circular ring badge with the CertiSphere emblem centered */
+[data-theme="light"] .cs-orbital-triangle {
+  clip-path: none !important;
+  width: 130px !important;
+  height: 130px !important;
+  border-radius: 50% !important;
+  background: #ffffff !important;
+  overflow: visible !important;
+  filter: drop-shadow(0 14px 30px rgba(15,23,42,.16)) !important;
+}
+/* gradient ring halo (blue -> gold -> soft grey) */
+[data-theme="light"] .cs-orbital-triangle::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: -7px !important;
+  clip-path: none !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: conic-gradient(from 135deg,
+    #1e3a8a 0deg, #2563eb 90deg, #60a5fa 180deg, #bfdbfe 240deg,
+    #3a8de0 300deg, #1e3a8a 360deg) !important;
+  z-index: -2 !important;
+}
+/* inner white disc */
+[data-theme="light"] .cs-orbital-triangle::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  clip-path: none !important;
+  border-radius: 50% !important;
+  background: radial-gradient(circle at 38% 32%, #ffffff 0%, #f3f7fc 100%) !important;
+  z-index: -1 !important;
+}
+/* emblem perfectly centered inside the circular hub */
+[data-theme="light"] .cs-orbital-triangle .cs-orbital-icon-img,
+[data-theme="light"] .cs-orbital-logo.cs-orbital-icon-img {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 60% !important;
+  max-width: 82px !important;
+  border-radius: 0 !important;
+  filter: drop-shadow(0 3px 7px rgba(15,23,42,.20)) !important;
+}
+
+/* ===== Section heads ===== */
+[data-theme="light"] .cs-bento-section-head .cs-home-section-title { color: var(--csl-text) !important; }
+[data-theme="light"] .cs-bento-section-head .cs-home-section-title::after { background: linear-gradient(90deg, transparent, var(--csl-gold), transparent) !important; }
+[data-theme="light"] .cs-home-section-sub { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .cs-home .cs-home-tag { color: var(--csl-blue) !important; }
+
+/* ===== Module cards ===== */
+[data-theme="light"] .bento-mod { background: var(--csl-bg-3) !important; border: 1px solid var(--csl-line) !important; box-shadow: var(--csl-shadow-sm) !important; }
+[data-theme="light"] .bento-mod:hover { border-color: var(--csl-blue) !important; box-shadow: var(--csl-shadow-md) !important; }
+[data-theme="light"] .bento-mod h3 { color: var(--csl-text) !important; }
+[data-theme="light"] .bento-mod p { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .bento-mod-icon { background: linear-gradient(135deg, #eef4ff, #fff8e6) !important; border: 1px solid var(--csl-line) !important; color: var(--csl-blue) !important; }
+[data-theme="light"] .bento-mod-demo { background: var(--csl-gold-soft) !important; color: var(--csl-gold) !important; border: 1px solid #ecdfb4 !important; }
+[data-theme="light"] .bento-mod-arrow { background: var(--csl-blue) !important; color: #ffffff !important; }
+[data-theme="light"] .bento-mod-featured { background: linear-gradient(160deg, #f3f7ff 0%, #fffdf5 100%) !important; border-color: #d7e3fb !important; }
+
+/* ===== Brand showcase ===== */
+[data-theme="light"] .cs-brand-showcase-inner { background: linear-gradient(135deg, #ffffff 0%, #f6f9ff 100%) !important; border: 1px solid var(--csl-line) !important; box-shadow: var(--csl-shadow-lg) !important; }
+[data-theme="light"] .cs-brand-showcase-tag { color: var(--csl-gold) !important; }
+
+/* ===== Benefits ===== */
+[data-theme="light"] .bento-benefit { background: var(--csl-bg-3) !important; border: 1px solid var(--csl-line) !important; box-shadow: var(--csl-shadow-sm) !important; }
+[data-theme="light"] .bento-benefit:hover { box-shadow: var(--csl-shadow-md) !important; }
+[data-theme="light"] .bento-benefit h3 { color: var(--csl-text) !important; }
+[data-theme="light"] .bento-benefit p { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .bento-benefit-icon { background: linear-gradient(135deg, var(--csl-blue) 0%, var(--csl-blue-deep) 100%) !important; color: #ffffff !important; }
+
+/* ===== About Us ===== */
+[data-theme="light"] .cs-founder-side { background: linear-gradient(160deg, #f8fafc 0%, #eef2f8 100%) !important; }
+[data-theme="light"] .cs-founder-bio { background: #ffffff !important; border: 1px solid var(--csl-line) !important; box-shadow: var(--csl-shadow-sm) !important; color: var(--csl-text) !important; }
+[data-theme="light"] .cs-founder-bio p { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .cs-founder-bio p strong { color: var(--csl-text) !important; }
+[data-theme="light"] .cs-founder-bio p:first-of-type strong { color: var(--csl-gold) !important; }
+[data-theme="light"] .cs-bio-label { color: var(--csl-gold) !important; }
+[data-theme="light"] .cs-bio-sub { color: var(--csl-muted) !important; }
+[data-theme="light"] .cs-bio-bar { background: var(--csl-gold) !important; }
+[data-theme="light"] .cs-expertise-pill {
+  background: #ffffff !important; border: 1px solid var(--csl-line) !important; border-left: 3px solid var(--csl-gold) !important; color: var(--csl-text) !important; box-shadow: var(--csl-shadow-sm) !important;
+}
+[data-theme="light"] .cs-expertise-pill svg { color: var(--csl-gold) !important; }
+[data-theme="light"] .cs-founder-bio a[href*="certisphere"],
+[data-theme="light"] .cs-founder-bio a[href*="company"],
+[data-theme="light"] .cs-founder-bio button:first-of-type { background: var(--csl-blue) !important; color: #ffffff !important; border: none !important; }
+[data-theme="light"] .cs-founder-bio a[href^="mailto"],
+[data-theme="light"] .cs-founder-bio button:last-of-type { background: var(--csl-gold) !important; color: #ffffff !important; border: none !important; }
+
+/* ===== Pre-footer ===== */
+[data-theme="light"] .cs-prefooter { background: linear-gradient(180deg, #eef3fb 0%, #e2ebf7 100%) !important; border-top: 1px solid #dbe4f2 !important; }
+[data-theme="light"] .cs-prefooter-title { color: #f7f2e2 !important; }
+[data-theme="light"] .cs-prefooter-title em {
+  background: linear-gradient(135deg, var(--csl-blue) 0%, var(--csl-gold) 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent !important; color: transparent !important; font-style: normal;
+}
+[data-theme="light"] .cs-prefooter-sub { color: rgba(247,242,226,0.66) !important; }
+[data-theme="light"] .cs-prefooter-cta { background: linear-gradient(135deg, var(--csl-blue) 0%, var(--csl-blue-deep) 100%) !important; color: #ffffff !important; box-shadow: 0 10px 24px rgba(37,99,235,0.26) !important; }
+[data-theme="light"] .cs-prefooter a { color: #f6d878 !important; }
+
+/* ===== Footer ===== */
+[data-theme="light"] .cs-home-footer { background: linear-gradient(180deg, #0b0b0d 0%, #000000 100%) !important; color: #d6dae2 !important; border-top: 2px solid rgba(245,193,48,0.55) !important; box-shadow: inset 0 1px 0 rgba(245,193,48,0.12) !important; }
+/* Header logo plate — solid black to highlight the blue+gold logo */
+[data-theme="light"] .cs-home-brand-plate {
+  background: #000000 !important;
+  border: 1px solid rgba(245, 193, 48, 0.38) !important;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35) !important;
+}
+/* Footer logo plate — transparent so it blends with the light footer */
+[data-theme="light"] .cs-footer-logo-plate {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px 0 !important;
+}
+[data-theme="light"] .cs-home-brand-plate img,
+[data-theme="light"] .cs-footer-logo-plate img {
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4)) !important;
+}
+[data-theme="light"] .cs-footer-col h4 { color: #f5c130 !important; letter-spacing: 1.4px !important; text-shadow: 0 1px 8px rgba(245,193,48,0.18) !important; }
+[data-theme="light"] .cs-footer-col a,
+[data-theme="light"] .cs-footer-col button { color: #c9cfdb !important; transition: color .18s ease !important; }
+[data-theme="light"] .cs-footer-col a:hover,
+[data-theme="light"] .cs-footer-col button:hover { color: #ffd700 !important; padding-left: 3px !important; }
+[data-theme="light"] .cs-footer-tagline { color: #b9c0cc !important; }
+[data-theme="light"] .cs-footer-bottom { color: #8b93a3 !important; border-top: 1px solid rgba(245,193,48,0.18) !important; }
+[data-theme="light"] .cs-footer-static { color: #94a3b8 !important; }
+[data-theme="light"] .cs-footer-slogan { color: #b9c0cc !important; font-style: italic !important; }
+
+/* ===== Stat numbers ===== */
+[data-theme="light"] .bento-stat strong {
+  background: linear-gradient(135deg, var(--csl-text) 0%, var(--csl-blue) 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important; -webkit-text-fill-color: transparent !important; color: transparent !important;
+}
+[data-theme="light"] .bento-stat span { color: var(--csl-text-soft) !important; }
+
+/* ===== Workflow ring ===== */
+[data-theme="light"] .bento-workflow-ring { border-color: var(--csl-line-strong) !important; }
+[data-theme="light"] .bento-workflow-dot { background: var(--csl-gold) !important; box-shadow: 0 0 14px rgba(184,134,11,0.45) !important; }
+[data-theme="light"] .bento-workflow-stages span { background: #f3f7ff !important; color: var(--csl-text) !important; border: 1px solid var(--csl-line) !important; }
+
+/* ===== Pulse card ===== */
+[data-theme="light"] .bento-pulse-meta strong { color: var(--csl-text) !important; }
+[data-theme="light"] .bento-pulse-meta span { color: var(--csl-text-soft) !important; }
+[data-theme="light"] .bento-pulse-ring { background: var(--csl-emerald) !important; }
+
+/* =============================================================
+   MODULES SECTION — neat, uniform, application-grade cards
+   ============================================================= */
+[data-theme="light"] #modules .cs-bento-modules {
+  gap: 18px !important;
+}
+/* uniform grid: drop the double-width featured card + animated border */
+[data-theme="light"] #modules .bento-mod-featured {
+  grid-column: span 1 !important;
+  background: #ffffff !important;
+}
+[data-theme="light"] #modules .bento-mod-featured::before { display: none !important; }
+
+/* clean card */
+[data-theme="light"] #modules .bento-mod {
+  background: #ffffff !important;
+  border: 1px solid #e7ecf3 !important;
+  border-radius: 16px !important;
+  padding: 22px 20px !important;
+  min-height: 210px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+  box-shadow: 0 1px 3px rgba(15,23,42,.05), 0 10px 24px rgba(15,23,42,.05) !important;
+  transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease !important;
+}
+[data-theme="light"] #modules .bento-mod:hover {
+  transform: translateY(-4px) !important;       /* calm, classic lift (no 3D tilt) */
+  border-color: #bcd2f3 !important;
+  box-shadow: 0 14px 32px rgba(15,23,42,.10) !important;
+}
+
+/* icon tile */
+[data-theme="light"] #modules .bento-mod-icon {
+  width: 46px !important; height: 46px !important;
+  border-radius: 12px !important;
+  background: linear-gradient(135deg, #eaf2ff 0%, #fff6e0 100%) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #1f6bbf !important;
+  margin-bottom: 4px !important;
+}
+/* title + body */
+[data-theme="light"] #modules .bento-mod h3 { color: #0f2547 !important; font-size: 16.5px !important; }
+[data-theme="light"] #modules .bento-mod p { color: #5b6b80 !important; font-size: 13.5px !important; line-height: 1.55 !important; flex: 1 !important; }
+
+/* "Sign In to Access" — neat blue pill aligned to bottom */
+[data-theme="light"] #modules .bento-mod-demo {
+  align-self: flex-start !important;
+  background: #eef4ff !important;
+  color: #1d4ed8 !important;
+  border: 1px solid #d7e3fb !important;
+  border-radius: 999px !important;
+  padding: 5px 12px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: .3px !important;
+  text-transform: none !important;
+}
+/* corner arrow */
+[data-theme="light"] #modules .bento-mod-arrow {
+  background: #1f6bbf !important;
+  color: #fff !important;
+  box-shadow: 0 4px 10px rgba(31,107,191,.3) !important;
+}
+
+/* =============================================================
+   ROYAL HERO — navy + gold (Qmics) monochromatic classic look
+   Scoped to the hero section (#about) only.
+   ============================================================= */
+/* Framed, refined hero cards */
+[data-theme="light"] #about .bento-hero-text,
+[data-theme="light"] #about .bento-orbital {
+  background: linear-gradient(165deg, #ffffff 0%, #eef3fb 100%) !important;
+  border: 1px solid #dbe4f2 !important;
+  border-radius: 20px !important;
+  box-shadow: 0 1px 3px rgba(10,31,64,.05), 0 20px 46px rgba(10,31,64,.08) !important;
+}
+/* Tag pill — navy + gold, no off-palette green */
+[data-theme="light"] #about .cs-home-tag {
+  background: #eef3fb !important;
+  border: 1px solid #d6e0f2 !important;
+  color: #0a2a5f !important;
+}
+[data-theme="light"] #about .cs-home-tag-dot {
+  background: #f5c130 !important;
+  box-shadow: 0 0 0 4px rgba(245,193,48,.22) !important;
+}
+/* Title — deep royal navy, gold accent word */
+[data-theme="light"] #about .cs-home-title { color: #0a1f3f !important; }
+[data-theme="light"] #about .cs-home-title em {
+  background: linear-gradient(135deg, #1f6bbf 0%, #b8860b 55%, #f5c130 100%) !important;
+  -webkit-background-clip: text !important; background-clip: text !important;
+  -webkit-text-fill-color: transparent !important; color: transparent !important;
+  font-style: normal !important;
+}
+/* Subtitle — navy-grey, gold highlights */
+[data-theme="light"] #about .cs-home-sub { color: #3a4d66 !important; }
+[data-theme="light"] #about .cs-home-sub strong { color: #b8860b !important; font-weight: 800 !important; }
+/* CTAs — royal navy primary, navy-outline secondary */
+[data-theme="light"] #about .cs-home-cta-primary {
+  background: linear-gradient(135deg, #0a2a5f 0%, #1f6bbf 100%) !important;
+  color: #ffffff !important;
+  border: none !important;
+  box-shadow: 0 10px 24px rgba(10,42,95,.30) !important;
+}
+[data-theme="light"] #about .cs-home-cta-primary:hover { box-shadow: 0 14px 30px rgba(10,42,95,.40) !important; }
+[data-theme="light"] #about .cs-home-cta-secondary {
+  background: #ffffff !important;
+  color: #0a2a5f !important;
+  border: 1.5px solid #0a2a5f !important;
+}
+[data-theme="light"] #about .cs-home-cta-secondary:hover { background: #0a2a5f !important; color: #ffffff !important; }
+/* Trust strip — navy text, gold ticks */
+[data-theme="light"] #about .cs-home-trust li { color: #0a2a5f !important; font-weight: 600 !important; }
+[data-theme="light"] #about .cs-home-trust li svg,
+[data-theme="light"] #about .cs-home-trust svg { color: #b8860b !important; }
+/* Orbital side — unify nodes to navy/gold monochrome */
+[data-theme="light"] #about .cs-orbital-circle {
+  background: linear-gradient(135deg, #eaf1fb, #fff6e0) !important;
+  border: 1.5px solid #0a2a5f !important;
+  color: #0a2a5f !important;
+}
+[data-theme="light"] #about .cs-orbital-label {
+  color: #0a2a5f !important; border: 1px solid #dbe4f2 !important;
+}
+[data-theme="light"] #about .cs-brand-showcase-tag,
+[data-theme="light"] #about .cs-home-tag { letter-spacing: .4px !important; }
+
+/* =============================================================
+   MODULES — monochromatic Qmics (navy + gold) palette
+   Both background and text unified into the brand blue family.
+   ============================================================= */
+/* soft navy-tinted panel behind the section */
+[data-theme="light"] #modules.cs-bento-section {
+  background:
+    radial-gradient(120% 90% at 50% -10%, rgba(31,107,191,0.10) 0%, transparent 55%),
+    linear-gradient(180deg, #fbfdff 0%, #eef4fc 100%) !important;
+  border: 1px solid #dde7f4 !important;
+  border-radius: 22px !important;
+  padding: 32px 26px 38px !important;
+  box-shadow: 0 1px 2px rgba(10,31,64,.04), inset 0 1px 0 rgba(255,255,255,.6) !important;
+}
+/* section head — navy title, navy-grey sub, gold underline + dot */
+[data-theme="light"] #modules .cs-home-section-title { color: #0a1f3f !important; }
+[data-theme="light"] #modules .cs-home-section-sub { color: #46587a !important; }
+[data-theme="light"] #modules .cs-home-tag { background: #e7eefb !important; border: 1px solid #d2ddf1 !important; color: #0a2a5f !important; }
+[data-theme="light"] #modules .cs-home-tag-dot { background: #f5c130 !important; box-shadow: 0 0 0 4px rgba(245,193,48,.20) !important; }
+
+/* cards — light navy-tinted surface, navy border */
+[data-theme="light"] #modules .bento-mod {
+  background: linear-gradient(165deg, #ffffff 0%, #f3f7fd 100%) !important;
+  border: 1px solid #d7e2f1 !important;
+  box-shadow: 0 1px 3px rgba(10,31,64,.05), 0 10px 24px rgba(10,31,64,.06) !important;
+}
+[data-theme="light"] #modules .bento-mod:hover {
+  border-color: #9bb8e4 !important;
+  box-shadow: 0 14px 32px rgba(10,31,64,.12) !important;
+}
+/* icon tile — navy on a blue/gold tint */
+[data-theme="light"] #modules .bento-mod-icon {
+  background: linear-gradient(135deg, #e7eefb 0%, #fdf3d6 100%) !important;
+  border: 1px solid #d7e2f1 !important;
+  color: #0a2a5f !important;
+}
+/* text — navy title, navy-grey body */
+[data-theme="light"] #modules .bento-mod h3 { color: #0a1f3f !important; }
+[data-theme="light"] #modules .bento-mod p { color: #46587a !important; }
+/* chip + arrow — navy monochrome */
+[data-theme="light"] #modules .bento-mod-demo {
+  background: #e7eefb !important;
+  color: #0a2a5f !important;
+  border: 1px solid #d2ddf1 !important;
+}
+[data-theme="light"] #modules .bento-mod-arrow {
+  background: #0a2a5f !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 10px rgba(10,42,95,.3) !important;
+}
+
+/* =============================================================
+   STANDARDS + BENEFITS — dynamic (animated) trendy-classic text
+   ============================================================= */
+@keyframes cs-title-shimmer { 0% { background-position: 0% center; } 100% { background-position: 200% center; } }
+
+/* animated navy -> blue -> gold shimmer on the two section titles */
+[data-theme="light"] #certification-bodies .cs-home-section-title,
+[data-theme="light"] #benefits .cs-home-section-title {
+  background: linear-gradient(90deg, #0a1f3f 0%, #1f6bbf 25%, #b8860b 50%, #1f6bbf 75%, #0a1f3f 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: cs-title-shimmer 6s linear infinite !important;
+}
+[data-theme="light"] #certification-bodies .cs-home-section-sub { color: #46587a !important; }
+
+/* Standard cards — trendy classic */
+[data-theme="light"] .cs-cert-body-card {
+  background: #ffffff !important;
+  border: 1px solid #dbe4f2 !important;
+  border-radius: 16px !important;
+  box-shadow: 0 1px 3px rgba(10,31,64,.05), 0 10px 24px rgba(10,31,64,.05) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: transform .22s ease, box-shadow .22s ease, border-color .22s ease !important;
+}
+[data-theme="light"] .cs-cert-body-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: linear-gradient(180deg, #1f6bbf, #f5c130);
+  transform: scaleY(0); transform-origin: top; transition: transform .25s ease;
+}
+[data-theme="light"] .cs-cert-body-card:hover {
+  transform: translateY(-5px) !important;
+  border-color: #9bb8e4 !important;
+  box-shadow: 0 16px 34px rgba(10,31,64,.13) !important;
+}
+[data-theme="light"] .cs-cert-body-card:hover::before { transform: scaleY(1); }
+[data-theme="light"] .cs-cert-body-code { color: #b8860b !important; letter-spacing: .3px !important; }
+[data-theme="light"] .cs-cert-body-name { color: #0a1f3f !important; font-weight: 800 !important; }
+[data-theme="light"] .cs-cert-body-desc { color: #46587a !important; }
+[data-theme="light"] .cs-cert-body-icon { filter: drop-shadow(0 2px 6px rgba(10,31,64,.15)); }
+[data-theme="light"] .cs-cert-body-cta { color: #0a2a5f !important; font-weight: 800 !important; }
+[data-theme="light"] .cs-cert-body-card:hover .cs-cert-body-cta { color: #b8860b !important; }
+
+/* Benefits — trendy lift + navy headings */
+[data-theme="light"] #benefits .bento-benefit { transition: transform .2s ease, box-shadow .2s ease !important; }
+[data-theme="light"] #benefits .bento-benefit:hover { transform: translateY(-5px) !important; }
+[data-theme="light"] #benefits .bento-benefit h3 { color: #0a1f3f !important; }
+[data-theme="light"] #benefits .bento-benefit p { color: #46587a !important; }
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="light"] #certification-bodies .cs-home-section-title,
+  [data-theme="light"] #benefits .cs-home-section-title { animation: none !important; }
+}
+
+/* =============================================================
+   ABOUT US (Founder) — dynamic trendy-classic text
+   ============================================================= */
+[data-theme="light"] #about-us .cs-home-section-title {
+  background: linear-gradient(90deg, #0a1f3f 0%, #1f6bbf 25%, #b8860b 50%, #1f6bbf 75%, #0a1f3f 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: cs-title-shimmer 6s linear infinite !important;
+}
+[data-theme="light"] #about-us .cs-home-section-sub { color: #46587a !important; }
+[data-theme="light"] #about-us .cs-founder-name { color: #0a1f3f !important; }
+[data-theme="light"] #about-us .cs-founder-role { color: #b8860b !important; letter-spacing: 1px !important; }
+[data-theme="light"] #about-us .cs-bio-label { color: #b8860b !important; letter-spacing: 1.2px !important; }
+[data-theme="light"] #about-us .cs-founder-bio p { color: #3a4d66 !important; }
+[data-theme="light"] #about-us .cs-founder-bio p strong { color: #0a2a5f !important; }
+
+/* animated gold "35+" experience number */
+[data-theme="light"] #about-us .cs-founder-exp strong {
+  background: linear-gradient(90deg, #b8860b 0%, #f5c130 35%, #fff3c4 50%, #f5c130 65%, #b8860b 100%) !important;
+  background-size: 200% auto !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: cs-title-shimmer 5s linear infinite !important;
+}
+
+/* lively expertise pills */
+[data-theme="light"] #about-us .cs-expertise-pill {
+  transition: transform .18s ease, box-shadow .18s ease, border-left-color .18s ease !important;
+}
+[data-theme="light"] #about-us .cs-expertise-pill:hover {
+  transform: translateY(-2px) !important;
+  border-left-color: #f5c130 !important;
+  box-shadow: 0 8px 18px rgba(10,31,64,.12) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="light"] #about-us .cs-home-section-title,
+  [data-theme="light"] #about-us .cs-founder-exp strong { animation: none !important; }
+}

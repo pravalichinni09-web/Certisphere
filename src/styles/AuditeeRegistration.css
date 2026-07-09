@@ -1,0 +1,172 @@
+.reg-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15,23,42,.6);
+  backdrop-filter: blur(4px);
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+  padding: 20px;
+  animation: regIn .15s ease-out;
+}
+@keyframes regIn { from { opacity: 0; } to { opacity: 1; } }
+
+.reg-modal {
+  width: min(640px, 100%);
+  max-height: 92vh;
+  overflow: auto;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 30px 60px rgba(15,23,42,.35);
+  position: relative;
+  padding: 26px 28px;
+  animation: regModalIn .2s ease-out;
+}
+@keyframes regModalIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.reg-close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: #f3f4f6;
+  border: 0;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #4b5563;
+}
+.reg-close:hover { background: #e5e7eb; color: #111827; }
+
+.reg-head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.reg-head-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: #fff;
+  flex-shrink: 0;
+}
+.reg-head-icon.ok { background: linear-gradient(135deg, #10b981, #059669); }
+.reg-head h2 { margin: 0; font-size: 18px; font-weight: 800; color: #1f2937; }
+.reg-head p { margin: 4px 0 0; color: #6b7280; font-size: 13px; line-height: 1.5; }
+
+.reg-form { display: flex; flex-direction: column; gap: 12px; }
+.reg-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.reg-field { display: flex; flex-direction: column; gap: 5px; }
+.reg-field label { font-size: 12px; font-weight: 600; color: #374151; display: inline-flex; align-items: center; gap: 4px; }
+.reg-field .req { color: #dc2626; margin-left: 2px; }
+.reg-field input,
+.reg-field select {
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  font-size: 13.5px;
+  outline: none;
+  transition: all .15s;
+}
+.reg-field input:focus, .reg-field select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99,102,241,.12);
+}
+
+.reg-error {
+  background: rgba(239,68,68,.08);
+  color: #b91c1c;
+  border: 1px solid rgba(239,68,68,.25);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.reg-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 8px; }
+.reg-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all .15s;
+}
+.reg-btn.ghost { background: #fff; color: #4b5563; border-color: #e5e7eb; }
+.reg-btn.ghost:hover { background: #f9fafb; }
+.reg-btn.primary { background: linear-gradient(135deg, #4f46e5, #7c3aed); color: #fff; box-shadow: 0 4px 10px rgba(79,70,229,.3); }
+.reg-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(79,70,229,.4); }
+
+.reg-creds {
+  background: linear-gradient(135deg, #ecfdf5, #f0f9ff);
+  border: 1px solid #a7f3d0;
+  border-radius: 12px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.reg-cred-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.reg-cred-label {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #065f46;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+.reg-cred-value {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-size: 15px;
+  font-weight: 700;
+  color: #064e3b;
+  margin-top: 2px;
+}
+.reg-copy {
+  background: #fff;
+  border: 1px solid #a7f3d0;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: #047857;
+}
+.reg-copy:hover { background: #ecfdf5; }
+
+.reg-info {
+  background: rgba(99,102,241,.06);
+  color: #3730a3;
+  border: 1px dashed rgba(99,102,241,.3);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 640px) {
+  .reg-row { grid-template-columns: 1fr; }
+}

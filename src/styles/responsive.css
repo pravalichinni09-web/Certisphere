@@ -1,0 +1,174 @@
+/* =============================================================================
+ * responsive.css — Global mobile / tablet polish
+ * ---------------------------------------------------------------------------
+ * Tightens layouts, switches two-pane grids to stacked, and grows touch
+ * targets on narrow viewports. Loaded after index.css so it can override
+ * base padding without bloating individual page stylesheets.
+ * ===========================================================================*/
+
+@media (max-width: 1024px) {
+  .layout-content {
+    margin-top: 64px;
+    padding: 18px;
+  }
+  .dashboard-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Two-pane workflow consoles → stack */
+  .aa-grid,
+  .cw-grid,
+  .sa-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .aa-detail-card,
+  .cw-detail-card,
+  .sa-card {
+    margin-top: 4px;
+  }
+
+  /* Hero blocks compress */
+  .aa-hero,
+  .cw-hero,
+  .sa-hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .aa-hero-stats {
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --cms-shadow-md: 0 6px 16px rgba(2, 6, 23, 0.06);
+  }
+
+  .layout-content {
+    margin-top: 56px;
+    padding: 14px 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  /* Form rows */
+  .form-row {
+    grid-template-columns: 1fr !important;
+    gap: 12px !important;
+  }
+
+  /* Common toolbar patterns */
+  .aa-toolbar,
+  .cw-toolbar,
+  .cred-toolbar {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  /* Grow buttons for thumbs */
+  button,
+  .submit-btn,
+  .cancel-btn,
+  .add-btn,
+  .cred-btn,
+  .aa-assign-btn,
+  .cms-empty-state__btn {
+    min-height: 44px;
+  }
+
+  /* Inputs */
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* prevents iOS auto-zoom */
+    padding: 10px 12px;
+  }
+
+  /* Tables → horizontal scroll without breaking layout */
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+  table thead, table tbody, table tr {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  /* Modals — full width on mobile */
+  .modal-content,
+  .cred-modal,
+  .ar-modal {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 14px 14px 0 0 !important;
+    margin-top: auto !important;
+  }
+  .modal-overlay {
+    align-items: flex-end !important;
+  }
+
+  /* Sidebar drawer offset */
+  .vertical-menu-toggle {
+    top: 8px !important;
+    left: 8px !important;
+  }
+
+  /* Workflow timeline tightens */
+  .wf-timeline {
+    gap: 10px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .layout-content {
+    padding: 10px 10px 18px;
+  }
+  .dashboard-header h1 {
+    font-size: 20px;
+  }
+  .stat-value {
+    font-size: 22px !important;
+  }
+
+  .aa-hero-stats {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Auditor screens used in field — make rows airy */
+  .aa-list-item,
+  .cw-list-item {
+    padding: 12px 10px !important;
+  }
+  .aa-list-name,
+  .cw-list-name {
+    font-size: 14px;
+  }
+
+  /* Hide non-essential meta to keep cards readable */
+  .aa-list-meta,
+  .cw-list-meta {
+    font-size: 11px;
+  }
+}
+
+/* Landscape phones — keep critical actions visible */
+@media (max-width: 900px) and (orientation: landscape) {
+  .layout-content {
+    margin-top: 50px;
+    padding: 12px;
+  }
+}

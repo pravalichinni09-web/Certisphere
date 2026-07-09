@@ -1,0 +1,316 @@
+/* =============================================================
+   ThemeContrastFix.css — AUTO-GENERATED dark-theme text repairs
+   Every selector below hard-codes a near-black text colour in its
+   source stylesheet; when the dark theme re-skins the surfaces,
+   that text disappears. These overrides remap it to the theme
+   token so it is always readable. Light theme is untouched.
+   ============================================================= */
+
+/* ---- from styles/AIAssistant.css ---- */
+[data-theme="dark"] .ai-bubble { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .ai-block-text code { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .ai-block-list { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .ai-card-title { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditClient/AuditActions.css ---- */
+[data-theme="dark"] .status-badge.completed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.approved { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditClient/AuditApplication.css ---- */
+[data-theme="dark"] .audit-application-container h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .panel-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .detail-item p { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .highlight-text { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-close:hover { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .btn-close { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditClient/ScheduleApprovals.css ---- */
+[data-theme="dark"] .sa-empty h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sa-empty-inline strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sa-val { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sa-val-strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sa-status.approved { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditeeRegistration.css ---- */
+[data-theme="dark"] .reg-head h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .reg-cred-label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .reg-cred-value { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Auditor/ActionReview.css ---- */
+[data-theme="dark"] .priority-low { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-completed { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Auditor/AuditReport.css ---- */
+[data-theme="dark"] ﻿.audit-report-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-submitted { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .editor-title h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .info-card h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .nav-card h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .info-row .value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .completed .step-number { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .section-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .report-summary-card h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .auto-content p { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Auditor/ConductAudit.css ---- */
+[data-theme="dark"] ﻿.conduct-audit-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .card-header-row h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .context-info h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklist-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .item-top-line h4 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-completed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-ofi { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-compliant { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-body .form-group label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-success { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-pill.status-badge-submitted { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-pill.status-badge-approved { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Auditor/ScheduleConfirmations.css ---- */
+[data-theme="dark"] ﻿.schedule-confirmations-page { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-pill.confirmed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .card-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .info-row { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-header h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .stat-pill .value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .empty-state h3 { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator.css ---- */
+[data-theme="dark"] .stat-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .validator-authorized { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklists-table tbody td { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .scopes-table th { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-active { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-rwo-title-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-rwo-title h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-rwo-title p { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-rwo-chip { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-rwo-foot strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cs-view-name { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/ApplicationDispatch.css ---- */
+[data-theme="dark"] .scope-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .scope-form h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .form-group label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cancel-btn:hover { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklists-table td { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .link-btn:hover { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/AuditChecklists.css ---- */
+[data-theme="dark"] ﻿.checklist-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .search-bar input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklist-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .items-count { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.active { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .btn-edit-checklist svg { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .evidence-wrapper .file-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-header h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .btn-close:hover { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .item-input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .file-upload-btn .file-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .editor-header h2 { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/AuditWorkflow.css ---- */
+[data-theme="dark"] .cw-search input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cw-list-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cw-detail-head h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cw-step-head h4 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cw-pill.ok { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/ClientRegistration.css ---- */
+[data-theme="dark"] .scope-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .scope-form h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .form-group label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .form-group input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .form-group select { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .form-group textarea { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cancel-btn { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklists-table th { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklists-table strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .iso-standard { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-registered { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-approved { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-client-approved { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-active { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/Dashboard.css ---- */
+[data-theme="dark"] .kpi-value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .kpi-trend.up { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .dash-card-head h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .donut-center-value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .legend-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .tile-label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audits-table tbody td { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.status-completed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.status-closed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.status-done { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.status-pending { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.status-scheduled { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .activity-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .coverage-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .coverage-value { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AuditorCoordinator/Profile.css ---- */
+[data-theme="dark"] .profile-page-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .profile-avatar-initials { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .profile-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .profile-name-input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .profile-field-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .profile-value { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/AvailabilityCalendar.css ---- */
+[data-theme="dark"] .avail-table thead th strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .avail-table thead th.is-selected { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .is-free .avail-pill { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/BulkAddQuestions.css ---- */
+[data-theme="dark"] .bulk-tab:hover { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-preview strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-preview-list { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-template-tab:hover { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-template-meta strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-template-text { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .bulk-add-summary strong { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/CertificationsPicker.css ---- */
+[data-theme="dark"] .cert-picker-summary { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-summary-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-action { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-chip-remove { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-option-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cert-picker-option-label { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/CoordinatorGreeting.css ---- */
+[data-theme="dark"] .greeting-sparkle { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .greeting-title { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/CorrectiveActionSuggest.css ---- */
+[data-theme="dark"] .cas-title-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cas-sev-observation { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cas-sev-ofi { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cas-tag { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cas-score { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/ActionApproval.css ---- */
+[data-theme="dark"] ﻿.action-approval-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .approval-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .client-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .detail-box p { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-body p { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .highlight { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/ActionReview.css ---- */
+[data-theme="dark"] ﻿.action-review-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .stat-content h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .severity-ofi { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .modal-header h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .review-section h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .detail-grid .value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .read-only-text { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .file-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .file-name-full { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/AuditReport.css ---- */
+[data-theme="dark"] ﻿.audit-report-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .report-page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .search-box input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .card-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-title-cell { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .metadata-input { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/AuditSchedules.css ---- */
+[data-theme="dark"] .page-header h1 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .stat-value { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .audit-table td { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.scheduled { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-badge.in-progress { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/ConductAudit.css ---- */
+[data-theme="dark"] ﻿.conduct-audit-container { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .card-header-row h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .context-info h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .checklist-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .item-top-line h4 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .status-completed { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-ofi { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .badge-compliant { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/LeadAuditor/Dashboard.css ---- */
+[data-theme="dark"] .section-header h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .client-name { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Management/AuditAssignments.css ---- */
+[data-theme="dark"] .aa-search input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .aa-list-name { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .aa-detail-head h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .aa-info-val { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .aa-assigned { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .aa-assigned strong { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Management/ClientCredentials.css ---- */
+[data-theme="dark"] .cred-search input { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-table tbody td { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-org { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-mono { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-status-active { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-switch.is-active .cred-switch-label { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-action-btn.unlock { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-help strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-action-btn.edit { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-modal-header h2 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-card-title h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .cred-card-input .cred-mono { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Management/Dashboard.css ---- */
+[data-theme="dark"] .badge-green { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/Sidebar.css ---- */
+[data-theme="dark"] .sidebar-popup-title .menu-icon { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/SmartAssignSuggest.css ---- */
+[data-theme="dark"] .sas-title-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sas-chip-strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sas-confidence { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sas-reasons li svg { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .sas-cert { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/StandardPicker.css ---- */
+[data-theme="dark"] .standard-picker-value strong { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .standard-picker-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .standard-picker-header h3 { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .standard-picker-option-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .standard-picker-option-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .standard-picker-check { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/TextDiffView.css ---- */
+[data-theme="dark"] .diff-view__chip--add { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .diff-line--add .diff-line__sign { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/WizardSteps.css ---- */
+[data-theme="dark"] .cms-wizard__step.is-done .cms-wizard__bullet { color: var(--cms-text-primary) !important; }
+
+/* ---- from styles/WorkflowTimeline.css ---- */
+[data-theme="dark"] .wf-step-title { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .wf-step-done .wf-step-icon { color: var(--cms-text-primary) !important; }
+[data-theme="dark"] .wf-step-done .wf-step-title { color: var(--cms-text-primary) !important; }
+
+/* ---- Dashboard greeting hero: always light text on its dark gradient ---- */
+.dash-hero, .dash-hero-title, .dash-hero-sub, .dash-hero-eyebrow, .dash-hero-meta span,
+[data-theme="light"] .dash-hero-title,
+[data-theme="light"] .dash-hero-sub,
+[data-theme="light"] .dash-hero-eyebrow,
+[data-theme="light"] .dash-hero-meta span {
+  color: #ffffff !important;
+}

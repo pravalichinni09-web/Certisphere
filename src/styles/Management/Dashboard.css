@@ -1,0 +1,304 @@
+﻿/* Management Dashboard Styles */
+.management-dashboard {
+  width: 100%;
+}
+
+/* Header */
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+}
+
+.dashboard-header h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0 0 8px 0;
+}
+
+.dashboard-header p {
+  color: var(--text-light);
+  margin: 0;
+  font-size: 14px;
+}
+
+/* Header Actions: Export Button + Stats */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Export Excel Button Styles */
+.export-btn {
+  background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-teal) 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 0.2s;
+  box-shadow: var(--shadow);
+}
+
+.export-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.export-btn:active {
+  transform: translateY(0);
+}
+
+.stat-badge {
+  text-align: right;
+  background: rgba(135, 186, 195, 0.1);
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.stat-badge .label {
+  display: block;
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.stat-badge .value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary-blue);
+  line-height: 1.1;
+}
+
+/* Sections */
+.analysis-section {
+  margin-bottom: 40px;
+}
+
+.section-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+  padding-left: 12px;
+  border-left: 4px solid var(--primary-blue);
+}
+
+/* --- Grid Layouts --- */
+.charts-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.charts-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* --- Cards --- */
+.chart-card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  border: none;
+  transition: all 0.2s;
+}
+
+.pie-card-wrapper {
+  padding: 12px;
+  max-width: 250px;
+  margin: 0 auto;
+}
+
+.chart-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.chart-card h3 {
+  font-size: 16px;
+  color: var(--text-dark);
+  margin: 0 0 16px 0;
+  font-weight: 700;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.card-header h3 {
+  margin: 0;
+}
+
+/* --- Badges --- */
+.badge {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.badge-purple { background: rgba(135, 186, 195, 0.1); color: var(--primary-blue); }
+.badge-orange { background: rgba(249, 115, 22, 0.1); color: #ea580c; }
+.badge-green { background: rgba(34, 197, 94, 0.1); color: #16a34a; }
+
+/* --- Chart Wrappers --- */
+.chart-wrapper {
+  position: relative;
+  height: 200px;
+  width: 100%;
+}
+
+.chart-wrapper-medium {
+  position: relative;
+  height: 250px;
+  width: 100%;
+}
+
+.chart-wrapper-large {
+  position: relative;
+  height: 320px;
+  width: 100%;
+}
+
+.chart-wrapper-pie {
+  position: relative;
+  height: 200px; 
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+/* --- Certificate Numbering --- */
+.certificate-numbering-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.cert-number-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow);
+  transition: all 0.2s;
+}
+
+.cert-number-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+.cert-number-card.next-issue {
+  background: linear-gradient(135deg, #ffffff 0%, rgba(135, 186, 195, 0.05) 100%);
+  border: 2px solid var(--border-color);
+}
+
+.cert-icon {
+  font-size: 40px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--light-bg);
+  border-radius: 12px;
+  color: var(--primary-blue);
+}
+
+.cert-details {
+  flex: 1;
+}
+
+.cert-details h4 {
+  margin: 0 0 6px 0;
+  font-size: 11px;
+  color: var(--text-light);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.cert-code {
+  display: block;
+  font-family: 'Monaco', 'Consolas', monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+  letter-spacing: -0.5px;
+}
+
+.cert-code.highlight {
+  color: var(--primary-blue);
+}
+
+.cert-date, .cert-status, .cert-sub {
+  display: block;
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 4px;
+}
+
+.cert-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--primary-blue);
+  line-height: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .charts-grid-3, .charts-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  .header-actions {
+      width: 100%;
+      justify-content: space-between;
+  }
+
+  .charts-grid-3, .charts-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .certificate-numbering-container {
+    grid-template-columns: 1fr;
+  }
+}
+

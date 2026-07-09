@@ -1,0 +1,275 @@
+/* =============================================================
+   CertiSphere — DARK NAVY + GOLD theme (matches user's approved
+   About Us / Footer screenshot). Loaded after Home.css + HomePolish
+   so it has the final word on colours.
+   ============================================================= */
+
+:root {
+  --csg-bg:          #051828;   /* deepest navy backdrop */
+  --csg-bg-2:        #07203A;   /* slightly lifted */
+  --csg-bg-3:        #0A2540;   /* card base */
+  --csg-bg-band:     #102B4D;   /* lighter band */
+  --csg-line:        rgba(255, 215, 0, 0.15);
+  --csg-line-strong: rgba(255, 215, 0, 0.40);
+  --csg-gold:        #FFD700;
+  --csg-gold-deep:   #E8B547;
+  --csg-gold-light:  #FDE68A;
+  --csg-blue:        #3B82F6;
+  --csg-blue-deep:   #1E40AF;
+  --csg-emerald:     #10B981;
+  --csg-text:        #F8FAFC;
+  --csg-text-soft:   #CBD5E1;
+  --csg-muted:       #94A3B8;
+}
+
+/* === Page-wide dark base === */
+[data-theme="dark"] .cs-home {
+  background: linear-gradient(180deg, var(--csg-bg) 0%, #030F1C 100%) !important;
+  color: var(--csg-text) !important;
+}
+
+/* === Floating bubbles — soft gold on dark === */
+[data-theme="dark"] .cs-home .cs-bubble {
+  background: radial-gradient(circle at center,
+    rgba(255, 215, 0, 0.18) 0%,
+    rgba(59, 130, 246, 0.10) 60%,
+    transparent 80%) !important;
+  opacity: 0.5 !important;
+}
+
+/* === Header === */
+[data-theme="dark"] .cs-home-header {
+  background: linear-gradient(135deg, #07203A 0%, #051828 100%) !important;
+  border-bottom: 1px solid var(--csg-line) !important;
+}
+[data-theme="dark"] .cs-home-nav a { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .cs-home-nav a:hover { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-home-signin {
+  background: linear-gradient(135deg, var(--csg-gold) 0%, #C99934 100%) !important;
+  color: var(--csg-bg) !important;
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.30) !important;
+}
+
+/* === Marquee strip === */
+[data-theme="dark"] .bento-marquee {
+  background: linear-gradient(90deg, transparent 0%, rgba(255,215,0,0.06) 30%, rgba(255,215,0,0.06) 70%, transparent 100%) !important;
+  border-top: 1px solid var(--csg-line) !important;
+  border-bottom: 1px solid var(--csg-line) !important;
+}
+[data-theme="dark"] .bento-marquee-name { color: var(--csg-gold) !important; }
+
+/* === Hero bento — dark cards with gold edge on hover === */
+[data-theme="dark"] .bento-card {
+  background: linear-gradient(160deg, var(--csg-bg-3) 0%, var(--csg-bg-2) 100%) !important;
+  border: 1px solid var(--csg-line) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.35) !important;
+  color: var(--csg-text) !important;
+}
+[data-theme="dark"] .bento-card:hover {
+  border-color: var(--csg-gold) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255,215,0,0.40) inset !important;
+}
+[data-theme="dark"] .bento-card-label {
+  background: rgba(255, 215, 0, 0.10) !important;
+  color: var(--csg-gold) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+}
+
+/* === Hero text === */
+[data-theme="dark"] .cs-home-tag {
+  background: rgba(255, 215, 0, 0.08) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+  color: var(--csg-gold) !important;
+}
+[data-theme="dark"] .cs-home-tag-dot { background: var(--csg-emerald) !important; box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.22) !important; }
+[data-theme="dark"] .cs-home-title { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-home-title em {
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--csg-gold) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+[data-theme="dark"] .cs-home-sub { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .cs-home-sub strong { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-home-trust li { color: var(--csg-text) !important; }
+[data-theme="dark"] .cs-home-trust li svg { color: var(--csg-gold) !important; }
+
+/* === CTAs === */
+[data-theme="dark"] .cs-home-cta-primary {
+  background: linear-gradient(135deg, var(--csg-gold) 0%, #C99934 100%) !important;
+  color: var(--csg-bg) !important;
+  box-shadow: 0 8px 22px rgba(255, 215, 0, 0.30) !important;
+}
+[data-theme="dark"] .cs-home-cta-primary:hover { box-shadow: 0 12px 30px rgba(255, 215, 0, 0.42) !important; }
+[data-theme="dark"] .cs-home-cta-secondary {
+  background: var(--csg-bg-3) !important;
+  color: var(--csg-gold) !important;
+  border: 1px solid var(--csg-gold) !important;
+}
+[data-theme="dark"] .cs-home-cta-secondary:hover {
+  background: var(--csg-gold) !important;
+  color: var(--csg-bg) !important;
+}
+
+/* === Orbital diagram === */
+[data-theme="dark"] .bento-orbital { background: linear-gradient(160deg, var(--csg-bg-3) 0%, var(--csg-bg) 100%) !important; }
+[data-theme="dark"] .cs-orbital-outer {
+  border-color: var(--csg-line-strong) !important;
+  background: radial-gradient(circle at center,
+    rgba(255, 215, 0, 0.08) 0%,
+    rgba(59, 130, 246, 0.06) 60%,
+    transparent 90%) !important;
+}
+[data-theme="dark"] .cs-orbital-circle {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.20), rgba(59, 130, 246, 0.18)) !important;
+  border: 1.5px solid var(--csg-gold) !important;
+  color: var(--csg-gold) !important;
+}
+[data-theme="dark"] .cs-orbital-label {
+  background: var(--csg-bg-3) !important;
+  color: var(--csg-gold) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+}
+[data-theme="dark"] .cs-orbital-triangle::after {
+  background: linear-gradient(160deg, rgba(5, 24, 40, 0.96) 0%, rgba(7, 32, 58, 0.95) 100%) !important;
+}
+
+/* === Section heads === */
+[data-theme="dark"] .cs-bento-section-head .cs-home-section-title { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-bento-section-head .cs-home-section-title::after {
+  background: linear-gradient(90deg, transparent, var(--csg-gold), transparent) !important;
+}
+[data-theme="dark"] .cs-home-section-sub { color: var(--csg-text-soft) !important; }
+
+/* === Module cards === */
+[data-theme="dark"] .bento-mod h3 { color: var(--csg-gold) !important; }
+[data-theme="dark"] .bento-mod p { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .bento-mod-icon {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.18), rgba(59, 130, 246, 0.12)) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+  color: var(--csg-gold) !important;
+}
+[data-theme="dark"] .bento-mod-demo {
+  background: rgba(255, 215, 0, 0.12) !important;
+  color: var(--csg-gold) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+}
+[data-theme="dark"] .bento-mod-arrow {
+  background: var(--csg-gold) !important;
+  color: var(--csg-bg) !important;
+}
+[data-theme="dark"] .bento-mod-featured {
+  background: linear-gradient(160deg, rgba(255, 215, 0, 0.08) 0%, rgba(59, 130, 246, 0.06) 100%) !important;
+}
+
+/* === Brand showcase band === */
+[data-theme="dark"] .cs-brand-showcase-inner {
+  background: linear-gradient(135deg, var(--csg-bg-3) 0%, var(--csg-bg) 100%) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.50) !important;
+}
+[data-theme="dark"] .cs-brand-showcase-tag { color: var(--csg-gold) !important; }
+
+/* === Benefits === */
+[data-theme="dark"] .bento-benefit h3 { color: var(--csg-gold) !important; }
+[data-theme="dark"] .bento-benefit p { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .bento-benefit-icon {
+  background: var(--csg-gold) !important;
+  color: var(--csg-bg) !important;
+}
+
+/* === About Us — matches user's screenshot exactly === */
+[data-theme="dark"] .cs-founder-side {
+  background: linear-gradient(160deg, var(--csg-bg-3) 0%, var(--csg-bg) 100%) !important;
+}
+[data-theme="dark"] .cs-founder-bio {
+  background: var(--csg-bg-3) !important;
+  color: var(--csg-text) !important;
+}
+[data-theme="dark"] .cs-founder-bio p { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .cs-founder-bio p strong { color: var(--csg-text) !important; }
+[data-theme="dark"] .cs-founder-bio p:first-of-type strong { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-bio-label { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-bio-sub { color: var(--csg-muted) !important; }
+[data-theme="dark"] .cs-bio-bar { background: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-expertise-pill {
+  background: var(--csg-bg-2) !important;
+  border: 1px solid var(--csg-line-strong) !important;
+  border-left: 3px solid var(--csg-gold) !important;
+  color: var(--csg-text) !important;
+}
+[data-theme="dark"] .cs-expertise-pill svg { color: var(--csg-gold) !important; }
+
+/* About action buttons (Company Profile / Get In Touch) — match screenshot */
+.cs-founder-bio a[href*="certisphere"],
+.cs-founder-bio a[href*="company"],
+[data-theme="dark"] .cs-founder-bio button:first-of-type {
+  background: var(--csg-blue) !important;
+  color: #FFFFFF !important;
+  border: none !important;
+}
+.cs-founder-bio a[href^="mailto"],
+[data-theme="dark"] .cs-founder-bio button:last-of-type {
+  background: var(--csg-gold-deep) !important;
+  color: var(--csg-bg) !important;
+  border: none !important;
+}
+
+/* === Pre-footer === */
+[data-theme="dark"] .cs-prefooter {
+  background: linear-gradient(135deg, var(--csg-bg-3) 0%, var(--csg-bg) 100%) !important;
+  border-top: 1px solid var(--csg-line) !important;
+}
+[data-theme="dark"] .cs-prefooter-title { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-prefooter-title em {
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--csg-gold) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+[data-theme="dark"] .cs-prefooter-sub { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .cs-prefooter-cta {
+  background: linear-gradient(135deg, var(--csg-gold) 0%, #C99934 100%) !important;
+  color: var(--csg-bg) !important;
+}
+
+/* === Footer (deep navy, gold headings) — matches screenshot === */
+[data-theme="dark"] .cs-home-footer {
+  background: linear-gradient(180deg, var(--csg-bg) 0%, #020A14 100%) !important;
+  color: var(--csg-text-soft) !important;
+  border-top: 1px solid var(--csg-line) !important;
+}
+[data-theme="dark"] .cs-footer-col h4 { color: var(--csg-gold) !important; }
+.cs-footer-col a,
+[data-theme="dark"] .cs-footer-col button { color: var(--csg-text-soft) !important; }
+.cs-footer-col a:hover,
+[data-theme="dark"] .cs-footer-col button:hover { color: var(--csg-gold) !important; }
+[data-theme="dark"] .cs-footer-tagline { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .cs-footer-bottom { color: var(--csg-muted) !important; border-top-color: var(--csg-line) !important; }
+[data-theme="dark"] .cs-footer-static { color: var(--csg-muted) !important; }
+
+/* === Stats card numbers === */
+[data-theme="dark"] .bento-stat strong {
+  background: linear-gradient(135deg, #FFFFFF 0%, var(--csg-gold) 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+}
+[data-theme="dark"] .bento-stat span { color: var(--csg-text-soft) !important; }
+
+/* === Workflow ring === */
+[data-theme="dark"] .bento-workflow-ring { border-color: var(--csg-line-strong) !important; }
+[data-theme="dark"] .bento-workflow-dot { background: var(--csg-gold) !important; box-shadow: 0 0 14px rgba(255, 215, 0, 0.7) !important; }
+[data-theme="dark"] .bento-workflow-stages span {
+  background: rgba(255, 215, 0, 0.08) !important;
+  color: var(--csg-text) !important;
+  border: 1px solid var(--csg-line) !important;
+}
+
+/* === Pulse card === */
+[data-theme="dark"] .bento-pulse-meta strong { color: var(--csg-gold) !important; }
+[data-theme="dark"] .bento-pulse-meta span { color: var(--csg-text-soft) !important; }
+[data-theme="dark"] .bento-pulse-ring { background: var(--csg-emerald) !important; box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55) !important; }

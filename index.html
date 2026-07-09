@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Certification Management System</title>
+    <style>
+      #app-loader{position:fixed;inset:0;z-index:99999;display:flex;
+        align-items:center;justify-content:center;
+        background:radial-gradient(circle at 50% 45%,#ffffff 0%,#eef3fb 55%,#e1eaf6 100%);
+        transition:opacity .45s ease;}
+      #app-loader.csl-hide{opacity:0;pointer-events:none;}
+      .csl-orbit{position:relative;width:128px;height:128px;
+        display:flex;align-items:center;justify-content:center;}
+      /* outer spinning refresh ring */
+      .csl-orbit::before{content:"";position:absolute;inset:0;border-radius:50%;
+        border:4px solid rgba(15,23,42,.07);
+        border-top-color:#1f6bbf;border-right-color:#f5c130;
+        animation:csl-spin .85s linear infinite;}
+      /* inner counter-spinning thin arc */
+      .csl-orbit::after{content:"";position:absolute;inset:12px;border-radius:50%;
+        border:2.5px solid transparent;
+        border-bottom-color:rgba(31,107,191,.55);border-left-color:rgba(245,193,48,.55);
+        animation:csl-spin 1.25s linear infinite reverse;}
+      .csl-logo{width:74px;height:74px;object-fit:contain;
+        filter:drop-shadow(0 4px 12px rgba(15,23,42,.20));
+        animation:csl-pulse 1.6s ease-in-out infinite;}
+      @keyframes csl-spin{to{transform:rotate(360deg);}}
+      @keyframes csl-pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.06);}}
+    </style>
+  </head>
+  <body>
+    <div id="app-loader" role="status" aria-label="Refreshing">
+      <div class="csl-orbit">
+        <img class="csl-logo" src="/images/certisphere-icon.png" alt="Loading" />
+      </div>
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

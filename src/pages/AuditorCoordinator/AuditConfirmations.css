@@ -1,0 +1,82 @@
+.audit-confirmations-container {
+  padding: 24px;
+}
+
+.action-bar {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 92%;
+  max-width: 640px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.form-group {
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color, #e5e7eb);
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-cancel {
+  background: var(--light-bg, #f3f4f6);
+  border: 1px solid var(--border-color, #e5e7eb);
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btn-confirm {
+  background: linear-gradient(135deg, var(--primary-blue), var(--primary-teal));
+  color: #fff;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}

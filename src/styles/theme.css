@@ -1,0 +1,1718 @@
+/* =============================================================================
+ * theme.css — Light + Dark theme tokens for CertMS
+ * ---------------------------------------------------------------------------
+ * - Defines a single, semantic set of tokens.
+ * - Light theme is the default.
+ * - Dark theme activates when <html data-theme="dark"> is set.
+ * - Re-maps the legacy variables (--light-bg, --card-bg, etc.) so existing
+ *   styles inherit theme awareness without rewriting every file.
+ * - Adds high-specificity overrides for common hard-coded patterns
+ *   (#fff card surfaces, gradient backgrounds, table rows, etc.) so dark
+ *   mode looks cohesive without touching every per-page stylesheet.
+ * ===========================================================================*/
+
+:root,
+:root[data-theme="light"] {
+  /* Surfaces */
+  --cms-bg-page: #f1f7f6;
+  --cms-bg-page-gradient: linear-gradient(135deg, #D6F4ED 0%, #e0e7ff 100%);
+  --cms-bg-surface: #ffffff;
+  --cms-bg-elevated: #f8fafc;
+  --cms-bg-subtle: #f1f5f9;
+  --cms-bg-hover: rgba(14, 165, 233, 0.06);
+
+  /* Text */
+  --cms-text-primary: #0f172a;
+  --cms-text-secondary: #475569;
+  --cms-text-muted: #64748b;
+  --cms-text-on-brand: #ffffff;
+  --cms-text-inverse: #ffffff;
+
+  /* Meta text (was hard-coded #87BAC3 — unreadable on white) */
+  --cms-text-meta: #46707f;
+
+  /* Borders */
+  --cms-border-subtle: rgba(15, 23, 42, 0.08);
+  --cms-border-strong: rgba(15, 23, 42, 0.16);
+  --cms-border-input: #cbd5e1;
+
+  /* Brand */
+  --cms-brand: #0ea5e9;
+  --cms-brand-strong: #0369a1;
+  --cms-brand-soft: #e0f2fe;
+  --cms-brand-gradient: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+
+  /* State */
+  --cms-success: #10b981;
+  --cms-success-soft: rgba(16, 185, 129, 0.12);
+  --cms-warning: #f59e0b;
+  --cms-warning-soft: rgba(245, 158, 11, 0.14);
+  --cms-danger: #ef4444;
+  --cms-danger-soft: rgba(239, 68, 68, 0.12);
+  --cms-info: #6366f1;
+  --cms-info-soft: rgba(99, 102, 241, 0.12);
+
+  /* Effects */
+  --cms-shadow-sm: 0 4px 12px rgba(2, 6, 23, 0.04);
+  --cms-shadow-md: 0 8px 22px rgba(2, 6, 23, 0.06);
+  --cms-shadow-lg: 0 20px 48px rgba(2, 6, 23, 0.08);
+  --cms-shadow-modal: 0 30px 80px rgba(2, 6, 23, 0.18);
+  --cms-skeleton-base: rgba(15, 23, 42, 0.06);
+  --cms-skeleton-shine: rgba(255, 255, 255, 0.65);
+
+  /* Legacy variable remap (so existing :root in index.css inherits theme) */
+  --primary-blue: #0ea5e9;
+  --primary-teal: #06b6d4;
+  --primary-orange: #ea580c;
+  --primary-purple: #7c3aed;
+  --light-bg: var(--cms-bg-page);
+  --card-bg: var(--cms-bg-surface);
+  --text-dark: var(--cms-text-primary);
+  --text-light: var(--cms-text-muted);
+  --border-color: var(--cms-border-subtle);
+  --shadow: var(--cms-shadow-sm);
+  --shadow-lg: var(--cms-shadow-lg);
+}
+
+:root[data-theme="dark"] {
+  --cms-bg-page: #000000;
+  --cms-bg-page-gradient: #000000;
+  --cms-bg-surface: #0d0d0d;
+  --cms-bg-elevated: #141414;
+  --cms-bg-subtle: #1a1a1a;
+  --cms-bg-hover: rgba(56, 189, 248, 0.08);
+
+  --cms-text-primary: #e2e8f0;
+  --cms-text-meta: #87BAC3;
+  --cms-text-secondary: #cbd5e1;
+  --cms-text-muted: #94a3b8;
+  --cms-text-on-brand: #0b1220;
+  --cms-text-inverse: #0b1220;
+
+  --cms-border-subtle: rgba(148, 163, 184, 0.18);
+  --cms-border-strong: rgba(148, 163, 184, 0.32);
+  --cms-border-input: rgba(148, 163, 184, 0.28);
+
+  --cms-brand: #38bdf8;
+  --cms-brand-strong: #7dd3fc;
+  --cms-brand-soft: rgba(14, 165, 233, 0.16);
+  --cms-brand-gradient: linear-gradient(135deg, #38bdf8 0%, #22d3ee 100%);
+
+  --cms-success: #34d399;
+  --cms-success-soft: rgba(52, 211, 153, 0.18);
+  --cms-warning: #fbbf24;
+  --cms-warning-soft: rgba(251, 191, 36, 0.18);
+  --cms-danger: #f87171;
+  --cms-danger-soft: rgba(248, 113, 113, 0.18);
+  --cms-info: #818cf8;
+  --cms-info-soft: rgba(129, 140, 248, 0.18);
+
+  --cms-shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --cms-shadow-md: 0 8px 22px rgba(0, 0, 0, 0.45);
+  --cms-shadow-lg: 0 20px 48px rgba(0, 0, 0, 0.55);
+  --cms-shadow-modal: 0 30px 80px rgba(0, 0, 0, 0.7);
+  --cms-skeleton-base: rgba(148, 163, 184, 0.1);
+  --cms-skeleton-shine: rgba(148, 163, 184, 0.22);
+
+  /* Legacy remap */
+  --primary-blue: #38bdf8;
+  --primary-teal: #22d3ee;
+  --primary-orange: #fb923c;
+  --primary-purple: #a78bfa;
+  --light-bg: var(--cms-bg-page);
+  --card-bg: var(--cms-bg-surface);
+  --text-dark: var(--cms-text-primary);
+  --text-light: var(--cms-text-muted);
+  --border-color: var(--cms-border-subtle);
+  --shadow: var(--cms-shadow-sm);
+  --shadow-lg: var(--cms-shadow-lg);
+}
+
+/* Smooth transition between themes */
+html {
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+html, body {
+  background: var(--cms-bg-page) !important;
+  color: var(--cms-text-primary);
+}
+body {
+  background: var(--cms-bg-page-gradient) !important;
+}
+
+/* =========================================================================
+ * Dark mode overrides for the most common hard-coded patterns
+ * Keeps light mode pixel-perfect and only activates with [data-theme="dark"]
+ * =======================================================================*/
+:root[data-theme="dark"] .layout,
+:root[data-theme="dark"] .layout-content,
+:root[data-theme="dark"] .app {
+  background: var(--cms-bg-page) !important;
+  color: var(--cms-text-primary);
+}
+:root[data-theme="dark"] .layout-content {
+  background: var(--cms-bg-page-gradient) !important;
+}
+
+/* Surface cards — a lot of pages set `background: #fff` directly */
+:root[data-theme="dark"] .table-wrap,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .recent-audits-section,
+:root[data-theme="dark"] .quick-actions-section,
+:root[data-theme="dark"] .profiles-table,
+:root[data-theme="dark"] .audits-table,
+:root[data-theme="dark"] .form-card,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .surface {
+  background: var(--cms-bg-surface) !important;
+  color: var(--cms-text-primary);
+  border-color: var(--cms-border-subtle);
+}
+
+/* Inputs */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select {
+  background: var(--cms-bg-elevated);
+  color: var(--cms-text-primary);
+  border-color: var(--cms-border-input);
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: var(--cms-text-muted);
+}
+
+/* Tables */
+:root[data-theme="dark"] table {
+  color: var(--cms-text-primary);
+}
+:root[data-theme="dark"] table thead {
+  background: var(--cms-bg-elevated) !important;
+}
+:root[data-theme="dark"] table th {
+  color: var(--cms-text-muted) !important;
+  border-color: var(--cms-border-subtle) !important;
+}
+:root[data-theme="dark"] table td {
+  color: var(--cms-text-secondary) !important;
+  border-color: var(--cms-border-subtle) !important;
+}
+:root[data-theme="dark"] table tbody tr:hover {
+  background: var(--cms-bg-hover) !important;
+}
+
+/* Sidebar — dark surface stays dark, just sharper text */
+:root[data-theme="dark"] .vertical-sidebar {
+  background: #0b1220 !important;
+  border-right: 1px solid var(--cms-border-subtle);
+}
+
+/* Modals/overlays */
+:root[data-theme="dark"] .modal-overlay,
+:root[data-theme="dark"] .overlay {
+  background: rgba(2, 6, 23, 0.7) !important;
+}
+
+/* ==========================================================================
+ * BLACK THEME — Global overrides
+ * Forces every hard-coded light background to the black palette so the
+ * entire app looks consistent regardless of which CSS file set the colour.
+ * ==========================================================================*/
+
+/* ── Base ── */
+:root[data-theme="dark"] html,
+:root[data-theme="dark"] body,
+html[data-theme="dark"],
+html[data-theme="dark"] body {
+  background: #000000 !important;
+  color: var(--cms-text-primary);
+}
+
+/* ── Page wrapper / layout shells ── */
+:root[data-theme="dark"] .app,
+:root[data-theme="dark"] .layout,
+:root[data-theme="dark"] .layout-content,
+:root[data-theme="dark"] .layout-main,
+:root[data-theme="dark"] .page-wrapper,
+:root[data-theme="dark"] .page-root,
+:root[data-theme="dark"] .module-root,
+:root[data-theme="dark"] .content-area,
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .dashboard-root,
+:root[data-theme="dark"] .dashboard-content,
+:root[data-theme="dark"] .cms-page,
+:root[data-theme="dark"] .route-view,
+:root[data-theme="dark"] [class*="-layout"],
+:root[data-theme="dark"] [class*="-wrapper"],
+:root[data-theme="dark"] [class*="-container"] {
+  background: #000000 !important;
+}
+
+/* ── Cards / surfaces ── */
+:root[data-theme="dark"] .card,
+:root[data-theme="dark"] .surface,
+:root[data-theme="dark"] .panel,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .info-card,
+:root[data-theme="dark"] .form-card,
+:root[data-theme="dark"] .filter-bar,
+:root[data-theme="dark"] .table-card,
+:root[data-theme="dark"] .table-wrap,
+:root[data-theme="dark"] .recent-audits-section,
+:root[data-theme="dark"] .quick-actions-section,
+:root[data-theme="dark"] [class*="-card"],
+:root[data-theme="dark"] [class*="-panel"],
+:root[data-theme="dark"] [class*="-box"],
+:root[data-theme="dark"] [class*="-section"] {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.07) !important;
+  color: var(--cms-text-primary) !important;
+}
+
+/* ── Tables ── */
+:root[data-theme="dark"] table,
+:root[data-theme="dark"] .profiles-table,
+:root[data-theme="dark"] .audits-table,
+:root[data-theme="dark"] [class*="-table"] {
+  background: #0d0d0d !important;
+  color: var(--cms-text-primary) !important;
+}
+:root[data-theme="dark"] thead,
+:root[data-theme="dark"] thead tr,
+:root[data-theme="dark"] th {
+  background: #141414 !important;
+  color: var(--cms-text-muted) !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+:root[data-theme="dark"] tbody tr {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.05) !important;
+}
+:root[data-theme="dark"] tbody tr:nth-child(even) {
+  background: #111111 !important;
+}
+:root[data-theme="dark"] tbody tr:hover {
+  background: #1a1a1a !important;
+}
+:root[data-theme="dark"] td {
+  color: var(--cms-text-secondary) !important;
+  border-color: rgba(255,255,255,0.05) !important;
+}
+
+/* ── Inputs / selects ── */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] .search-input,
+:root[data-theme="dark"] [class*="-input"],
+:root[data-theme="dark"] [class*="-select"] {
+  background: #141414 !important;
+  color: var(--cms-text-primary) !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: var(--cms-text-muted) !important;
+}
+
+/* ── Modals / overlays ── */
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .modal-box,
+:root[data-theme="dark"] .dialog,
+:root[data-theme="dark"] [class*="-modal"],
+:root[data-theme="dark"] [class*="-dialog"] {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: var(--cms-text-primary) !important;
+}
+:root[data-theme="dark"] .modal-overlay,
+:root[data-theme="dark"] .overlay,
+:root[data-theme="dark"] [class*="-overlay"] {
+  background: rgba(0,0,0,0.85) !important;
+}
+
+/* ── Sidebar ── */
+:root[data-theme="dark"] .vertical-sidebar,
+:root[data-theme="dark"] .sidebar,
+:root[data-theme="dark"] [class*="-sidebar"] {
+  background: #000000 !important;
+  border-right-color: rgba(255,255,255,0.07) !important;
+}
+
+/* ── Headers / topbars ── */
+:root[data-theme="dark"] .header,
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] .navbar,
+:root[data-theme="dark"] [class*="-header"],
+:root[data-theme="dark"] [class*="-topbar"],
+:root[data-theme="dark"] [class*="-nav"] {
+  background: #000000 !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+}
+
+/* ── Hard-coded light colours used in scattered component CSS ── */
+:root[data-theme="dark"] [style*="background: white"],
+:root[data-theme="dark"] [style*="background: #fff"],
+:root[data-theme="dark"] [style*="background-color: white"],
+:root[data-theme="dark"] [style*="background-color: #fff"] {
+  background: #0d0d0d !important;
+  background-color: #0d0d0d !important;
+}
+:root[data-theme="dark"] [style*="background: #D6F4ED"],
+:root[data-theme="dark"] [style*="background: #eef6ff"],
+:root[data-theme="dark"] [style*="background: #f1f7f6"],
+:root[data-theme="dark"] [style*="background: #f8fafc"],
+:root[data-theme="dark"] [style*="background: linear-gradient(135deg, #D6F4ED"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* ── Login page ── */
+:root[data-theme="dark"] .login-container,
+:root[data-theme="dark"] .login-section,
+:root[data-theme="dark"] .login-form-wrapper,
+:root[data-theme="dark"] .login-brand-section,
+:root[data-theme="dark"] .login-right,
+:root[data-theme="dark"] .login-left {
+  background: #000000 !important;
+}
+:root[data-theme="dark"] .login-card,
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .form-box {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+
+/* ── Dropdowns / popovers ── */
+:root[data-theme="dark"] .dropdown,
+:root[data-theme="dark"] .popover,
+:root[data-theme="dark"] .tooltip,
+:root[data-theme="dark"] [class*="-dropdown"],
+:root[data-theme="dark"] [class*="-popover"] {
+  background: #141414 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: var(--cms-text-primary) !important;
+}
+
+/* ── Chips / tags / badges ── */
+:root[data-theme="dark"] .badge,
+:root[data-theme="dark"] .chip,
+:root[data-theme="dark"] .tag,
+:root[data-theme="dark"] [class*="-badge"],
+:root[data-theme="dark"] [class*="-chip"],
+:root[data-theme="dark"] [class*="-tag"] {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* ==========================================================================
+ * GLOBAL BLACK — Applied only to dark theme
+ * ==========================================================================*/
+:root[data-theme="dark"] html,
+:root[data-theme="dark"] body,
+:root[data-theme="dark"] #root {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* Every layout wrapper */
+:root[data-theme="dark"] .app,
+:root[data-theme="dark"] .layout,
+:root[data-theme="dark"] .layout-content,
+:root[data-theme="dark"] .layout-main,
+:root[data-theme="dark"] .page-wrapper,
+:root[data-theme="dark"] .page-root,
+:root[data-theme="dark"] .module-root,
+:root[data-theme="dark"] .content-area,
+:root[data-theme="dark"] .main-content,
+:root[data-theme="dark"] .dashboard-root,
+:root[data-theme="dark"] .dashboard-content,
+:root[data-theme="dark"] .cms-page,
+:root[data-theme="dark"] [class*="-layout"],
+:root[data-theme="dark"] [class*="-wrapper"],
+:root[data-theme="dark"] [class*="-content"] {
+  background: #000000 !important;
+}
+
+/* All page-level route views */
+:root[data-theme="dark"] .route-view,
+:root[data-theme="dark"] .view-root,
+:root[data-theme="dark"] [class*="-page"]:not([class*="home-page"]) {
+  background: #000000 !important;
+}
+
+/* ==========================================================================
+ * HARD-CODED WHITE / LIGHT OVERRIDES — replaces every #fff / white / light
+ * gradient throughout all module CSS files with the black palette.
+ * ==========================================================================*/
+
+/* ── Page / layout backgrounds ── */
+:root[data-theme="dark"] .layout-content,
+:root[data-theme="dark"] .ac-layout-content,
+:root[data-theme="dark"] [class*="layout-content"],
+:root[data-theme="dark"] [class*="-layout"] > *,
+:root[data-theme="dark"] [class*="-wrapper"] {
+  background: #000000 !important;
+}
+
+/* ── AuditClient layout ── */
+:root[data-theme="dark"] .ac-layout,
+:root[data-theme="dark"] .ac-layout-main,
+:root[data-theme="dark"] .ac-layout-content {
+  background: #000000 !important;
+}
+
+/* ── All cards and surface panels ── */
+:root[data-theme="dark"] [class*="-card"],
+:root[data-theme="dark"] [class*="-panel"],
+:root[data-theme="dark"] [class*="-section"],
+:root[data-theme="dark"] [class*="-box"],
+:root[data-theme="dark"] [class*="-wrap"],
+:root[data-theme="dark"] [class*="-modal"],
+:root[data-theme="dark"] [class*="-form"],
+:root[data-theme="dark"] .modal,
+:root[data-theme="dark"] .modal-content,
+:root[data-theme="dark"] .form-card,
+:root[data-theme="dark"] .table-wrap,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .info-card,
+:root[data-theme="dark"] .recent-audits-section,
+:root[data-theme="dark"] .quick-actions-section {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── All inputs / textareas / selects ── */
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] textarea,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] [class*="-input"],
+:root[data-theme="dark"] [class*="-select"],
+:root[data-theme="dark"] [class*="-textarea"] {
+  background: #141414 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+:root[data-theme="dark"] input::placeholder,
+:root[data-theme="dark"] textarea::placeholder {
+  color: #64748b !important;
+}
+
+/* ── Tables ── */
+:root[data-theme="dark"] table {
+  background: #0d0d0d !important;
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] thead,
+:root[data-theme="dark"] thead tr,
+:root[data-theme="dark"] th {
+  background: #141414 !important;
+  color: #94a3b8 !important;
+  border-color: rgba(255,255,255,0.07) !important;
+}
+:root[data-theme="dark"] tbody tr {
+  background: #0d0d0d !important;
+}
+:root[data-theme="dark"] tbody tr:nth-child(even) {
+  background: #111111 !important;
+}
+:root[data-theme="dark"] tbody tr:hover {
+  background: #1a1a1a !important;
+}
+:root[data-theme="dark"] td {
+  color: #cbd5e1 !important;
+  border-color: rgba(255,255,255,0.05) !important;
+}
+
+/* ── Sidebars & headers ── */
+:root[data-theme="dark"] .vertical-sidebar,
+:root[data-theme="dark"] [class*="-sidebar"] {
+  background: #000000 !important;
+  border-right-color: rgba(255,255,255,0.07) !important;
+}
+:root[data-theme="dark"] .topbar,
+:root[data-theme="dark"] [class*="-topbar"],
+:root[data-theme="dark"] [class*="-header"]:not(h1):not(h2):not(h3):not(h4) {
+  background: #000000 !important;
+  border-bottom-color: rgba(255,255,255,0.07) !important;
+}
+
+/* ── Modals / overlays ── */
+:root[data-theme="dark"] .modal-overlay,
+:root[data-theme="dark"] [class*="-overlay"] {
+  background: rgba(0,0,0,0.85) !important;
+}
+
+/* ── Login page ── */
+:root[data-theme="dark"] .login-container,
+:root[data-theme="dark"] .login-section,
+:root[data-theme="dark"] .login-form-wrapper,
+:root[data-theme="dark"] .login-brand-section,
+:root[data-theme="dark"] .login-right,
+:root[data-theme="dark"] .login-left,
+:root[data-theme="dark"] .login-page,
+:root[data-theme="dark"] [class*="login-"] {
+  background: #000000 !important;
+}
+:root[data-theme="dark"] .login-card,
+:root[data-theme="dark"] .auth-card,
+:root[data-theme="dark"] .form-box {
+  background: #0d0d0d !important;
+}
+
+/* ── Dropdown / popover ── */
+:root[data-theme="dark"] .dropdown,
+:root[data-theme="dark"] .popover,
+:root[data-theme="dark"] [class*="-dropdown"],
+:root[data-theme="dark"] [class*="-popover"] {
+  background: #141414 !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── AI Assistant panel ── */
+:root[data-theme="dark"] .ai-assistant-panel,
+:root[data-theme="dark"] .ai-messages,
+:root[data-theme="dark"] .ai-bubble-bot,
+:root[data-theme="dark"] .ai-input-row {
+  background: #0d0d0d !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── Splash ── */
+:root[data-theme="dark"] .cs-splash {
+  background: #000000 !important;
+}
+
+/* ==========================================================================
+ * TEXT COLOR OVERRIDES — Dark mode
+ * --------------------------------------------------------------------------
+ * Every page CSS in this app hard-codes dark text colors (#0f172a, #1e293b,
+ * #334155, etc.). When the user toggles dark mode those colors stay dark on
+ * a now-dark background, making text invisible. These rules force every
+ * common dark text colour to a light equivalent — without touching any
+ * component logic, data, or workflow.
+ * ========================================================================*/
+
+/* ── All headings ── */
+:root[data-theme="dark"] h1,
+:root[data-theme="dark"] h2,
+:root[data-theme="dark"] h3,
+:root[data-theme="dark"] h4,
+:root[data-theme="dark"] h5,
+:root[data-theme="dark"] h6 {
+  color: #f1f5f9 !important;
+}
+
+/* ── Paragraph + body copy ── */
+:root[data-theme="dark"] p,
+:root[data-theme="dark"] span:not([class*="badge"]):not([class*="pill"]):not([class*="chip"]):not([class*="-dot"]):not([class*="status-"]):not([class*="tag"]),
+:root[data-theme="dark"] li,
+:root[data-theme="dark"] label,
+:root[data-theme="dark"] strong,
+:root[data-theme="dark"] b,
+:root[data-theme="dark"] em,
+:root[data-theme="dark"] small,
+:root[data-theme="dark"] dt,
+:root[data-theme="dark"] dd,
+:root[data-theme="dark"] figcaption,
+:root[data-theme="dark"] blockquote {
+  color: #e2e8f0;
+}
+
+/* ── Anchors that aren't explicitly styled buttons ── */
+:root[data-theme="dark"] a:not([class*="btn"]):not([class*="button"]) {
+  color: #7dd3fc;
+}
+:root[data-theme="dark"] a:not([class*="btn"]):not([class*="button"]):hover {
+  color: #38bdf8;
+}
+
+/* ── Force every common hard-coded dark text colour to light ── */
+:root[data-theme="dark"] [style*="color: #000"],
+:root[data-theme="dark"] [style*="color: black"],
+:root[data-theme="dark"] [style*="color: #0f172a"],
+:root[data-theme="dark"] [style*="color: #0F172A"],
+:root[data-theme="dark"] [style*="color: #1e293b"],
+:root[data-theme="dark"] [style*="color: #1E293B"],
+:root[data-theme="dark"] [style*="color: #1e3a8a"],
+:root[data-theme="dark"] [style*="color: #1E3A8A"],
+:root[data-theme="dark"] [style*="color: #111"],
+:root[data-theme="dark"] [style*="color: #222"],
+:root[data-theme="dark"] [style*="color: #333"],
+:root[data-theme="dark"] [style*="color: #1f2937"],
+:root[data-theme="dark"] [style*="color: #334155"] {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] [style*="color: #475569"],
+:root[data-theme="dark"] [style*="color: #64748b"],
+:root[data-theme="dark"] [style*="color: #6b7280"],
+:root[data-theme="dark"] [style*="color: #525f7f"] {
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] [style*="color: #94a3b8"],
+:root[data-theme="dark"] [style*="color: #9ca3af"],
+:root[data-theme="dark"] [style*="color: #a1a1aa"] {
+  color: #94a3b8 !important;
+}
+
+/* ── Class-based text patterns commonly used across modules ── */
+:root[data-theme="dark"] .page-title,
+:root[data-theme="dark"] .section-title,
+:root[data-theme="dark"] .card-title,
+:root[data-theme="dark"] .panel-title,
+:root[data-theme="dark"] .modal-title,
+:root[data-theme="dark"] [class*="-title"]:not([class*="status-title"]),
+:root[data-theme="dark"] [class*="-heading"],
+:root[data-theme="dark"] [class*="-headline"] {
+  color: #f1f5f9 !important;
+}
+
+:root[data-theme="dark"] .subtitle,
+:root[data-theme="dark"] .page-subtitle,
+:root[data-theme="dark"] .section-subtitle,
+:root[data-theme="dark"] .card-subtitle,
+:root[data-theme="dark"] [class*="-subtitle"],
+:root[data-theme="dark"] [class*="-sub"]:not([class*="submit"]):not([class*="subscription"]),
+:root[data-theme="dark"] [class*="-description"],
+:root[data-theme="dark"] [class*="-helper"],
+:root[data-theme="dark"] [class*="-caption"] {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme="dark"] .label,
+:root[data-theme="dark"] .field-label,
+:root[data-theme="dark"] .form-label,
+:root[data-theme="dark"] [class*="-label"]:not([class*="status-label"]):not([class*="tag-label"]) {
+  color: #cbd5e1 !important;
+}
+
+:root[data-theme="dark"] .value,
+:root[data-theme="dark"] .field-value,
+:root[data-theme="dark"] [class*="-value"]:not([class*="kpi-value"]):not([class*="stat-value"]) {
+  color: #f1f5f9 !important;
+}
+
+:root[data-theme="dark"] .muted,
+:root[data-theme="dark"] .text-muted,
+:root[data-theme="dark"] [class*="-muted"],
+:root[data-theme="dark"] [class*="-hint"],
+:root[data-theme="dark"] [class*="-meta"]:not([class*="metadata"]) {
+  color: #94a3b8 !important;
+}
+
+/* ── KPI / metric numbers — keep bright ── */
+:root[data-theme="dark"] .kpi-value,
+:root[data-theme="dark"] .stat-value,
+:root[data-theme="dark"] .metric-value,
+:root[data-theme="dark"] [class*="-count"]:not([class*="counter"]),
+:root[data-theme="dark"] [class*="-number"]:not([class*="phone-number"]) {
+  color: #ffffff !important;
+}
+
+/* ── Card / panel inner text ── */
+:root[data-theme="dark"] .card *,
+:root[data-theme="dark"] .panel *,
+:root[data-theme="dark"] .surface *,
+:root[data-theme="dark"] [class*="-card"] h1,
+:root[data-theme="dark"] [class*="-card"] h2,
+:root[data-theme="dark"] [class*="-card"] h3,
+:root[data-theme="dark"] [class*="-card"] h4,
+:root[data-theme="dark"] [class*="-card"] h5,
+:root[data-theme="dark"] [class*="-card"] h6,
+:root[data-theme="dark"] [class*="-panel"] h1,
+:root[data-theme="dark"] [class*="-panel"] h2,
+:root[data-theme="dark"] [class*="-panel"] h3,
+:root[data-theme="dark"] [class*="-panel"] h4 {
+  /* don't override badges/pills/icons inside cards */
+}
+:root[data-theme="dark"] [class*="-card"] > *:not(button):not([class*="badge"]):not([class*="pill"]):not([class*="chip"]):not([class*="status-"]):not(svg) {
+  color: inherit;
+}
+
+/* ── Table cell text — also covers nested spans ── */
+:root[data-theme="dark"] td,
+:root[data-theme="dark"] td span:not([class*="badge"]):not([class*="pill"]):not([class*="status-"]) {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] th {
+  color: #cbd5e1 !important;
+}
+
+/* ── Sidebar nav text ── */
+:root[data-theme="dark"] .vertical-sidebar a,
+:root[data-theme="dark"] .vertical-sidebar button,
+:root[data-theme="dark"] [class*="-sidebar"] a,
+:root[data-theme="dark"] [class*="-sidebar"] button,
+:root[data-theme="dark"] [class*="-sidebar"] span,
+:root[data-theme="dark"] [class*="-sidebar"] li {
+  color: #cbd5e1;
+}
+:root[data-theme="dark"] .vertical-sidebar a:hover,
+:root[data-theme="dark"] [class*="-sidebar"] a:hover {
+  color: #ffffff;
+}
+:root[data-theme="dark"] .vertical-sidebar a.active,
+:root[data-theme="dark"] [class*="-sidebar"] a.active,
+:root[data-theme="dark"] .vertical-sidebar .active {
+  color: #ffffff !important;
+}
+
+/* ── Modal / dialog content text ── */
+:root[data-theme="dark"] .modal *,
+:root[data-theme="dark"] .modal-content *,
+:root[data-theme="dark"] .dialog *,
+:root[data-theme="dark"] [class*="-modal"] h1,
+:root[data-theme="dark"] [class*="-modal"] h2,
+:root[data-theme="dark"] [class*="-modal"] h3,
+:root[data-theme="dark"] [class*="-modal"] h4,
+:root[data-theme="dark"] [class*="-modal"] p,
+:root[data-theme="dark"] [class*="-modal"] label,
+:root[data-theme="dark"] [class*="-modal"] span:not([class*="badge"]):not([class*="pill"]) {
+  /* allow component colors to dominate but ensure readability */
+}
+:root[data-theme="dark"] [class*="-modal"] h1,
+:root[data-theme="dark"] [class*="-modal"] h2,
+:root[data-theme="dark"] [class*="-modal"] h3,
+:root[data-theme="dark"] [class*="-modal"] h4 {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] [class*="-modal"] p,
+:root[data-theme="dark"] [class*="-modal"] label {
+  color: #cbd5e1 !important;
+}
+
+/* ── Buttons — keep their own colors, just ensure default unstyled buttons stay readable ── */
+:root[data-theme="dark"] button:not([class]) {
+  background: #141414;
+  color: #e2e8f0;
+  border-color: rgba(255,255,255,.12);
+}
+
+/* ── Welcome / banner text (lots of dashboards use this pattern) ── */
+:root[data-theme="dark"] .welcome-section h1,
+:root[data-theme="dark"] .welcome-section h2,
+:root[data-theme="dark"] [class*="welcome"] h1,
+:root[data-theme="dark"] [class*="welcome"] h2,
+:root[data-theme="dark"] [class*="welcome"] p,
+:root[data-theme="dark"] [class*="banner"] h1,
+:root[data-theme="dark"] [class*="banner"] h2,
+:root[data-theme="dark"] [class*="banner"] p {
+  color: #f1f5f9 !important;
+}
+
+/* ── Generic .text-* utility classes that pages use ── */
+:root[data-theme="dark"] .text-primary,
+:root[data-theme="dark"] .text-dark,
+:root[data-theme="dark"] .text-strong,
+:root[data-theme="dark"] [class*="text-primary"],
+:root[data-theme="dark"] [class*="text-dark"] {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .text-secondary,
+:root[data-theme="dark"] .text-light {
+  color: #cbd5e1 !important;
+}
+
+/* ── Status pills / badges — preserve their colored bg but make text legible ── */
+:root[data-theme="dark"] .status-badge,
+:root[data-theme="dark"] [class*="status-"]:not([class*="status-bar"]) {
+  /* Keep their inline backgrounds; the badge colors are typically light bg + dark text */
+}
+
+/* ── Lists & nav items in cards ── */
+:root[data-theme="dark"] .list-item,
+:root[data-theme="dark"] .menu-item,
+:root[data-theme="dark"] [class*="-item"]:not([class*="status-item"]):not([class*="audit-stat"]) {
+  color: #e2e8f0;
+}
+
+/* ── Date / timestamp text everywhere ── */
+:root[data-theme="dark"] .date,
+:root[data-theme="dark"] .timestamp,
+:root[data-theme="dark"] .time,
+:root[data-theme="dark"] [class*="-date"]:not([class*="-badge"]),
+:root[data-theme="dark"] [class*="-time"]:not([class*="timer"]),
+:root[data-theme="dark"] [class*="-timestamp"] {
+  color: #94a3b8 !important;
+}
+
+/* ── Form helper / error text ── */
+:root[data-theme="dark"] .helper-text,
+:root[data-theme="dark"] .field-hint,
+:root[data-theme="dark"] [class*="-hint-text"],
+:root[data-theme="dark"] [class*="-helper-text"] {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .error-text,
+:root[data-theme="dark"] .field-error,
+:root[data-theme="dark"] [class*="-error"]:not([class*="error-page"]) {
+  color: #fca5a5 !important;
+}
+
+/* ── SVG icons inherit color from parent in most cases — ensure they stay visible ── */
+:root[data-theme="dark"] svg {
+  /* default stroke/fill stays at currentColor for most lucide icons,
+     so they'll follow the text colour automatically */
+}
+:root[data-theme="dark"] [class*="icon-gray"],
+:root[data-theme="dark"] [class*="icon-dark"] {
+  color: #94a3b8 !important;
+}
+
+/* ── Footer text ── */
+:root[data-theme="dark"] footer,
+:root[data-theme="dark"] .footer,
+:root[data-theme="dark"] [class*="-footer"] {
+  color: #cbd5e1;
+}
+:root[data-theme="dark"] footer a,
+:root[data-theme="dark"] .footer a,
+:root[data-theme="dark"] [class*="-footer"] a {
+  color: #7dd3fc;
+}
+
+/* ── Dashboard-specific helpers that show up in many pages ── */
+:root[data-theme="dark"] .kpi-title,
+:root[data-theme="dark"] .kpi-label,
+:root[data-theme="dark"] .stat-label,
+:root[data-theme="dark"] .metric-label {
+  color: #94a3b8 !important;
+}
+
+/* ── Activity feed text ── */
+:root[data-theme="dark"] .activity-feed,
+:root[data-theme="dark"] .activity-item,
+:root[data-theme="dark"] .act-title,
+:root[data-theme="dark"] .act-time,
+:root[data-theme="dark"] [class*="activity-"] p,
+:root[data-theme="dark"] [class*="activity-"] span {
+  color: #cbd5e1;
+}
+:root[data-theme="dark"] .act-time,
+:root[data-theme="dark"] [class*="-time"] {
+  color: #94a3b8 !important;
+}
+
+/* ── Filter & search labels in toolbars ── */
+:root[data-theme="dark"] .filter-bar label,
+:root[data-theme="dark"] .filter-bar span,
+:root[data-theme="dark"] .search-bar label,
+:root[data-theme="dark"] [class*="filter-"] label,
+:root[data-theme="dark"] [class*="filter-"] > span {
+  color: #cbd5e1 !important;
+}
+
+/* ── Tab navigation ── */
+:root[data-theme="dark"] .tab,
+:root[data-theme="dark"] .tab-button,
+:root[data-theme="dark"] [class*="-tab"]:not([class*="-table"]) {
+  color: #cbd5e1;
+}
+:root[data-theme="dark"] .tab.active,
+:root[data-theme="dark"] [class*="-tab"].active,
+:root[data-theme="dark"] [class*="-tab"].is-active {
+  color: #ffffff !important;
+}
+
+/* ── Empty state placeholder text ── */
+:root[data-theme="dark"] .empty-state,
+:root[data-theme="dark"] [class*="-empty"] {
+  color: #94a3b8;
+}
+:root[data-theme="dark"] .empty-state h2,
+:root[data-theme="dark"] .empty-state h3,
+:root[data-theme="dark"] [class*="-empty"] h2,
+:root[data-theme="dark"] [class*="-empty"] h3 {
+  color: #e2e8f0 !important;
+}
+
+/* ── Workflow page (the new Auditee workflow page) ── */
+:root[data-theme="dark"] .aw-page {
+  background: #000000 !important;
+}
+:root[data-theme="dark"] .aw-pipeline-card,
+:root[data-theme="dark"] .aw-history-card,
+:root[data-theme="dark"] .aw-empty-card,
+:root[data-theme="dark"] .aw-selector,
+:root[data-theme="dark"] .aw-kpi,
+:root[data-theme="dark"] .aw-stage-body {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+:root[data-theme="dark"] .aw-kpi-value,
+:root[data-theme="dark"] .aw-pipeline-head h2,
+:root[data-theme="dark"] .aw-history-head h2,
+:root[data-theme="dark"] .aw-stage-title-block h3,
+:root[data-theme="dark"] .aw-history-line strong,
+:root[data-theme="dark"] .aw-progress-text {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .aw-kpi-label,
+:root[data-theme="dark"] .aw-pipeline-head p,
+:root[data-theme="dark"] .aw-stage-title-block p,
+:root[data-theme="dark"] .aw-history-sub,
+:root[data-theme="dark"] .aw-history-note,
+:root[data-theme="dark"] .aw-history-time,
+:root[data-theme="dark"] .aw-history-by,
+:root[data-theme="dark"] .aw-stage-number {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .aw-history-item {
+  background: #141414 !important;
+}
+:root[data-theme="dark"] .aw-progress-track {
+  background: #1a1a1a !important;
+  border-color: rgba(255,255,255,0.1) !important;
+}
+:root[data-theme="dark"] .aw-progress-text {
+  text-shadow: 0 1px 2px rgba(0,0,0,.6) !important;
+}
+:root[data-theme="dark"] .aw-chip {
+  background: #141414 !important;
+  color: #cbd5e1 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+:root[data-theme="dark"] .aw-stage-list::before {
+  background: rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="dark"] .aw-stage-marker {
+  border-color: #0d0d0d !important;
+}
+
+/* ── Audit Actions card grid (Auditee page we just built) ── */
+:root[data-theme="dark"] .audit-card {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="dark"] .audit-card-title h3 {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .audit-card-sub,
+:root[data-theme="dark"] .audit-card-line .label,
+:root[data-theme="dark"] .audit-stat-label {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .audit-card-line span:last-child {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .audit-stat {
+  background: #141414 !important;
+  border-color: rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="dark"] .audit-stat-count {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .audit-card-contacts {
+  border-top-color: rgba(255,255,255,0.08) !important;
+  border-bottom-color: rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="dark"] .audit-card-actions {
+  border-top-color: rgba(255,255,255,0.08) !important;
+}
+:root[data-theme="dark"] .audit-card-empty {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.1) !important;
+  color: #94a3b8 !important;
+}
+
+/* ── Smooth color transitions when toggling theme ── */
+*,
+*::before,
+*::after {
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+/* ==========================================================================
+ * SPECIFIC COMPONENT FIXES — Make theme toggle work uniformly across roles
+ * --------------------------------------------------------------------------
+ * Adds explicit dark-mode treatment for components that had hard-coded
+ * light backgrounds + dark text (locked light in dark mode) or that were
+ * over-darkened by generic selectors.
+ * ========================================================================*/
+
+/* ── RoleWorkflowOverview — "Your Workflow at a Glance" strip ── */
+:root[data-theme="dark"] .cs-rwo {
+  background: linear-gradient(180deg, #0d0d0d 0%, #141414 100%) !important;
+  border-color: rgba(96, 165, 250, 0.22) !important;
+  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.5) !important;
+}
+:root[data-theme="dark"] .cs-rwo::before {
+  background: radial-gradient(circle at top right, rgba(59, 130, 246, 0.16), transparent 40%),
+              radial-gradient(circle at 20% 80%, rgba(16, 185, 129, 0.10), transparent 35%) !important;
+}
+:root[data-theme="dark"] .cs-rwo-title-icon {
+  background: rgba(59, 130, 246, 0.22) !important;
+  border-color: rgba(59, 130, 246, 0.35) !important;
+  color: #7dd3fc !important;
+}
+:root[data-theme="dark"] .cs-rwo-title h3 {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .cs-rwo-title p {
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .cs-rwo-open {
+  background: #1d4ed8 !important;
+  color: #ffffff !important;
+}
+:root[data-theme="dark"] .cs-rwo-open:hover {
+  background: #2563eb !important;
+  box-shadow: 0 10px 22px rgba(59, 130, 246, 0.35) !important;
+}
+:root[data-theme="dark"] .cs-rwo-chip {
+  background: rgba(30, 41, 59, 0.7) !important;
+  border-color: rgba(96, 165, 250, 0.25) !important;
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .cs-rwo-chip.is-hot {
+  background: rgba(59, 130, 246, 0.18) !important;
+  border-color: rgba(96, 165, 250, 0.45) !important;
+}
+:root[data-theme="dark"] .cs-rwo-chip-label {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .cs-rwo-chip.is-hot .cs-rwo-chip-label {
+  color: #93c5fd !important;
+}
+:root[data-theme="dark"] .cs-rwo-chip-count {
+  background: rgba(245, 158, 11, 0.2) !important;
+  color: #fcd34d !important;
+}
+:root[data-theme="dark"] .cs-rwo-foot {
+  border-top-color: rgba(96, 165, 250, 0.18) !important;
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .cs-rwo-foot strong {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .cs-rwo-foot-dot,
+:root[data-theme="dark"] .cs-rwo-foot-globe,
+:root[data-theme="dark"] .cs-rwo-foot-more {
+  color: #94a3b8 !important;
+}
+
+/* ── Management Dashboard sections ── */
+:root[data-theme="dark"] .analysis-section {
+  background: transparent !important;
+}
+:root[data-theme="dark"] .section-title {
+  color: #f1f5f9 !important;
+  border-left-color: #38bdf8 !important;
+}
+:root[data-theme="dark"] .chart-card,
+:root[data-theme="dark"] .cert-number-card {
+  background: #0d0d0d !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+:root[data-theme="dark"] .cert-number-card.next-issue {
+  background: linear-gradient(135deg, #0d0d0d 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+  border-color: rgba(96, 165, 250, 0.3) !important;
+}
+:root[data-theme="dark"] .chart-card h3,
+:root[data-theme="dark"] .chart-card .card-header h3,
+:root[data-theme="dark"] .cert-number-card h4,
+:root[data-theme="dark"] .cert-details h4 {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .chart-card h4,
+:root[data-theme="dark"] .cert-number-card h5,
+:root[data-theme="dark"] .cert-details p {
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .cert-icon {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #7dd3fc !important;
+}
+
+/* ── Chart canvases & their parent wrappers: keep transparent so card colour shows ── */
+:root[data-theme="dark"] .chart-wrapper,
+:root[data-theme="dark"] .chart-wrapper-medium,
+:root[data-theme="dark"] .chart-wrapper-large,
+:root[data-theme="dark"] .chart-wrapper-pie {
+  background: transparent !important;
+}
+
+/* ── Recharts text — SVG labels/axes inside charts ── */
+:root[data-theme="dark"] .recharts-text,
+:root[data-theme="dark"] .recharts-cartesian-axis-tick text,
+:root[data-theme="dark"] .recharts-legend-item-text,
+:root[data-theme="dark"] .recharts-label,
+:root[data-theme="dark"] .recharts-default-tooltip {
+  fill: #cbd5e1 !important;
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .recharts-cartesian-grid line,
+:root[data-theme="dark"] .recharts-cartesian-axis-line {
+  stroke: rgba(148, 163, 184, 0.18) !important;
+}
+:root[data-theme="dark"] .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: #141414 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ── ChartJS canvas tooltip backdrop — chart.js draws inside the canvas, so
+   we can't restyle ticks here without code changes. Box surrounds + grid stay
+   handled. ── */
+
+/* ── Badges that show "Last 12 Months", "Q1 / Q2", etc. in chart card-header ── */
+:root[data-theme="dark"] .chart-card .badge,
+:root[data-theme="dark"] .chart-card .badge-purple,
+:root[data-theme="dark"] .chart-card .badge-orange,
+:root[data-theme="dark"] .chart-card .badge-green {
+  /* keep their colored backgrounds, just brighten text slightly */
+  filter: brightness(1.08);
+}
+
+/* ── Management Dashboard KPI strip / generic stat cards ── */
+:root[data-theme="dark"] .kpi-card,
+:root[data-theme="dark"] .stat-card,
+:root[data-theme="dark"] .metric-card,
+:root[data-theme="dark"] .info-card {
+  background: #0d0d0d !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .kpi-card .kpi-title,
+:root[data-theme="dark"] .stat-card .stat-label,
+:root[data-theme="dark"] .kpi-title {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .kpi-card .kpi-value,
+:root[data-theme="dark"] .stat-card .stat-value,
+:root[data-theme="dark"] .kpi-value {
+  color: #f1f5f9 !important;
+}
+
+/* ── Auditor Coordinator / other dashboards: page wrappers ── */
+:root[data-theme="dark"] .ac-page,
+:root[data-theme="dark"] .management-page,
+:root[data-theme="dark"] .lead-auditor-page,
+:root[data-theme="dark"] .auditor-page,
+:root[data-theme="dark"] .client-coordinator-page,
+:root[data-theme="dark"] .dashboard-container,
+:root[data-theme="dark"] [class*="dashboard-container"] {
+  background: #000000 !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── Welcome banner across roles ── */
+:root[data-theme="dark"] .welcome-section,
+:root[data-theme="dark"] [class*="welcome-banner"] {
+  background: linear-gradient(135deg, #0d0d0d 0%, #141414 100%) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+:root[data-theme="dark"] .welcome-section h1,
+:root[data-theme="dark"] .welcome-section h2,
+:root[data-theme="dark"] .welcome-section p,
+:root[data-theme="dark"] .welcome-section strong {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .welcome-section p {
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .date-badge {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #7dd3fc !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+}
+
+/* ── Dashboard recent-activity / deadline cards ── */
+:root[data-theme="dark"] .dash-card {
+  background: #0d0d0d !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .dash-card .card-header h3,
+:root[data-theme="dark"] .dash-card h3 {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .deadline-item {
+  background: #141414 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+:root[data-theme="dark"] .deadline-item.urgent {
+  background: rgba(239, 68, 68, 0.08) !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+:root[data-theme="dark"] .deadline-date .day,
+:root[data-theme="dark"] .deadline-date .month {
+  color: #f1f5f9 !important;
+}
+:root[data-theme="dark"] .deadline-details .task-name {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .activity-item {
+  border-color: rgba(255, 255, 255, 0.06) !important;
+}
+:root[data-theme="dark"] .activity-item .act-title {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .activity-item .act-time {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .activity-line {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ── Status / progress bar fills inside Audit Status Overview ── */
+:root[data-theme="dark"] .status-bar-bg {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+:root[data-theme="dark"] .status-info .status-label {
+  color: #e2e8f0 !important;
+}
+:root[data-theme="dark"] .status-info .status-count {
+  color: #f1f5f9 !important;
+}
+
+/* ── Card-footer "View All" links ── */
+:root[data-theme="dark"] .btn-full,
+:root[data-theme="dark"] .btn-link {
+  background: rgba(56, 189, 248, 0.12) !important;
+  color: #7dd3fc !important;
+  border-color: rgba(56, 189, 248, 0.25) !important;
+}
+:root[data-theme="dark"] .btn-full:hover,
+:root[data-theme="dark"] .btn-link:hover {
+  background: rgba(56, 189, 248, 0.22) !important;
+  color: #ffffff !important;
+}
+
+/* ── Progress bar (mini) ── */
+:root[data-theme="dark"] .progress-bar-mini {
+  background: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ── Audit Coordinator Dashboard "AuditorCoordinator" classes ── */
+:root[data-theme="dark"] .recent-audits-section,
+:root[data-theme="dark"] .quick-actions-section,
+:root[data-theme="dark"] .stats-grid,
+:root[data-theme="dark"] .ac-stat-card,
+:root[data-theme="dark"] .ac-card {
+  background: #0d0d0d !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+:root[data-theme="dark"] .ac-stat-card .stat-label,
+:root[data-theme="dark"] .quick-actions-section .action-label {
+  color: #94a3b8 !important;
+}
+:root[data-theme="dark"] .ac-stat-card .stat-value {
+  color: #f1f5f9 !important;
+}
+
+/* ── Lead Auditor / Auditor / Client Coordinator dashboards: stat tiles ── */
+:root[data-theme="dark"] .la-stat-card,
+:root[data-theme="dark"] .auditor-stat-card,
+:root[data-theme="dark"] .cc-stat-card,
+:root[data-theme="dark"] [class*="stat-tile"],
+:root[data-theme="dark"] [class*="metric-tile"] {
+  background: #0d0d0d !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── Notification bell dropdown ── */
+:root[data-theme="dark"] .notif-bell-panel,
+:root[data-theme="dark"] [class*="notif-panel"] {
+  background: #141414 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  color: #e2e8f0 !important;
+}
+
+/* ── Back button (top-left arrow) ── */
+:root[data-theme="dark"] .back-button,
+:root[data-theme="dark"] [class*="back-button"] {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ==========================================================================
+ * EXPLICIT LIGHT-MODE RESETS — Force these specific components back to
+ * crisp light styling so nothing carries over from prior dark state
+ * ========================================================================*/
+:root[data-theme="light"] .cs-rwo {
+  background: linear-gradient(180deg, #ffffff 0%, #f5f9ff 100%) !important;
+  border-color: rgba(96, 165, 250, 0.18) !important;
+}
+:root[data-theme="light"] .cs-rwo-title h3 { color: #0f172a !important; }
+:root[data-theme="light"] .cs-rwo-title p { color: #334155 !important; }
+
+:root[data-theme="light"] .analysis-section { background: transparent !important; }
+:root[data-theme="light"] .section-title {
+  color: #0f172a !important;
+  border-left-color: #0ea5e9 !important;
+}
+:root[data-theme="light"] .chart-card,
+:root[data-theme="light"] .cert-number-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+:root[data-theme="light"] .chart-card h3,
+:root[data-theme="light"] .cert-number-card h4 { color: #0f172a !important; }
+
+:root[data-theme="light"] .welcome-section h1,
+:root[data-theme="light"] .welcome-section h2 { color: #0f172a !important; }
+:root[data-theme="light"] .welcome-section p { color: #475569 !important; }
+
+:root[data-theme="light"] .dash-card,
+:root[data-theme="light"] .kpi-card,
+:root[data-theme="light"] .stat-card,
+:root[data-theme="light"] .recent-audits-section,
+:root[data-theme="light"] .quick-actions-section {
+  background: #ffffff !important;
+  color: #0f172a !important;
+}
+
+
+/* ==========================================================================
+ * FINAL THEME PASS — Comprehensive light/dark mode coverage
+ * --------------------------------------------------------------------------
+ * Goal: any element with hardcoded light or dark colours in inline styles or
+ * class CSS gets flipped to match the active theme. Data/workflow untouched.
+ * ========================================================================*/
+
+/* Browser native widgets (scrollbars, form controls, autofill, etc.) */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+
+/* Scrollbar styling */
+:root[data-theme="dark"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+:root[data-theme="dark"] ::-webkit-scrollbar-track { background: #0d0d0d; }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 6px; }
+:root[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #3a3a3a; }
+:root[data-theme="light"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+:root[data-theme="light"] ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+:root[data-theme="light"] ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Autofill on inputs (Chrome) */
+:root[data-theme="dark"] input:-webkit-autofill,
+:root[data-theme="dark"] input:-webkit-autofill:hover,
+:root[data-theme="dark"] input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #e2e8f0 !important;
+  -webkit-box-shadow: 0 0 0px 1000px #141414 inset !important;
+  caret-color: #e2e8f0;
+}
+
+/* ==========================================================================
+ * INLINE STYLE SWEEPS — every common hardcoded background and text colour
+ * ========================================================================*/
+
+/* ── Backgrounds: light/white-ish inline → dark surface ── */
+:root[data-theme="dark"] [style*="background:#fff"],
+:root[data-theme="dark"] [style*="background: #fff"],
+:root[data-theme="dark"] [style*="background:#FFF"],
+:root[data-theme="dark"] [style*="background: #FFF"],
+:root[data-theme="dark"] [style*="background:#ffffff"],
+:root[data-theme="dark"] [style*="background: #ffffff"],
+:root[data-theme="dark"] [style*="background:white"],
+:root[data-theme="dark"] [style*="background: white"],
+:root[data-theme="dark"] [style*="background-color:#fff"],
+:root[data-theme="dark"] [style*="background-color: #fff"],
+:root[data-theme="dark"] [style*="background-color:#ffffff"],
+:root[data-theme="dark"] [style*="background-color: #ffffff"],
+:root[data-theme="dark"] [style*="background-color:white"],
+:root[data-theme="dark"] [style*="background-color: white"],
+:root[data-theme="dark"] [style*="background:#f8fafc"],
+:root[data-theme="dark"] [style*="background: #f8fafc"],
+:root[data-theme="dark"] [style*="background:#F8FAFC"],
+:root[data-theme="dark"] [style*="background:#f1f5f9"],
+:root[data-theme="dark"] [style*="background: #f1f5f9"],
+:root[data-theme="dark"] [style*="background:#f5f5f5"],
+:root[data-theme="dark"] [style*="background:#fafafa"],
+:root[data-theme="dark"] [style*="background:#FAFAFA"],
+:root[data-theme="dark"] [style*="background:#eef2ff"],
+:root[data-theme="dark"] [style*="background:#EFF6FF"],
+:root[data-theme="dark"] [style*="background:#eff6ff"],
+:root[data-theme="dark"] [style*="background:#DBEAFE"],
+:root[data-theme="dark"] [style*="background:#dbeafe"],
+:root[data-theme="dark"] [style*="background:#dcfce7"],
+:root[data-theme="dark"] [style*="background:#fef3c7"],
+:root[data-theme="dark"] [style*="background:#fee2e2"],
+:root[data-theme="dark"] [style*="background:#fef9c3"],
+:root[data-theme="dark"] [style*="background:#e0f2fe"],
+:root[data-theme="dark"] [style*="background:#e0e7ff"],
+:root[data-theme="dark"] [style*="background:#f3e8ff"],
+:root[data-theme="dark"] [style*="background:#D6F4ED"],
+:root[data-theme="dark"] [style*="background: #D6F4ED"] {
+  background: #0d0d0d !important;
+  background-color: #0d0d0d !important;
+}
+
+/* ── Soft pastel backgrounds (badges, pills) — keep saturation but darken ── */
+:root[data-theme="dark"] [style*="background:#fef"][style*="background:#fef3c7"],
+:root[data-theme="dark"] [style*="background: #fef3c7"] {
+  background: rgba(245, 158, 11, 0.18) !important;
+}
+:root[data-theme="dark"] [style*="background:#dcfce7"],
+:root[data-theme="dark"] [style*="background: #dcfce7"] {
+  background: rgba(16, 185, 129, 0.18) !important;
+}
+:root[data-theme="dark"] [style*="background:#fee2e2"],
+:root[data-theme="dark"] [style*="background: #fee2e2"] {
+  background: rgba(239, 68, 68, 0.18) !important;
+}
+:root[data-theme="dark"] [style*="background:#dbeafe"],
+:root[data-theme="dark"] [style*="background: #dbeafe"],
+:root[data-theme="dark"] [style*="background:#DBEAFE"],
+:root[data-theme="dark"] [style*="background: #DBEAFE"] {
+  background: rgba(59, 130, 246, 0.20) !important;
+}
+:root[data-theme="dark"] [style*="background:#f3e8ff"],
+:root[data-theme="dark"] [style*="background: #f3e8ff"] {
+  background: rgba(168, 85, 247, 0.18) !important;
+}
+
+/* ── Inline text colours: every dark/near-black variant → bright text ── */
+:root[data-theme="dark"] [style*="color:#000"],
+:root[data-theme="dark"] [style*="color: #000"],
+:root[data-theme="dark"] [style*="color:#111"],
+:root[data-theme="dark"] [style*="color: #111"],
+:root[data-theme="dark"] [style*="color:#111827"],
+:root[data-theme="dark"] [style*="color: #111827"],
+:root[data-theme="dark"] [style*="color:#1f2937"],
+:root[data-theme="dark"] [style*="color: #1f2937"],
+:root[data-theme="dark"] [style*="color:#374151"],
+:root[data-theme="dark"] [style*="color: #374151"],
+:root[data-theme="dark"] [style*="color:#0f172a"],
+:root[data-theme="dark"] [style*="color: #0f172a"],
+:root[data-theme="dark"] [style*="color:#0F172A"],
+:root[data-theme="dark"] [style*="color: #0F172A"],
+:root[data-theme="dark"] [style*="color:#1e293b"],
+:root[data-theme="dark"] [style*="color: #1e293b"],
+:root[data-theme="dark"] [style*="color:#1E293B"],
+:root[data-theme="dark"] [style*="color: #1E293B"],
+:root[data-theme="dark"] [style*="color:#222"],
+:root[data-theme="dark"] [style*="color: #222"],
+:root[data-theme="dark"] [style*="color:#333"],
+:root[data-theme="dark"] [style*="color: #333"],
+:root[data-theme="dark"] [style*="color:#1e3a8a"],
+:root[data-theme="dark"] [style*="color: #1e3a8a"],
+:root[data-theme="dark"] [style*="color:#1E3A8A"],
+:root[data-theme="dark"] [style*="color: #1E3A8A"],
+:root[data-theme="dark"] [style*="color:#1E40AF"],
+:root[data-theme="dark"] [style*="color: #1E40AF"],
+:root[data-theme="dark"] [style*="color:#1e40af"],
+:root[data-theme="dark"] [style*="color: #1e40af"],
+:root[data-theme="dark"] [style*="color:#0c4a6e"],
+:root[data-theme="dark"] [style*="color: #0c4a6e"],
+:root[data-theme="dark"] [style*="color:black"],
+:root[data-theme="dark"] [style*="color: black"] {
+  color: #f1f5f9 !important;
+}
+
+/* ── Medium grey text → secondary light ── */
+:root[data-theme="dark"] [style*="color:#334155"],
+:root[data-theme="dark"] [style*="color: #334155"],
+:root[data-theme="dark"] [style*="color:#475569"],
+:root[data-theme="dark"] [style*="color: #475569"],
+:root[data-theme="dark"] [style*="color:#525f7f"],
+:root[data-theme="dark"] [style*="color: #525f7f"] {
+  color: #cbd5e1 !important;
+}
+
+/* ── Light grey text → muted ── */
+:root[data-theme="dark"] [style*="color:#64748b"],
+:root[data-theme="dark"] [style*="color: #64748b"],
+:root[data-theme="dark"] [style*="color:#6b7280"],
+:root[data-theme="dark"] [style*="color: #6b7280"],
+:root[data-theme="dark"] [style*="color:#9ca3af"],
+:root[data-theme="dark"] [style*="color: #9ca3af"],
+:root[data-theme="dark"] [style*="color:#a1a1aa"],
+:root[data-theme="dark"] [style*="color: #a1a1aa"] {
+  color: #94a3b8 !important;
+}
+
+/* ── Inline border colours that lock light ── */
+:root[data-theme="dark"] [style*="border:1px solid #e2e8f0"],
+:root[data-theme="dark"] [style*="border: 1px solid #e2e8f0"],
+:root[data-theme="dark"] [style*="border:1px solid #f1f5f9"],
+:root[data-theme="dark"] [style*="border: 1px solid #f1f5f9"],
+:root[data-theme="dark"] [style*="border:1px solid #cbd5e1"],
+:root[data-theme="dark"] [style*="border: 1px solid #cbd5e1"] {
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * GLOBAL SAFETY NET — ensures everything within a known role container
+ * picks up the theme even if a child has unscoped colours.
+ * Selectors limited so we don't break charts, brand gradients or badges.
+ * ────────────────────────────────────────────────────────────────────────*/
+
+/* Generic role layout shells — every role uses one of these */
+:root[data-theme="dark"] .layout,
+:root[data-theme="dark"] .layout-content,
+:root[data-theme="dark"] .client-layout,
+:root[data-theme="dark"] .client-content,
+:root[data-theme="dark"] .ac-layout,
+:root[data-theme="dark"] .ac-layout-content,
+:root[data-theme="dark"] .lead-auditor-layout,
+:root[data-theme="dark"] .auditor-layout,
+:root[data-theme="dark"] .management-layout,
+:root[data-theme="dark"] .client-coordinator-layout {
+  background: #000000 !important;
+  color: #e2e8f0 !important;
+}
+:root[data-theme="light"] .layout,
+:root[data-theme="light"] .layout-content,
+:root[data-theme="light"] .client-layout,
+:root[data-theme="light"] .client-content,
+:root[data-theme="light"] .ac-layout,
+:root[data-theme="light"] .ac-layout-content,
+:root[data-theme="light"] .lead-auditor-layout,
+:root[data-theme="light"] .auditor-layout,
+:root[data-theme="light"] .management-layout,
+:root[data-theme="light"] .client-coordinator-layout {
+  background: linear-gradient(135deg, #D6F4ED 0%, #e0e7ff 100%) !important;
+  color: #0f172a !important;
+}
+
+/* ── Universal "page bg" override for any inner page ── */
+:root[data-theme="dark"] .page,
+:root[data-theme="dark"] [class*="-page"]:not([class*="home-page"]):not([class*="login-page"]),
+:root[data-theme="dark"] [class*="Page"]:not([class*="LoginPage"]):not([class*="HomePage"]) {
+  background: transparent !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * BUTTON SAFETY — keep buttons readable but never override the role-coloured
+ * action buttons (.btn-primary, .btn-action, etc.)
+ * ────────────────────────────────────────────────────────────────────────*/
+
+/* Default unstyled buttons get a sane dark fallback */
+:root[data-theme="dark"] button {
+  /* fall back only — pages with specific classes/inline styles win */
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * COMMON UTILITY CLASSES — ensure consistent contrast in either mode
+ * ────────────────────────────────────────────────────────────────────────*/
+
+/* Headings always readable */
+:root[data-theme="light"] h1,
+:root[data-theme="light"] h2,
+:root[data-theme="light"] h3,
+:root[data-theme="light"] h4,
+:root[data-theme="light"] h5,
+:root[data-theme="light"] h6 {
+  color: #0f172a;
+}
+:root[data-theme="light"] p,
+:root[data-theme="light"] li,
+:root[data-theme="light"] label,
+:root[data-theme="light"] dd,
+:root[data-theme="light"] dt {
+  color: #334155;
+}
+
+/* ── Form fields ── */
+:root[data-theme="light"] input,
+:root[data-theme="light"] textarea,
+:root[data-theme="light"] select {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * EXTRA COVERAGE for common per-page classes that still had light bg
+ * ────────────────────────────────────────────────────────────────────────*/
+
+:root[data-theme="dark"] .toolbar,
+:root[data-theme="dark"] .actionbar,
+:root[data-theme="dark"] .toolbar-row,
+:root[data-theme="dark"] [class*="toolbar"]:not([class*="-icon"]) {
+  background: #0d0d0d !important;
+  border-color: rgba(255,255,255,0.08) !important;
+  color: #e2e8f0 !important;
+}
+
+:root[data-theme="dark"] .pagination,
+:root[data-theme="dark"] [class*="pagination"] {
+  background: transparent !important;
+  color: #cbd5e1 !important;
+}
+:root[data-theme="dark"] .pagination button,
+:root[data-theme="dark"] [class*="pagination"] button {
+  background: #141414 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * RECHARTS / CHARTJS — extra coverage for chart text legibility
+ * ────────────────────────────────────────────────────────────────────────*/
+
+/* ChartJS tooltip box (DOM, not canvas) */
+:root[data-theme="dark"] #chartjs-tooltip,
+:root[data-theme="dark"] [id*="chartjs"] {
+  background: #141414 !important;
+  color: #e2e8f0 !important;
+  border-color: rgba(255,255,255,0.12) !important;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+ * Make role chips, status badges retain their colour intent but bump contrast
+ * ────────────────────────────────────────────────────────────────────────*/
+
+/* Don't change badge backgrounds in dark mode at the very end */
+
+
+/* ═══════════════════════════════════════════════════════════════
+   Light modal override — ContactForm and any cs-light-modal card
+   Forces light backgrounds + dark text regardless of theme
+   ═══════════════════════════════════════════════════════════════ */
+.cs-light-modal,
+:root[data-theme="dark"] .cs-light-modal {
+  background: #ffffff !important;
+  color: #111827 !important;
+}
+
+/* Labels */
+:root[data-theme="dark"] .cs-light-modal label {
+  color: #374151 !important;
+}
+
+/* All inputs / textareas inside the modal */
+:root[data-theme="dark"] .cs-light-modal input,
+:root[data-theme="dark"] .cs-light-modal textarea,
+:root[data-theme="dark"] .cs-light-modal select {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: #E2E8F0 !important;
+}
+
+/* Placeholder text */
+:root[data-theme="dark"] .cs-light-modal input::placeholder,
+:root[data-theme="dark"] .cs-light-modal textarea::placeholder {
+  color: #9CA3AF !important;
+}
+
+/* Heading + body text */
+:root[data-theme="dark"] .cs-light-modal h2,
+:root[data-theme="dark"] .cs-light-modal h3,
+:root[data-theme="dark"] .cs-light-modal p {
+  color: #111827 !important;
+}
+
+:root[data-theme="dark"] .cs-light-modal .cs-contact-subtext {
+  color: #6B7280 !important;
+}
+
+/* Demo notice banner inside the modal */
+:root[data-theme="dark"] .cs-light-modal .cs-demo-notice {
+  background: #FFFBEB !important;
+  color: #92400E !important;
+  border-color: #FCD34D !important;
+}

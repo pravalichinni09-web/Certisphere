@@ -1,0 +1,2292 @@
+/* =============================================================
+   CertiSphere — public Home / landing page
+   ============================================================= */
+
+.cs-home {
+  min-height: 100vh;
+  background: #fbf8f1; /* warm cream */
+  color: #0f172a;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* ===== Header ===== */
+.cs-home-header {
+  background: #000; /* changed to black */
+  color: #fff;
+  border-bottom: 4px solid #f5c130;
+}
+.cs-home-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 14px 28px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 24px;
+}
+.cs-home-brand-plate {
+  background: #fff;
+  padding: 6px 14px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.cs-home-brand-plate img {
+  height: 36px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+.cs-home-nav {
+  display: flex;
+  justify-content: center;
+  gap: 28px;
+}
+.cs-home-nav a {
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  opacity: 0.92;
+  transition: opacity 0.12s;
+}
+.cs-home-nav a:hover { opacity: 1; color: #f5c130; }
+.cs-home-signin {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f5c130 0%, #d99a18 100%);
+  color: #0f172a;
+  border: none;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(245, 193, 48, 0.35);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cs-home-signin:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(245, 193, 48, 0.45);
+}
+
+/* ===== Hero ===== */
+.cs-home-hero {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 56px 28px 64px;
+}
+.cs-home-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: center;
+  min-height: 480px;
+}
+@media (max-width: 1024px) {
+  .cs-home-hero-grid { grid-template-columns: 1fr; gap: 56px; }
+}
+
+/* Tag pill */
+.cs-home-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  color: #475569;
+}
+.cs-home-tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.18);
+}
+
+/* Title */
+.cs-home-title {
+  margin: 22px 0 16px;
+  font-family: 'Georgia', 'Times New Roman', serif;
+  font-size: 58px;
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -1px;
+  color: #0f172a;
+}
+.cs-home-title em {
+  font-style: italic;
+  background: linear-gradient(135deg, #1f6bbf 0%, #c98a16 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+@media (max-width: 720px) {
+  .cs-home-title { font-size: 38px; }
+}
+
+.cs-home-sub {
+  font-size: 16px;
+  line-height: 1.65;
+  color: #475569;
+  margin-bottom: 24px;
+  max-width: 560px;
+}
+.cs-home-sub strong {
+  color: #0f172a;
+  font-weight: 700;
+}
+
+/* CTA buttons */
+.cs-home-cta-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+.cs-home-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+  text-decoration: none;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cs-home-cta:hover { transform: translateY(-2px); }
+.cs-home-cta-primary {
+  background: linear-gradient(135deg, #f5c130 0%, #d99a18 100%);
+  color: #0f172a;
+  box-shadow: 0 6px 16px rgba(245, 193, 48, 0.40);
+}
+.cs-home-cta-primary:hover { box-shadow: 0 10px 22px rgba(245, 193, 48, 0.50); }
+.cs-home-cta-secondary {
+  background: #fff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+.cs-home-cta-secondary:hover { border-color: #0a2a5f; }
+.cs-home-cta[aria-hidden="true"] {
+  background: transparent !important;
+  color: inherit !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  cursor: default !important;
+}
+.cs-home-cta[aria-hidden="true"]:hover {
+  transform: none !important;
+}
+
+/* Trust strip */
+.cs-home-trust {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 0;
+  margin: 0;
+}
+.cs-home-trust li {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #475569;
+  font-weight: 600;
+}
+.cs-home-trust svg { color: #16a34a; }
+
+/* ===== Orbit diagram ===== */
+.cs-home-orbit {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+}
+.cs-orbit-ring,
+.cs-orbit-ring-2 {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  border: 1.5px dashed #cbd5e1;
+  pointer-events: none;
+}
+.cs-orbit-ring-2 {
+  inset: 22%;
+  border-style: dashed;
+  border-color: rgba(15, 76, 92, 0.22);
+}
+
+/* Central hub tile (a stylised dashboard mock) */
+.cs-orbit-core {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 32%;
+  aspect-ratio: 1 / 0.7;
+  background: #0a2a5f;
+  color: #fff;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  box-shadow: 0 14px 30px rgba(15, 76, 92, 0.30);
+}
+.cs-orbit-core-bar {
+  background: rgba(245, 193, 48, 0.18);
+  color: #f5c130;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.cs-orbit-core-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 30%;
+}
+.cs-orbit-core-bars span {
+  flex: 1;
+  background: linear-gradient(180deg, #f5c130 0%, #d99a18 100%);
+  border-radius: 2px;
+}
+.cs-orbit-core-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  font-size: 10px;
+}
+.cs-orbit-core-stats div {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  padding: 2px 4px;
+  text-align: center;
+}
+.cs-orbit-core-stats strong { display: block; font-size: 13px; color: #f5c130; }
+.cs-orbit-core-stats span { color: rgba(255,255,255,0.7); }
+
+/* Orbiting module nodes */
+.cs-orbit-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  width: 92px;
+}
+.cs-orbit-node-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  display: grid;
+  place-items: center;
+  color: #0a2a5f;
+  box-shadow: 0 6px 14px rgba(15, 76, 92, 0.10);
+}
+.cs-orbit-node-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #475569;
+  text-align: center;
+  background: rgba(251, 248, 241, 0.85);
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* ===== Sections ===== */
+.cs-home-section {
+  margin-top: 64px;
+}
+.cs-home-section-title {
+  font-family: 'Georgia', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: #0f172a;
+  text-align: center;
+  margin: 0 0 8px;
+}
+.cs-home-section-sub {
+  text-align: center;
+  color: #64748b;
+  font-size: 15px;
+  max-width: 640px;
+  margin: 0 auto 28px;
+}
+
+/* Module cards */
+.cs-home-modules {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+.cs-mod-card {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+}
+.cs-mod-card:hover {
+  transform: translateY(-2px);
+  border-color: #f5c130;
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
+}
+.cs-mod-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: #ecfeff;
+  color: #0a2a5f;
+  display: grid;
+  place-items: center;
+  margin-bottom: 10px;
+}
+.cs-mod-card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #0f172a;
+}
+.cs-mod-card p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+  line-height: 1.55;
+}
+
+/* Benefits */
+.cs-home-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+.cs-benefit {
+  background: linear-gradient(135deg, #ffffff 0%, #ecfeff 100%);
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #0a2a5f;
+  border-radius: 12px;
+  padding: 18px;
+}
+.cs-benefit-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: #f5c130; color: #0f172a;
+  display: grid; place-items: center; margin-bottom: 10px;
+}
+.cs-benefit h3 {
+  margin: 0 0 4px; font-size: 15px; font-weight: 800; color: #0f172a;
+}
+.cs-benefit p {
+  margin: 0; font-size: 13px; color: #475569; line-height: 1.55;
+}
+
+/* ===== Mobile tweaks ===== */
+@media (max-width: 768px) {
+  .cs-home-header-inner {
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+  }
+  .cs-home-nav {
+    grid-column: 1 / -1;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: flex-start;
+  }
+  .cs-home-cta-band { padding: 22px; }
+  .cs-orbit-node-label { font-size: 10px; }
+}
+
+/* =============================================================
+   Pre-footer CTA band (light gradient)
+   ============================================================= */
+.cs-prefooter {
+  margin-top: 80px;
+  padding: 64px 28px;
+  background: linear-gradient(135deg, #ffffff 0%, #e0f2fe 50%, #fef3c7 100%);
+  border-top: 1px solid rgba(15, 23, 42, 0.06);
+  text-align: center;
+}
+.cs-prefooter-inner {
+  max-width: 760px;
+  margin: 0 auto;
+}
+.cs-prefooter-title {
+  font-family: 'Georgia', serif;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.15;
+  color: #0a2a5f;
+  margin: 0 0 14px;
+  letter-spacing: -0.5px;
+}
+.cs-prefooter-title em {
+  font-style: italic;
+  background: linear-gradient(135deg, #1f6bbf 0%, #c98a16 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+.cs-prefooter-sub {
+  margin: 0 auto 28px;
+  font-size: 16px;
+  color: #475569;
+  max-width: 600px;
+  line-height: 1.6;
+}
+.cs-prefooter-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #f5c130 0%, #d99a18 100%);
+  color: #0f172a;
+  border: none;
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  box-shadow: 0 10px 22px rgba(245, 193, 48, 0.40);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+.cs-prefooter-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(245, 193, 48, 0.50);
+}
+.cs-prefooter-note {
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: 700;
+}
+@media (max-width: 720px) {
+  .cs-prefooter-title { font-size: 26px; }
+  .cs-prefooter { padding: 44px 20px; }
+}
+
+/* =============================================================
+   Rich multi-column footer
+   ============================================================= */
+.cs-home-footer {
+  background: #000000;
+  color: #cbd5e1;
+  padding: 56px 28px 26px;
+}
+.cs-footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 40px;
+}
+@media (max-width: 1024px) {
+  .cs-footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+}
+@media (max-width: 600px) {
+  .cs-footer-grid { grid-template-columns: 1fr; gap: 28px; }
+}
+.cs-footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cs-footer-logo-plate {
+  background: #000000;
+  padding: 6px 14px;
+  border-radius: 10px;
+  width: fit-content;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.cs-footer-logo-plate img {
+  height: 34px;
+  width: auto;
+  display: block;
+  object-fit: contain;
+}
+.cs-footer-tagline {
+  color: rgba(255,255,255,0.78);
+  font-size: 13px;
+  line-height: 1.65;
+  max-width: 360px;
+  margin: 0;
+}
+.cs-footer-col {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.cs-footer-col h4 {
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: #f5c130;
+  margin: 0 0 10px;
+}
+.cs-footer-col a {
+  color: rgba(255,255,255,0.82);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.12s ease;
+}
+.cs-footer-col a:hover { color: #f5c130; }
+.cs-footer-static {
+  font-size: 13px;
+  color: rgba(255,255,255,0.62);
+  font-weight: 500;
+}
+.cs-footer-bottom {
+  max-width: 1200px;
+  margin: 36px auto 0;
+  padding-top: 18px;
+  border-top: 1px solid rgba(255,255,255,0.10);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.62);
+}
+.cs-footer-slogan {
+  font-style: italic;
+  letter-spacing: 0.2px;
+}
+
+/* =============================================================
+   CertiSphere — Premium scroll-reveal animations
+   ============================================================= */
+
+/* Base reveal: hidden then transitions in once .cs-revealed lands. */
+.cs-reveal {
+  opacity: 0;
+  will-change: opacity, transform;
+  transition:
+    opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cs-reveal.cs-revealed { opacity: 1; transform: none; }
+
+/* Variant: fadeInUp */
+.cs-reveal-up        { transform: translateY(28px); }
+
+/* Variant: zoom-in */
+.cs-reveal-zoom      { transform: scale(0.86); }
+
+/* Variant: scale + fade */
+.cs-reveal-scale     { transform: scale(0.94) translateY(12px); }
+
+/* Variant: slide-in left / right */
+.cs-reveal-left      { transform: translateX(-36px); }
+.cs-reveal-right     { transform: translateX(36px); }
+
+/* If the user prefers reduced motion, reveal instantly with no transform. */
+@media (prefers-reduced-motion: reduce) {
+  .cs-reveal { transition: none; transform: none !important; opacity: 1 !important; }
+}
+
+/* =============================================================
+   Premium hover lift for cards + buttons
+   ============================================================= */
+.cs-mod-card,
+.cs-benefit,
+.cs-home-cta,
+.cs-prefooter-cta,
+.cs-home-signin {
+  will-change: transform, box-shadow;
+}
+.cs-mod-card:hover {
+  transform: translateY(-6px) scale(1.015);
+  box-shadow: 0 22px 44px rgba(10, 42, 95, 0.16), 0 6px 14px rgba(245, 193, 48, 0.18);
+  border-color: var(--cs-gold, #f5c130);
+}
+.cs-benefit:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(10, 42, 95, 0.14);
+}
+
+/* =============================================================
+   Infinite clockwise orbit rotation for the module ring
+   ============================================================= */
+.cs-orbit-ring-track {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* nodes themselves still receive events via inner inverse */
+  animation: cs-orbit-rotate 60s linear infinite;
+  transform-origin: 50% 50%;
+}
+.cs-orbit-ring-track .cs-orbit-node {
+  pointer-events: auto;
+}
+/* Counter-rotation keeps the icon + label upright while the track spins */
+.cs-orbit-node-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: cs-orbit-counter-rotate 60s linear infinite;
+  transform-origin: 50% 50%;
+}
+/* Slow, smooth animation pause when a node is hovered */
+.cs-orbit-ring-track:hover,
+.cs-orbit-ring-track:hover .cs-orbit-node-inner {
+  animation-play-state: paused;
+}
+
+@keyframes cs-orbit-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes cs-orbit-counter-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+/* Slow gentle pulse on the central core to draw the eye */
+.cs-orbit-core {
+  animation: cs-core-pulse 5s ease-in-out infinite;
+}
+@keyframes cs-core-pulse {
+  0%, 100% { box-shadow: 0 14px 30px rgba(10, 42, 95, 0.30); }
+  50%      { box-shadow: 0 20px 44px rgba(10, 42, 95, 0.42), 0 0 0 12px rgba(245, 193, 48, 0.10); }
+}
+
+/* Premium hover effect on individual orbit icon discs */
+.cs-orbit-node-icon {
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.22s ease;
+}
+.cs-orbit-node:hover .cs-orbit-node-icon {
+  transform: scale(1.18);
+  box-shadow: 0 10px 24px rgba(10, 42, 95, 0.22), 0 0 0 4px rgba(245, 193, 48, 0.18);
+  color: var(--cs-gold, #f5c130);
+}
+.cs-orbit-node-label {
+  transition: color 0.22s ease, transform 0.22s ease;
+}
+.cs-orbit-node:hover .cs-orbit-node-label {
+  color: var(--cs-navy, #0a2a5f);
+  transform: scale(1.04);
+}
+
+/* Respect reduced-motion preference for orbit too */
+@media (prefers-reduced-motion: reduce) {
+  .cs-orbit-ring-track,
+  .cs-orbit-node-inner,
+  .cs-orbit-core { animation: none; }
+}
+
+/* CTA pulse — subtle glow that draws the eye to "Get Started" */
+.cs-home-cta-primary,
+.cs-prefooter-cta,
+.cs-home-signin {
+  position: relative;
+  isolation: isolate;
+}
+.cs-home-cta-primary::after,
+.cs-prefooter-cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 0 rgba(245, 193, 48, 0.55);
+  animation: cs-cta-pulse-ring 2.8s ease-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+@keyframes cs-cta-pulse-ring {
+  0%   { box-shadow: 0 0 0 0   rgba(245, 193, 48, 0.55); }
+  70%  { box-shadow: 0 0 0 16px rgba(245, 193, 48, 0);   }
+  100% { box-shadow: 0 0 0 0   rgba(245, 193, 48, 0);   }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-home-cta-primary::after,
+  .cs-prefooter-cta::after { animation: none; }
+}
+
+/* =============================================================
+   THEME OVERRIDE — Dark blue background + gold/white type
+   ============================================================= */
+[data-theme="dark"] .cs-home {
+  background: #070F26 !important;
+  color: #ffffff;
+}
+
+/* Hero text directly on the dark background */
+[data-theme="dark"] .cs-home-title { color: #ffffff !important; }
+[data-theme="dark"] .cs-home-title em {
+  color: inherit !important;
+  font-style: italic;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+  -webkit-text-fill-color: inherit !important;
+}
+[data-theme="dark"] .cs-home-sub {
+  color: rgba(255, 255, 255, 0.86) !important;
+}
+[data-theme="dark"] .cs-home-sub strong {
+  color: #FFD700 !important;
+  font-weight: 700;
+}
+
+/* Tag pill on dark background */
+[data-theme="dark"] .cs-home-tag {
+  background: rgba(255, 255, 255, 0.10) !important;
+  border-color: rgba(255, 215, 0, 0.45) !important;
+  color: #FFD700 !important;
+  backdrop-filter: blur(4px);
+}
+[data-theme="dark"] .cs-home-tag-dot { background: #FFD700 !important; box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.20) !important; }
+
+/* CTA secondary (outlined Explore Modules) needs to read on dark */
+[data-theme="dark"] .cs-home-cta-secondary {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+  border-color: rgba(255, 215, 0, 0.55) !important;
+}
+[data-theme="dark"] .cs-home-cta-secondary:hover { border-color: #FFD700 !important; background: rgba(255, 215, 0, 0.10) !important; }
+
+/* Trust list */
+[data-theme="dark"] .cs-home-trust li { color: #ffffff !important; font-weight: 600; }
+[data-theme="dark"] .cs-home-trust svg { color: #FFD700 !important; }
+
+/* Section titles + subtitles outside cards */
+[data-theme="dark"] .cs-home-section-title { color: #ffffff !important; }
+[data-theme="dark"] .cs-home-section-sub   { color: rgba(255, 255, 255, 0.78) !important; }
+
+/* Orbit support — keep central dark tile; lighten dashed rings against dark blue */
+[data-theme="dark"] .cs-orbit-ring   { border-color: rgba(255, 255, 255, 0.30) !important; }
+[data-theme="dark"] .cs-orbit-ring-2 { border-color: rgba(255, 215, 0, 0.30) !important; }
+[data-theme="dark"] .cs-orbit-node-label {
+  background: rgba(255, 255, 255, 0.10) !important;
+  color: #ffffff !important;
+  backdrop-filter: blur(4px);
+}
+
+/* Pre-footer band → match dark-blue theme */
+[data-theme="dark"] .cs-prefooter {
+  background: linear-gradient(135deg, #070F26 0%, #070F26 60%, #0a2a5f 100%) !important;
+  border-top: 1px solid rgba(255, 215, 0, 0.20) !important;
+}
+[data-theme="dark"] .cs-prefooter-title { color: #ffffff !important; }
+[data-theme="dark"] .cs-prefooter-title em {
+  background: linear-gradient(135deg, #ffffff 0%, #FFD700 100%);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+[data-theme="dark"] .cs-prefooter-sub { color: rgba(255, 255, 255, 0.82) !important; }
+
+/* =============================================================
+   POP TEXT — dramatic entrance + continuous glow on hero title
+   "Structured Certification Operations, Delivered Globally"
+   ============================================================= */
+
+/* Override the generic .cs-reveal transform for the hero title so it
+   uses a richer pop-in animation rather than the small slide-up. */
+.cs-home-title.cs-reveal {
+  opacity: 0;
+  transform: scale(0.6) translateY(36px);
+  filter: blur(8px);
+}
+.cs-home-title.cs-reveal.cs-revealed {
+  animation: cs-pop-in 1.05s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+             cs-pop-glow 4.5s ease-in-out 1.1s infinite;
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+@keyframes cs-pop-in {
+  0%   { opacity: 0; transform: scale(0.6)  translateY(36px); filter: blur(8px); }
+  60%  { opacity: 1; transform: scale(1.08) translateY(0);    filter: blur(0); }
+  78%  {            transform: scale(0.98); }
+  100% {            transform: scale(1); }
+}
+
+/* Continuous subtle gold glow halo so the title stays alive on the dark bg */
+@keyframes cs-pop-glow {
+  0%, 100% {
+    text-shadow:
+      0 0 0   rgba(255, 215, 0, 0),
+      0 4px 22px rgba(255, 215, 0, 0.22);
+  }
+  50% {
+    text-shadow:
+      0 0 28px rgba(255, 215, 0, 0.55),
+      0 4px 38px rgba(255, 215, 0, 0.45);
+  }
+}
+
+/* Shimmer sweep across the title every few seconds */
+.cs-home-title.cs-revealed {
+  position: relative;
+  display: inline-block;
+}
+.cs-home-title.cs-revealed::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -25%;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 70%);
+  transform: skewX(-12deg);
+  animation: cs-title-shimmer 6.5s ease-in-out 1.6s infinite;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+@keyframes cs-title-shimmer {
+  0%   { transform: translateX(0)    skewX(-12deg); opacity: 0; }
+  20%  { opacity: 0.9; }
+  55%  { transform: translateX(420%) skewX(-12deg); opacity: 0; }
+  100% { transform: translateX(420%) skewX(-12deg); opacity: 0; }
+}
+
+/* Honour reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  .cs-home-title.cs-reveal,
+  .cs-home-title.cs-reveal.cs-revealed,
+  .cs-home-title.cs-revealed::after {
+    animation: none !important;
+    transform: none !important;
+    filter: none !important;
+    text-shadow: none !important;
+    opacity: 1 !important;
+  }
+}
+
+/* =============================================================
+   Floating background bubbles (decorative)
+   ============================================================= */
+.cs-bubble-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+}
+.cs-bubble {
+  position: absolute;
+  bottom: -120px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 215, 0, 0.10) 50%,
+    rgba(31, 107, 191, 0.06) 80%,
+    transparent 100%);
+  backdrop-filter: blur(1px);
+  opacity: 0;
+  animation-name: cs-bubble-rise;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+@keyframes cs-bubble-rise {
+  0%   { transform: translateY(0)      scale(0.9); opacity: 0; }
+  10%  {                                              opacity: 0.9; }
+  90%  {                                              opacity: 0.6; }
+  100% { transform: translateY(-115vh) scale(1.2); opacity: 0; }
+}
+/* Six size+position variants — cycled in JSX modulo 6 */
+.cs-bubble-0 { width: 22px;  height: 22px;  left: 6%;   animation-duration: 18s; animation-delay: 0s;   }
+.cs-bubble-1 { width: 36px;  height: 36px;  left: 22%;  animation-duration: 22s; animation-delay: 3s;   }
+.cs-bubble-2 { width: 14px;  height: 14px;  left: 36%;  animation-duration: 14s; animation-delay: 1s;   }
+.cs-bubble-3 { width: 56px;  height: 56px;  left: 55%;  animation-duration: 26s; animation-delay: 5s;   }
+.cs-bubble-4 { width: 28px;  height: 28px;  left: 70%;  animation-duration: 20s; animation-delay: 2.5s; }
+.cs-bubble-5 { width: 18px;  height: 18px;  left: 88%;  animation-duration: 16s; animation-delay: 4s;   }
+/* The 18 spans get spread across the screen by also adding horizontal drift */
+.cs-bubble:nth-child(7n+1) { left: 12%; }
+.cs-bubble:nth-child(7n+2) { left: 28%; }
+.cs-bubble:nth-child(7n+3) { left: 44%; }
+.cs-bubble:nth-child(7n+4) { left: 60%; }
+.cs-bubble:nth-child(7n+5) { left: 78%; }
+.cs-bubble:nth-child(7n+6) { left: 92%; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-bubble { display: none; }
+}
+
+/* =============================================================
+   Transparent brand plates across Home page (header, footer)
+   ============================================================= */
+.cs-home-brand-plate,
+.cs-footer-logo-plate {
+  background: transparent !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+.cs-home-brand-plate img,
+.cs-footer-logo-plate img {
+  filter: drop-shadow(0 2px 6px rgba(15, 23, 42, 0.18));
+}
+
+/* =============================================================
+   BENTO REDESIGN — modern asymmetric grid layout
+   ============================================================= */
+.cs-home-bento .cs-bento-wrap {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 28px 24px 48px;
+}
+
+/* Country flag marquee strip */
+.bento-marquee {
+  background: linear-gradient(90deg,
+    rgba(7, 15, 38, 0) 0%,
+    rgba(255, 215, 0, 0.08) 30%,
+    rgba(255, 215, 0, 0.08) 70%,
+    rgba(7, 15, 38, 0) 100%);
+  border-top: 1px solid rgba(255, 215, 0, 0.20);
+  border-bottom: 1px solid rgba(255, 215, 0, 0.20);
+  overflow: hidden;
+  padding: 10px 0;
+  position: relative;
+  z-index: 1;
+}
+.bento-marquee-track {
+  display: inline-flex;
+  gap: 36px;
+  animation: bento-marquee 40s linear infinite;
+  white-space: nowrap;
+}
+.bento-marquee-item {
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.4px;
+}
+@keyframes bento-marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-33.33%); }
+}
+
+/* ============== Hero Bento Grid ============== */
+.cs-bento-hero {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: auto auto auto;
+  grid-template-areas:
+    "hero stats"
+    "hero workflow"
+    "hero pulse";
+  gap: 16px;
+  margin-top: 28px;
+}
+@media (max-width: 1024px) {
+  .cs-bento-hero {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "hero"
+      "stats"
+      "workflow"
+      "pulse";
+  }
+}
+
+/* Base bento card style */
+.bento-card {
+  position: relative;
+  background: linear-gradient(160deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 215, 0, 0.03) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.18);
+  border-radius: 20px;
+  padding: 24px;
+  overflow: hidden;
+  backdrop-filter: blur(6px);
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+  z-index: 1;
+}
+.bento-card:hover {
+  border-color: rgba(255, 215, 0, 0.42);
+  box-shadow:
+    0 18px 40px rgba(0, 0, 0, 0.40),
+    0 0 0 1px rgba(255, 215, 0, 0.25) inset;
+}
+.bento-card-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  background: rgba(255, 215, 0, 0.14);
+  border: 1px solid rgba(255, 215, 0, 0.32);
+  border-radius: 999px;
+  color: #FFD700;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+
+/* Big hero text card with mouse-follow spotlight */
+.bento-hero-text {
+  grid-area: hero;
+  padding: 40px 36px !important;
+  --spot-x: 50%;
+  --spot-y: 50%;
+}
+.bento-hero-text::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at var(--spot-x) var(--spot-y),
+    rgba(255, 215, 0, 0.16) 0%,
+    rgba(31, 107, 191, 0.10) 30%,
+    transparent 60%);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+  pointer-events: none;
+  border-radius: inherit;
+}
+.bento-hero-text:hover::before { opacity: 1; }
+
+/* Stats card */
+.bento-stats-card { grid-area: stats; }
+.bento-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.bento-stat strong {
+  display: block;
+  font-family: 'Georgia', serif;
+  font-size: 36px;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 0%, #FFD700 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  line-height: 1;
+}
+.bento-stat span {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.62);
+  letter-spacing: 0.3px;
+}
+
+/* Workflow visualization card */
+.bento-workflow-card { grid-area: workflow; }
+.bento-workflow-vis {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.bento-workflow-ring {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: 2px dashed rgba(255, 215, 0, 0.45);
+  flex-shrink: 0;
+  animation: bento-ring-spin 18s linear infinite;
+}
+.bento-workflow-dot {
+  position: absolute;
+  top: -5px; left: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #FFD700;
+  transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.8);
+}
+@keyframes bento-ring-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.bento-workflow-stages {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  flex: 1;
+}
+.bento-workflow-stages span {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.78);
+  padding: 4px 6px;
+  background: rgba(255, 215, 0, 0.08);
+  border-radius: 6px;
+  text-align: center;
+  letter-spacing: 0.2px;
+}
+
+/* Pulse / operating worldwide card */
+.bento-pulse-card { grid-area: pulse; }
+.bento-pulse {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.bento-pulse-flag {
+  font-size: 36px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+}
+.bento-pulse-meta strong {
+  display: block;
+  font-size: 18px;
+  color: #FFD700;
+  font-weight: 800;
+}
+.bento-pulse-meta span {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.62);
+  margin-top: 2px;
+}
+.bento-pulse-ring {
+  position: absolute;
+  top: 24px; right: 24px;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: #16a34a;
+  box-shadow: 0 0 0 0 rgba(22, 163, 74, 0.55);
+  animation: bento-live-pulse 2.5s ease-out infinite;
+}
+@keyframes bento-live-pulse {
+  0%   { box-shadow: 0 0 0 0   rgba(22, 163, 74, 0.55); }
+  70%  { box-shadow: 0 0 0 14px rgba(22, 163, 74, 0);    }
+  100% { box-shadow: 0 0 0 0   rgba(22, 163, 74, 0);    }
+}
+
+/* ============== Section heading ============== */
+.cs-bento-section { margin-top: 48px; }
+.cs-bento-section-head { text-align: center; margin-bottom: 22px; }
+.cs-bento-section-head .cs-home-tag { margin-bottom: 12px; }
+
+/* ============== Modules Bento grid ============== */
+.cs-bento-modules {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 1024px) { .cs-bento-modules { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .cs-bento-modules { grid-template-columns: 1fr; } }
+.bento-mod {
+  padding: 22px;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.bento-mod:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(-2deg);
+}
+.bento-mod-featured {
+  /* spans 2 columns on wider viewports */
+  grid-column: span 2;
+  background: linear-gradient(160deg,
+    rgba(255, 215, 0, 0.10) 0%,
+    rgba(31, 107, 191, 0.06) 100%);
+}
+.bento-mod-featured::before {
+  /* Animated gradient border on featured cards */
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 20px;
+  padding: 1px;
+  background: linear-gradient(115deg,
+    rgba(255, 215, 0, 0.55) 0%,
+    rgba(31, 107, 191, 0.30) 35%,
+    rgba(255, 215, 0, 0.55) 70%,
+    rgba(31, 107, 191, 0.30) 100%);
+  background-size: 200% 200%;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: bento-border-shine 8s linear infinite;
+  pointer-events: none;
+}
+@keyframes bento-border-shine {
+  from { background-position: 0% 0%; }
+  to   { background-position: 200% 0%; }
+}
+@media (max-width: 600px) {
+  .bento-mod-featured { grid-column: span 1; }
+}
+.bento-mod-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.20), rgba(31, 107, 191, 0.18));
+  border: 1px solid rgba(255, 215, 0, 0.30);
+  display: grid;
+  place-items: center;
+  color: #FFD700;
+  margin-bottom: 12px;
+}
+.bento-mod h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #FFD700;
+}
+.bento-mod p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+.bento-mod-arrow {
+  position: absolute;
+  bottom: 14px; right: 16px;
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.10);
+  color: #FFD700;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.bento-mod:hover .bento-mod-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* ============== Benefits Bento grid ============== */
+.cs-bento-benefits {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 1024px) { .cs-bento-benefits { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px)  { .cs-bento-benefits { grid-template-columns: 1fr; } }
+.bento-benefit { padding: 22px; }
+.bento-benefit-icon {
+  width: 38px; height: 38px;
+  border-radius: 10px;
+  background: #FFD700;
+  color: #070F26;
+  display: grid; place-items: center;
+  margin-bottom: 12px;
+}
+.bento-benefit h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 800;
+  color: #FFD700;
+}
+.bento-benefit p {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Override the existing .cs-home-section-title color so it pops in Bento */
+.cs-bento-section .cs-home-section-title {
+  font-size: 30px !important;
+}
+
+/* Mobile tweaks */
+@media (max-width: 720px) {
+  .bento-hero-text { padding: 28px 22px !important; }
+  .bento-stats-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* =============================================================
+   Brand showcase band — featured CertiSphere logo between hero
+   bento and modules grid (fills the "empty" mid-page space)
+   ============================================================= */
+.cs-brand-showcase {
+  margin: 48px auto 12px;
+  display: flex;
+  justify-content: center;
+}
+.cs-brand-showcase-inner {
+  position: relative;
+  padding: 32px 56px;
+  border-radius: 24px;
+  background: linear-gradient(135deg,
+    rgba(255, 215, 0, 0.06) 0%,
+    rgba(31, 107, 191, 0.08) 50%,
+    rgba(255, 215, 0, 0.06) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  overflow: hidden;
+  isolation: isolate;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+}
+.cs-brand-showcase-glow {
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  background: radial-gradient(ellipse at center,
+    rgba(255, 215, 0, 0.30) 0%,
+    rgba(31, 107, 191, 0.20) 35%,
+    transparent 70%);
+  filter: blur(40px);
+  animation: cs-brand-glow-pulse 6s ease-in-out infinite;
+}
+@keyframes cs-brand-glow-pulse {
+  0%, 100% { opacity: 0.75; transform: scale(1);    }
+  50%      { opacity: 1.0;  transform: scale(1.08); }
+}
+.cs-brand-showcase-img {
+  max-width: 520px;
+  width: 100%;
+  height: auto;
+  display: block;
+  filter:
+    drop-shadow(0 14px 30px rgba(0, 0, 0, 0.55))
+    drop-shadow(0 0 16px rgba(255, 215, 0, 0.30));
+  animation: cs-brand-bob 6s ease-in-out infinite;
+}
+@keyframes cs-brand-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.cs-brand-showcase-tag {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFD700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+/* Diagonal shimmer sweep */
+.cs-brand-showcase-inner::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -30%;
+  width: 30%;
+  height: 100%;
+  background: linear-gradient(115deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 70%);
+  transform: skewX(-12deg);
+  animation: cs-brand-shimmer 7s ease-in-out infinite;
+  pointer-events: none;
+}
+@keyframes cs-brand-shimmer {
+  0%   { transform: translateX(0)    skewX(-12deg); opacity: 0; }
+  20%  { opacity: 0.8; }
+  55%  { transform: translateX(450%) skewX(-12deg); opacity: 0; }
+  100% { transform: translateX(450%) skewX(-12deg); opacity: 0; }
+}
+
+@media (max-width: 720px) {
+  .cs-brand-showcase-inner { padding: 22px 28px; }
+  .cs-brand-showcase-img   { max-width: 340px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-brand-showcase-img,
+  .cs-brand-showcase-glow,
+  .cs-brand-showcase-inner::after { animation: none !important; }
+}
+
+/* =============================================================
+   Smooth scroll for in-page anchors + reset for module/benefit buttons
+   ============================================================= */
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+
+.bento-mod,
+.bento-benefit {
+  /* Make the <button> versions look identical to the original <div>/<article> cards */
+  appearance: none;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  width: 100%;
+  cursor: pointer;
+}
+.bento-mod:focus-visible,
+.bento-benefit:focus-visible {
+  outline: 2px solid #FFD700;
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* =============================================================
+   Logo icon centered inside the workflow ring
+   ============================================================= */
+.bento-workflow-ring {
+  /* slightly bigger so the icon has breathing room */
+  width: 72px !important;
+  height: 72px !important;
+  position: relative;
+}
+.bento-workflow-icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  /* Counter-rotate so the icon stays upright while the ring spins */
+  animation: bento-ring-counter 18s linear infinite;
+}
+.bento-workflow-icon > span {
+  /* Drop the white background from CertiSphereLogo so it blends with the dark card */
+  background: transparent !important;
+}
+@keyframes bento-ring-counter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bento-workflow-icon { animation: none; }
+}
+
+/* =============================================================
+   Demo Tour badge on module cards + classic polish
+   ============================================================= */
+.bento-mod-demo {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 215, 0, 0.10);
+  border: 1px solid rgba(255, 215, 0, 0.32);
+  color: #FFD700;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.bento-mod:hover .bento-mod-demo {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Classic section divider between bento sections */
+.cs-bento-section + .cs-bento-section {
+  position: relative;
+}
+.cs-bento-section + .cs-bento-section::before {
+  content: '';
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 215, 0, 0.45), transparent);
+}
+
+/* Classic micro-decoration on section heads */
+.cs-bento-section-head .cs-home-section-title {
+  position: relative;
+  display: inline-block;
+}
+.cs-bento-section-head .cs-home-section-title::after {
+  content: '';
+  display: block;
+  margin: 14px auto 0;
+  width: 64px;
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent,
+    #FFD700 30%,
+    #FFD700 70%,
+    transparent);
+}
+
+/* Refined refinement: bento mod hover lift goes a bit further on click */
+.bento-mod:active { transform: translateY(-2px) scale(0.99); }
+
+/* =============================================================
+   Orbital triangle diagram (replaces 3-card right column)
+   ============================================================= */
+.bento-orbital {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: stretch;
+  min-height: 480px;
+  padding: 20px !important;
+}
+.cs-orbital-diagram {
+  position: relative;
+  width: 100%;
+  flex: 1;
+  aspect-ratio: 1 / 1;
+  margin: 0 auto;
+  max-width: 460px;
+  display: grid;
+  place-items: center;
+}
+
+/* Outer dashed container circle */
+.cs-orbital-outer {
+  position: absolute;
+  inset: 4%;
+  border: 1.5px dashed rgba(255, 215, 0, 0.32);
+  border-radius: 50%;
+  box-shadow: inset 0 0 60px rgba(31, 107, 191, 0.18), 0 0 30px rgba(0,0,0,0.30);
+  background:
+    radial-gradient(ellipse at center,
+      rgba(31, 107, 191, 0.10) 0%,
+      rgba(255, 215, 0, 0.04) 60%,
+      transparent 90%);
+}
+
+/* Rotating ring — holds satellites + connecting lines */
+.cs-orbital-ring {
+  position: absolute;
+  inset: 0;
+  animation: cs-orbital-spin 28s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes cs-orbital-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.cs-orbital-ring:hover { animation-play-state: paused; }
+
+/* Connecting lines (SVG sits flat in the ring so they rotate with it) */
+.cs-orbital-lines {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Satellite node */
+.cs-orbital-node {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+/* Counter-rotate the inner content so icons + labels stay upright */
+.cs-orbital-node-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  animation: cs-orbital-counter 28s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes cs-orbital-counter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.cs-orbital-ring:hover .cs-orbital-node-inner { animation-play-state: paused; }
+
+.cs-orbital-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.22), rgba(31, 107, 191, 0.22));
+  border: 1.5px solid rgba(255, 215, 0, 0.55);
+  display: grid;
+  place-items: center;
+  color: #FFD700;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.40);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.cs-orbital-node:hover .cs-orbital-circle {
+  transform: scale(1.12);
+  box-shadow: 0 0 0 4px rgba(255, 215, 0, 0.18), 0 8px 18px rgba(0, 0, 0, 0.55);
+}
+.cs-orbital-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.86);
+  text-align: center;
+  background: rgba(7, 15, 38, 0.65);
+  padding: 2px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+/* Central triangle with logo (NOT rotated — stays fixed in the middle) */
+.cs-orbital-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  z-index: 3;
+}
+.cs-orbital-triangle {
+  position: relative;
+  width: 130px;
+  height: 113px;       /* equilateral-ish triangle bounding box */
+  display: grid;
+  place-items: center;
+  /* Triangle shape via clip-path */
+  background:
+    linear-gradient(160deg, rgba(255, 215, 0, 0.20) 0%, rgba(31, 107, 191, 0.20) 100%);
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  filter:
+    drop-shadow(0 0 0 #FFD700)
+    drop-shadow(0 8px 18px rgba(0,0,0,0.55));
+  animation: cs-tri-pulse 4s ease-in-out infinite;
+}
+.cs-orbital-triangle::before {
+  /* Gold border emulated by a second clipped element behind */
+  content: '';
+  position: absolute;
+  inset: 0;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(135deg, #FFD700 0%, #c98a16 50%, #FFD700 100%);
+  z-index: -1;
+  padding: 2px;
+}
+.cs-orbital-triangle::after {
+  /* Inner darker fill so the border reads */
+  content: '';
+  position: absolute;
+  inset: 3px;
+  clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+  background: linear-gradient(160deg, rgba(7, 15, 38, 0.85) 0%, rgba(10, 42, 95, 0.85) 100%);
+  z-index: -1;
+}
+@keyframes cs-tri-pulse {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  /* Note: the .cs-orbital-center handles the centering transform.
+     The triangle itself just pulses subtly via box-shadow brightness. */
+}
+.cs-orbital-logo {
+  position: relative;
+  z-index: 2;
+  width: 70%;
+  height: auto;
+  max-width: 86px;
+  margin: 0;
+  place-self: center;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,0.6));
+}
+
+/* When the orbital card is full width on smaller screens */
+@media (max-width: 1024px) {
+  .bento-orbital { min-height: 400px; }
+}
+@media (max-width: 480px) {
+  .cs-orbital-diagram { max-width: 320px; }
+  .cs-orbital-triangle { width: 90px; height: 78px; }
+  .cs-orbital-circle { width: 36px; height: 36px; }
+  .cs-orbital-label { font-size: 9px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-orbital-ring,
+  .cs-orbital-node-inner { animation: none !important; }
+}
+
+/* Hero grid: when the right column is the orbital card alone, let it span
+   the full right column height instead of three rows. */
+.cs-bento-hero {
+  grid-template-areas: "hero orbital" !important;
+  grid-template-rows: auto !important;
+}
+.bento-orbital { grid-area: orbital; }
+@media (max-width: 1024px) {
+  .cs-bento-hero {
+    grid-template-columns: 1fr !important;
+    grid-template-areas: "hero" "orbital" !important;
+  }
+}
+
+/* =============================================================
+   Orbital diagram refinements — 8 satellites + centered triangle
+   ============================================================= */
+
+/* Slightly larger diagram so 8 satellites + labels never crowd each other */
+.cs-orbital-diagram {
+  max-width: 500px !important;
+}
+
+/* Triangle: bigger, centered, more breathing room */
+.cs-orbital-triangle {
+  width: 160px !important;
+  height: 140px !important;
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6))
+          drop-shadow(0 0 22px rgba(255, 215, 0, 0.32)) !important;
+}
+.cs-orbital-triangle::before {
+  background: linear-gradient(135deg, #FFD700 0%, #b07a0d 45%, #FFD700 100%) !important;
+}
+.cs-orbital-triangle::after {
+  inset: 4px !important;
+  background: linear-gradient(160deg, rgba(7, 15, 38, 0.92) 0%, rgba(10, 42, 95, 0.88) 100%) !important;
+}
+
+/* Logo sits cleanly inside the visible interior of the triangle */
+.cs-orbital-logo {
+  width: 78% !important;
+  max-width: 110px !important;
+  margin: 0 !important;
+  place-self: center;
+}
+
+/* Satellite circles tightened so 8 fit without label collision */
+.cs-orbital-node-inner {
+  max-width: 88px;
+}
+.cs-orbital-circle {
+  width: 40px !important;
+  height: 40px !important;
+}
+.cs-orbital-label {
+  font-size: 9.5px !important;
+  padding: 2px 6px !important;
+  border: 1px solid rgba(255, 215, 0, 0.30);
+}
+
+/* Outer ring — push the dashed border outward so satellites sit inside it cleanly */
+.cs-orbital-outer {
+  inset: 2% !important;
+  border-color: rgba(255, 215, 0, 0.38) !important;
+}
+
+/* Subtle pulsing on the triangle */
+.cs-orbital-triangle {
+  animation: cs-tri-glow 4s ease-in-out infinite !important;
+}
+@keyframes cs-tri-glow {
+  0%, 100% {
+    filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.6))
+            drop-shadow(0 0 22px rgba(255, 215, 0, 0.32));
+  }
+  50% {
+    filter: drop-shadow(0 14px 30px rgba(0, 0, 0, 0.7))
+            drop-shadow(0 0 36px rgba(255, 215, 0, 0.55));
+  }
+}
+
+/* Make the card itself taller so the bigger diagram is comfortable */
+.bento-orbital {
+  min-height: 540px !important;
+}
+@media (max-width: 1024px) {
+  .bento-orbital { min-height: 440px !important; }
+}
+@media (max-width: 480px) {
+  .cs-orbital-diagram { max-width: 340px !important; }
+  .cs-orbital-triangle { width: 110px !important; height: 96px !important; }
+  .cs-orbital-circle { width: 32px !important; height: 32px !important; }
+  .cs-orbital-label { font-size: 8.5px !important; }
+}
+
+/* =============================================================
+   Force orbital ring to be a PERFECT CIRCLE (was rendering oval
+   because flex:1 was stretching the diagram taller than its
+   max-width). Also rebalance the hero so the orbital card uses
+   the available side space.
+   ============================================================= */
+
+/* Rebalance the hero columns — give the right column equal weight */
+.cs-bento-hero {
+  grid-template-columns: 1.2fr 1fr !important;
+  gap: 18px !important;
+  align-items: stretch !important;
+}
+
+/* Stop the card from forcing the diagram to flex/stretch */
+.bento-orbital {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;     /* center the diagram horizontally */
+  justify-content: flex-start !important;
+  min-height: auto !important;
+  padding: 22px !important;
+  gap: 14px !important;
+}
+
+/* Square diagram container — never gets stretched */
+.cs-orbital-diagram {
+  width: min(500px, 100%) !important;
+  height: min(500px, 100%) !important;
+  aspect-ratio: 1 / 1 !important;
+  flex: 0 0 auto !important;
+  max-width: 500px !important;
+  margin: 0 auto !important;
+}
+
+/* Explicit square outer ring → perfect circle */
+.cs-orbital-outer {
+  top: 0 !important;
+  left: 0 !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50% !important;
+  border-width: 2px !important;
+  /* Add an inner gradient hint to make the circle clearly read */
+  background:
+    radial-gradient(circle at center,
+      rgba(31, 107, 191, 0.12) 0%,
+      rgba(255, 215, 0, 0.04) 55%,
+      transparent 92%) !important;
+  box-shadow:
+    inset 0 0 60px rgba(31, 107, 191, 0.22),
+    0 0 40px rgba(0, 0, 0, 0.40) !important;
+}
+
+/* Same for the rotating ring overlay (which carries the satellites + lines) */
+.cs-orbital-ring {
+  top: 0 !important;
+  left: 0 !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  border-radius: 50%;
+}
+
+/* Make the SVG lines fill the full square so endpoints land on the ring */
+.cs-orbital-lines {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Triangle stays centered with proper breathing room */
+.cs-orbital-center {
+  width: 100%;
+  height: 100%;
+  display: grid !important;
+  place-items: center !important;
+}
+
+/* Side spacing — make sure the bento section uses the full available width */
+.cs-bento-wrap {
+  max-width: 1280px !important;
+  padding: 28px 20px 48px !important;
+}
+
+/* On narrow screens, stack hero columns and center everything */
+@media (max-width: 1024px) {
+  .cs-bento-hero { grid-template-columns: 1fr !important; }
+  .cs-orbital-diagram {
+    width: min(440px, 100%) !important;
+    height: min(440px, 100%) !important;
+  }
+}
+@media (max-width: 480px) {
+  .cs-orbital-diagram {
+    width: min(320px, 100%) !important;
+    height: min(320px, 100%) !important;
+  }
+}
+
+/* =============================================================
+   About Us — Founder Profile card
+   ============================================================= */
+.cs-aboutus { margin-top: 56px; }
+
+.cs-aboutus-card {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 0;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 215, 0, 0.04) 100%);
+  border: 1px solid rgba(255, 215, 0, 0.20);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.40);
+}
+@media (max-width: 880px) {
+  .cs-aboutus-card { grid-template-columns: 1fr; }
+}
+
+/* Left identity panel */
+.cs-founder-side {
+  background: linear-gradient(160deg, #0a2a5f 0%, #070F26 100%);
+  padding: 30px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+}
+.cs-founder-photo {
+  position: relative;
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  border: 4px solid #FFD700;
+  background: #1f6bbf;
+  overflow: hidden;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.40);
+  margin-bottom: 18px;
+}
+.cs-founder-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.cs-founder-photo-fallback {
+  position: absolute;
+  inset: 0;
+  display: none;            /* shown via JS onError */
+  place-items: center;
+  font-family: 'Georgia', serif;
+  font-weight: 800;
+  font-size: 56px;
+  color: #FFD700;
+  background: linear-gradient(160deg, #082351 0%, #04132f 100%);
+  letter-spacing: 1px;
+}
+.cs-founder-star {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #FFD700;
+  color: #070F26;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.50);
+}
+.cs-founder-name {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 800;
+  color: #ffffff;
+}
+.cs-founder-role {
+  display: block;
+  margin: 4px 0 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  color: #FFD700;
+}
+.cs-founder-org {
+  margin: 0 0 16px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.74);
+  line-height: 1.5;
+}
+.cs-founder-exp {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 215, 0, 0.10);
+  border: 1px solid rgba(255, 215, 0, 0.30);
+  padding: 8px 14px;
+  border-radius: 10px;
+  margin-top: auto;
+}
+.cs-founder-exp strong {
+  font-family: 'Georgia', serif;
+  font-size: 28px;
+  color: #FFD700;
+  line-height: 1;
+}
+.cs-founder-exp span {
+  text-align: left;
+  font-size: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.82);
+  letter-spacing: 0.4px;
+  line-height: 1.3;
+}
+
+/* Right bio panel */
+.cs-founder-bio {
+  background: #ffffff;
+  padding: 30px 32px;
+  color: #1f2937;
+}
+.cs-founder-bio-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.cs-bio-bar {
+  width: 3px;
+  align-self: stretch;
+  background: #FFD700;
+  border-radius: 2px;
+}
+.cs-bio-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 800;
+  color: #d99a18;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+}
+.cs-bio-sub {
+  display: block;
+  font-size: 12px;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 2px;
+}
+.cs-founder-bio p {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #334155;
+}
+.cs-founder-bio p strong {
+  color: #0a2a5f;
+  font-weight: 700;
+}
+/* Highlight the "35 years of experience" phrase like the screenshot */
+.cs-founder-bio p:first-of-type strong {
+  color: #d99a18;
+}
+
+.cs-expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 18px;
+}
+@media (max-width: 720px) {
+  .cs-expertise-grid { grid-template-columns: 1fr; }
+}
+.cs-expertise-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 3px solid #FFD700;
+  border-radius: 8px;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: #0f172a;
+}
+.cs-expertise-pill svg { color: #d99a18; flex-shrink: 0; }
+
+@media (max-width: 880px) {
+  .cs-founder-bio { padding: 24px 22px; }
+  .cs-founder-bio p { font-size: 13.5px; }
+}
+
+/* =============================================================
+   Centered icon inside the orbital triangle
+   ============================================================= */
+.cs-orbital-icon-img {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  width: 58% !important;
+  max-width: 96px !important;
+  height: auto !important;
+  margin: 0 !important;
+  z-index: 5;
+  pointer-events: none;
+  border-radius: 50%;
+  filter:
+    drop-shadow(0 4px 14px rgba(0, 0, 0, 0.65))
+    drop-shadow(0 0 18px rgba(0, 195, 210, 0.45))
+    drop-shadow(0 0 8px rgba(255, 200, 0, 0.30));
+}
+
+/* When the BrandLogo SVG fallback is in use, sit it in the same spot */
+.cs-orbital-triangle > .cs-orbital-logo:not(img) {
+  position: absolute;
+  left: 50%;
+  top: 66%;
+  transform: translate(-50%, -50%);
+  width: 70%;
+  max-width: 100px;
+  margin: 0 !important;
+}
+
+/* Footer column links also work when rendered as <button> */
+.cs-footer-col button {
+  appearance: none;
+  font: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.12s ease;
+}
+.cs-footer-col button:hover { color: #FFD700; }
+
+/* Prefetch hint: as soon as user hovers over the home page, we predictively
+   "warm up" the /login route. Using a tiny invisible <link> via JS is too
+   complex; instead a CSS-only zero-cost mouse hover doesn't help here.
+   We add prefetch through React Router below in JSX. */
+
+/* ── TC_CS_1.2 Certification Bodies Grid ── */
+.cs-cert-bodies-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.cs-cert-body-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px 22px;
+  background: #fff;
+  border: 1.5px solid #e8edf6;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px rgba(30,58,138,.07);
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.cs-cert-body-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(30,58,138,.14);
+  border-color: #1E3A8A;
+}
+
+.cs-cert-body-icon {
+  font-size: 32px;
+  line-height: 1;
+}
+
+.cs-cert-body-info {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cs-cert-body-code {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1E3A8A;
+}
+
+.cs-cert-body-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #4b6cb7;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.cs-cert-body-desc {
+  margin: 6px 0 0;
+  font-size: 13.5px;
+  color: #555;
+  line-height: 1.5;
+}
+
+.cs-cert-body-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #1E3A8A;
+  letter-spacing: .02em;
+}
+
+/* ── TC_CS_1.5 Flag emoji display fix ── */
+.cs-flag-emoji {
+  font-size: 1.15em;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.bento-marquee-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Country name beside each flag in the marquee */
+.bento-marquee-item {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 8px;
+}
+.bento-marquee-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: #FFD700;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+/* ── Theme toggle button in home navbar ── */
+.cs-home-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.07);
+  color: #e2e8f0;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s, transform 0.15s, color 0.2s;
+  flex-shrink: 0;
+}
+.cs-home-theme-toggle:hover {
+  background: rgba(255, 255, 255, 0.14);
+  border-color: rgba(255, 255, 255, 0.35);
+  transform: rotate(20deg) scale(1.08);
+}
+.cs-home-theme-toggle:active {
+  transform: rotate(20deg) scale(0.96);
+}
+
+/* Light mode adjustments */
+[data-theme="light"] .cs-home-theme-toggle {
+  border-color: rgba(10, 42, 95, 0.18);
+  background: rgba(10, 42, 95, 0.06);
+  color: #0a2a5f;
+}
+[data-theme="light"] .cs-home-theme-toggle:hover {
+  background: rgba(10, 42, 95, 0.12);
+  border-color: rgba(10, 42, 95, 0.3);
+}

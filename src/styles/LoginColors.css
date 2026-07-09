@@ -1,0 +1,80 @@
+/* =============================================================
+   CertiSphere Login — MONOCHROME NOIR & GOLD
+   Component skin: demo-credentials toggle, role cards, info box.
+   (Scoped to .cs-login-shell; theme-agnostic.)
+   ============================================================= */
+
+.cs-login-shell .credentials-container { background: transparent; }
+
+.cs-login-shell .credentials-header h2 {
+  color: var(--nx-gold, #d4af37);
+  font-family: var(--nx-sans, 'Outfit', sans-serif);
+}
+.cs-login-shell .credentials-header p { color: var(--nx-mute, rgba(247,242,226,0.55)); }
+
+/* Toggle bar */
+.cs-login-shell .cs-creds-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(247, 242, 226, 0.03) !important;
+  border: 1px solid var(--nx-line, rgba(212,175,55,0.22)) !important;
+  color: var(--nx-gold, #d4af37) !important;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+.cs-login-shell .cs-creds-toggle:hover {
+  background: rgba(212, 175, 55, 0.09) !important;
+  border-color: var(--nx-line-strong, rgba(212,175,55,0.45)) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  transform: translateY(-1px);
+}
+.cs-login-shell .cs-creds-toggle.is-open {
+  background: rgba(212, 175, 55, 0.10) !important;
+  border-color: var(--nx-gold, #d4af37) !important;
+}
+
+/* Role cards inside the collapsible panel */
+.cs-login-shell .cs-role-card {
+  background: rgba(14, 12, 8, 0.85) !important;
+  border: 1px solid var(--nx-line, rgba(212,175,55,0.22)) !important;
+  border-radius: 12px;
+  transition: all 0.22s ease;
+}
+.cs-login-shell .cs-role-card:hover {
+  background: rgba(212, 175, 55, 0.08) !important;
+  border-color: var(--nx-line-strong, rgba(212,175,55,0.45)) !important;
+  box-shadow: 0 10px 26px rgba(212, 175, 55, 0.14) !important;
+  transform: translateY(-2px);
+}
+.cs-login-shell .cs-role-card.selected {
+  border-color: var(--nx-gold, #d4af37) !important;
+  background: rgba(212, 175, 55, 0.12) !important;
+}
+.cs-login-shell .cs-role-card-name { color: var(--nx-gold-bright, #f6d878) !important; }
+.cs-login-shell .cs-role-card-desc { color: var(--nx-mute, rgba(247,242,226,0.55)) !important; }
+.cs-login-shell .cs-role-card-icon {
+  border: 1px solid rgba(212, 175, 55, 0.30);
+}
+.cs-login-shell .cs-role-card-cta {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 55%, #96772a 100%) !important;
+  color: #0c0b09 !important;
+  font-weight: 700;
+}
+
+/* Info note */
+.cs-login-shell .info-box {
+  background: rgba(212, 175, 55, 0.05) !important;
+  border: 1px solid var(--nx-line, rgba(212,175,55,0.22)) !important;
+  color: var(--nx-mute, rgba(247,242,226,0.55)) !important;
+  border-radius: 12px;
+}
+.cs-login-shell .info-box strong { color: var(--nx-gold, #d4af37) !important; }

@@ -1,0 +1,123 @@
+.cms-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 16px;
+  padding: 48px 24px;
+  border-radius: 16px;
+  border: 1px dashed var(--cms-border-strong);
+  background: var(--cms-bg-surface);
+  color: var(--cms-text-primary);
+  box-shadow: var(--cms-shadow-sm);
+  transition: background 0.25s ease, border-color 0.25s ease;
+}
+
+.cms-empty-state--inline {
+  border: none;
+  padding: 24px 16px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.cms-empty-state--page {
+  padding: 80px 32px;
+  border-radius: 24px;
+}
+
+.cms-empty-state__icon {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--cms-brand-soft);
+  color: var(--cms-brand);
+}
+
+.cms-empty-state--inline .cms-empty-state__icon {
+  width: 56px;
+  height: 56px;
+}
+
+.cms-empty-state__copy {
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.cms-empty-state__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cms-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.cms-empty-state--page .cms-empty-state__title {
+  font-size: 22px;
+}
+
+.cms-empty-state__description {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--cms-text-secondary);
+}
+
+.cms-empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.cms-empty-state__btn {
+  appearance: none;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 9px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cms-empty-state__btn--primary {
+  background: var(--cms-brand);
+  color: var(--cms-text-on-brand);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.25);
+}
+
+.cms-empty-state__btn--primary:hover {
+  transform: translateY(-1px);
+  background: var(--cms-brand-strong);
+}
+
+.cms-empty-state__btn--secondary {
+  background: transparent;
+  color: var(--cms-text-secondary);
+  border-color: var(--cms-border-strong);
+}
+
+.cms-empty-state__btn--secondary:hover {
+  background: var(--cms-bg-hover);
+  color: var(--cms-text-primary);
+}
+
+@media (max-width: 640px) {
+  .cms-empty-state {
+    padding: 32px 18px;
+  }
+  .cms-empty-state--page {
+    padding: 56px 22px;
+  }
+  .cms-empty-state__icon {
+    width: 64px;
+    height: 64px;
+  }
+}

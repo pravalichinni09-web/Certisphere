@@ -1,0 +1,145 @@
+/* ================================================================
+   CertiSphere — Certification Background Particle Animation
+   High-visibility glowing icons on dark background
+   ================================================================ */
+
+/* ── Particle layer sits behind all content ── */
+.cs-cert-bg {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+/* ── Individual floating particle ── */
+.cs-cert-particle {
+  position: absolute;
+  opacity: 0;
+  animation: cs-cert-float linear infinite;
+  will-change: transform, opacity;
+}
+
+/* ── Float: rise from bottom ── */
+@keyframes cs-cert-float {
+  0%   { transform: translateY(0)      rotate(0deg)              scale(0.8);  opacity: 0; }
+  6%   { opacity: var(--p-opacity); }
+  90%  { opacity: var(--p-opacity); }
+  100% { transform: translateY(-110vh) rotate(var(--p-rot))       scale(1.1);  opacity: 0; }
+}
+
+/* ── Sway: gentle horizontal drift ── */
+@keyframes cs-cert-sway {
+  0%   { margin-left: 0; }
+  25%  { margin-left: var(--p-sway); }
+  75%  { margin-left: calc(var(--p-sway) * -0.7); }
+  100% { margin-left: 0; }
+}
+
+/* ── Pulse glow ── */
+@keyframes cs-cert-pulse {
+  0%, 100% { filter: drop-shadow(0 0 4px  var(--p-glow)) drop-shadow(0 0 10px var(--p-glow)); }
+  50%       { filter: drop-shadow(0 0 10px var(--p-glow)) drop-shadow(0 0 22px var(--p-glow)); }
+}
+
+/* Apply sway + pulse to icon wrapper */
+.cs-cert-particle .cp-icon {
+  animation:
+    cs-cert-sway  var(--p-sway-dur, 8s) ease-in-out infinite,
+    cs-cert-pulse var(--p-pulse-dur, 3s) ease-in-out infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Icon SVG ── */
+.cp-icon svg {
+  display: block;
+}
+
+/* ── SIZE variants ── */
+.cs-cert-particle.sz-sm  { width: 28px;  height: 28px; }
+.cs-cert-particle.sz-md  { width: 42px;  height: 42px; }
+.cs-cert-particle.sz-lg  { width: 58px;  height: 58px; }
+.cs-cert-particle.sz-xl  { width: 74px;  height: 74px; }
+
+/* ════════════════════════════════════════════
+   COLOUR THEMES — bright & glowing on black
+   ════════════════════════════════════════════ */
+
+/* Gold — certification primary */
+.cp-gold {
+  --p-glow: rgba(246, 196, 48, 0.8);
+}
+.cp-gold svg {
+  color: #f6c430;
+  stroke: #f6c430;
+  filter: drop-shadow(0 0 6px rgba(246,196,48,0.9)) drop-shadow(0 0 14px rgba(246,196,48,0.5));
+}
+
+/* Cyan — tech / digital */
+.cp-cyan {
+  --p-glow: rgba(0, 229, 255, 0.8);
+}
+.cp-cyan svg {
+  color: #00e5ff;
+  stroke: #00e5ff;
+  filter: drop-shadow(0 0 6px rgba(0,229,255,0.9)) drop-shadow(0 0 14px rgba(0,229,255,0.5));
+}
+
+/* Blue — trust / compliance */
+.cp-blue {
+  --p-glow: rgba(66, 165, 245, 0.8);
+}
+.cp-blue svg {
+  color: #42a5f5;
+  stroke: #42a5f5;
+  filter: drop-shadow(0 0 6px rgba(66,165,245,0.9)) drop-shadow(0 0 14px rgba(66,165,245,0.5));
+}
+
+/* White — clean / document */
+.cp-white {
+  --p-glow: rgba(255, 255, 255, 0.6);
+}
+.cp-white svg {
+  color: #e8f0fe;
+  stroke: #e8f0fe;
+  filter: drop-shadow(0 0 6px rgba(255,255,255,0.7)) drop-shadow(0 0 14px rgba(200,220,255,0.4));
+}
+
+/* Green — certified / approved */
+.cp-green {
+  --p-glow: rgba(105, 240, 174, 0.8);
+}
+.cp-green svg {
+  color: #69f0ae;
+  stroke: #69f0ae;
+  filter: drop-shadow(0 0 6px rgba(105,240,174,0.9)) drop-shadow(0 0 14px rgba(105,240,174,0.5));
+}
+
+/* Orange — alert / urgent */
+.cp-orange {
+  --p-glow: rgba(255, 171, 64, 0.8);
+}
+.cp-orange svg {
+  color: #ffab40;
+  stroke: #ffab40;
+  filter: drop-shadow(0 0 6px rgba(255,171,64,0.9)) drop-shadow(0 0 14px rgba(255,171,64,0.5));
+}
+
+/* ── Ensure home page content stacks above particles ── */
+.cs-home,
+.cs-home-bento {
+  position: relative;
+  z-index: 1;
+}
+
+.cs-home-header {
+  position: relative;
+  z-index: 100;
+}
+
+.cs-home > *:not(.cs-cert-bg) {
+  position: relative;
+  z-index: 1;
+}

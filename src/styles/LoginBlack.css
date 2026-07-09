@@ -1,0 +1,52 @@
+/* =============================================================
+   CertiSphere Login — MONOCHROME NOIR & GOLD
+   Theme assert layer: the login page renders identically in
+   light AND dark app themes (defeats global [data-theme] rules).
+   ============================================================= */
+
+[data-theme="light"] .cs-login-shell.login-container,
+[data-theme="dark"]  .cs-login-shell.login-container {
+  background: #050505 !important;
+  color: #f7f2e2 !important;
+}
+
+/* Glass card */
+[data-theme="light"] .cs-login-shell .cs-glass-card,
+[data-theme="dark"]  .cs-login-shell .cs-glass-card {
+  background: linear-gradient(165deg, rgba(22, 19, 12, 0.92) 0%, rgba(9, 8, 6, 0.94) 55%, rgba(14, 12, 8, 0.92) 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.22) !important;
+}
+
+/* Form surfaces */
+[data-theme="light"] .cs-login-shell .form-label,
+[data-theme="dark"]  .cs-login-shell .form-label { color: rgba(247, 242, 226, 0.85) !important; }
+
+[data-theme="light"] .cs-login-shell .form-input,
+[data-theme="dark"]  .cs-login-shell .form-input {
+  background: rgba(5, 5, 5, 0.55) !important;
+  border-color: rgba(212, 175, 55, 0.25) !important;
+  color: #f7f2e2 !important;
+}
+[data-theme="light"] .cs-login-shell .form-input:focus,
+[data-theme="dark"]  .cs-login-shell .form-input:focus {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.14) !important;
+}
+
+[data-theme="light"] .cs-login-shell .login-button,
+[data-theme="dark"]  .cs-login-shell .login-button {
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 45%, #96772a 100%) !important;
+  color: #0c0b09 !important;
+}
+
+/* Right column + chrome */
+[data-theme="light"] .cs-login-shell .credentials-section,
+[data-theme="dark"]  .cs-login-shell .credentials-section {
+  background: radial-gradient(60% 45% at 50% 42%, rgba(212, 175, 55, 0.07) 0%, transparent 70%) !important;
+}
+[data-theme="light"] .cs-login-shell .cs-logo-plate,
+[data-theme="dark"]  .cs-login-shell .cs-logo-plate {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}

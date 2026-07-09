@@ -1,0 +1,4 @@
+/* AppDarkTheme.css — DISABLED.
+   User reverted to the colorful per-role native themes.
+   Home + Login keep their dark theme via HomeColors.css + LoginColors.css.
+   This file is intentionally empty so existing imports don't break. */

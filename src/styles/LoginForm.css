@@ -1,0 +1,305 @@
+/* =============================================================
+   CertiSphere LoginForm — MONOCHROME NOIR & GOLD
+   ============================================================= */
+.login-form {
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-family: var(--nx-sans, 'Outfit', 'Segoe UI', sans-serif);
+}
+
+/* ---- Title: classic serif with gold rule + diamond ---- */
+.form-title {
+  font-family: var(--nx-serif, 'Playfair Display', Georgia, serif);
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--nx-gold, #d4af37);
+  text-align: center;
+  margin: 0 0 4px;
+  position: relative;
+  padding-bottom: 16px;
+  background: linear-gradient(100deg, #f7f2e2 0%, #f6d878 35%, #d4af37 65%, #96772a 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: nx-form-title-sheen 7s ease-in-out infinite;
+}
+@keyframes nx-form-title-sheen {
+  0%, 100% { background-position: 0% center; }
+  50%      { background-position: 100% center; }
+}
+.form-title::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 6px;
+  transform: translateX(-50%) rotate(45deg);
+  width: 6px;
+  height: 6px;
+  background: var(--nx-gold, #d4af37);
+  box-shadow:
+    -46px 3px 0 -2.5px rgba(212, 175, 55, 0.55),
+     46px 3px 0 -2.5px rgba(212, 175, 55, 0.55);
+}
+.form-title::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 8px;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.65), transparent);
+}
+
+/* ---- Selected role banner ---- */
+.selected-user-info {
+  background: rgba(212, 175, 55, 0.07);
+  padding: 10px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-left: 3px solid var(--nx-gold, #d4af37);
+  animation: nx-info-in 0.35s ease-out both;
+}
+@keyframes nx-info-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.info-label {
+  font-size: 10px;
+  color: rgba(247, 242, 226, 0.5);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 0 0 3px;
+}
+.info-value {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nx-gold-bright, #f6d878);
+  margin: 0;
+}
+
+/* ---- Fields ---- */
+.form-group { margin-bottom: 4px; }
+
+.form-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  font-weight: 600;
+  color: rgba(247, 242, 226, 0.85);
+  text-transform: uppercase;
+  letter-spacing: 1.8px;
+  margin-bottom: 8px;
+}
+.form-label svg {
+  color: var(--nx-gold, #d4af37);
+  width: 15px;
+  height: 15px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 13px 16px;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  border-radius: 12px;
+  font-size: 14px;
+  font-family: inherit;
+  font-weight: 400;
+  letter-spacing: 0.3px;
+  color: #f7f2e2;
+  background: rgba(5, 5, 5, 0.55);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, transform 0.25s ease;
+  caret-color: var(--nx-gold, #d4af37);
+}
+.form-input:hover { border-color: rgba(212, 175, 55, 0.45); }
+.form-input:focus {
+  outline: none;
+  border-color: var(--nx-gold, #d4af37);
+  background: rgba(10, 9, 6, 0.8);
+  box-shadow:
+    0 0 0 3px rgba(212, 175, 55, 0.14),
+    0 8px 26px rgba(212, 175, 55, 0.10);
+  transform: translateY(-1px);
+}
+.form-input::placeholder { color: rgba(247, 242, 226, 0.30); }
+
+/* Kill the browser's pale autofill flash on black */
+.form-input:-webkit-autofill,
+.form-input:-webkit-autofill:hover,
+.form-input:-webkit-autofill:focus {
+  -webkit-text-fill-color: #f7f2e2;
+  -webkit-box-shadow: 0 0 0 1000px #0a0906 inset;
+  transition: background-color 9999s ease-in-out 0s;
+}
+
+/* ---- Sign-in button: gold bar with shine sweep ---- */
+.login-button {
+  position: relative;
+  width: 100%;
+  padding: 15px 20px;
+  margin-top: 12px;
+  background: linear-gradient(135deg, #f6d878 0%, #d4af37 45%, #96772a 100%);
+  color: #0c0b09;
+  border: none;
+  border-radius: 12px;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.25s ease, filter 0.25s ease;
+  box-shadow:
+    0 12px 32px rgba(212, 175, 55, 0.28),
+    inset 0 1px 0 rgba(255, 240, 200, 0.6);
+}
+.login-button::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -80%;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(105deg, transparent 20%, rgba(255, 255, 255, 0.5) 50%, transparent 80%);
+  transform: skewX(-18deg);
+  animation: nx-btn-shine 4.5s ease-in-out 1.5s infinite;
+  pointer-events: none;
+}
+@keyframes nx-btn-shine {
+  0%   { left: -80%; }
+  35%  { left: 130%; }
+  100% { left: 130%; }
+}
+.login-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.06);
+  box-shadow:
+    0 18px 44px rgba(212, 175, 55, 0.42),
+    inset 0 1px 0 rgba(255, 240, 200, 0.7);
+}
+.login-button:active {
+  transform: translateY(0) scale(0.99);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.25);
+}
+
+.help-text {
+  font-size: 12px;
+  color: rgba(247, 242, 226, 0.45);
+  text-align: center;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(212, 175, 55, 0.15);
+}
+
+/* ===== Inline role picker — monochrome chips ===== */
+.role-picker { margin: 2px 0 6px; }
+
+.role-picker-label {
+  margin: 0 0 10px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--nx-gold, #d4af37);
+  text-transform: uppercase;
+  letter-spacing: 2.4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.role-picker-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(212, 175, 55, 0.4), transparent);
+}
+
+.role-picker-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 9px;
+}
+@media (max-width: 420px) {
+  .role-picker-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.role-pick-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 11px 6px 10px;
+  border: 1px solid rgba(212, 175, 55, 0.22) !important;
+  border-radius: 12px;
+  background: rgba(247, 242, 226, 0.03) !important;
+  color: rgba(247, 242, 226, 0.75) !important;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+}
+.role-pick-btn:hover {
+  transform: translateY(-2px);
+  border-color: rgba(212, 175, 55, 0.6) !important;
+  background: rgba(212, 175, 55, 0.08) !important;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(212, 175, 55, 0.12);
+}
+.role-pick-btn.is-active {
+  border-color: var(--nx-gold, #d4af37) !important;
+  background: linear-gradient(160deg, rgba(212, 175, 55, 0.18), rgba(212, 175, 55, 0.08)) !important;
+  color: var(--nx-gold-bright, #f6d878) !important;
+  box-shadow:
+    0 10px 26px rgba(212, 175, 55, 0.18),
+    inset 0 1px 0 rgba(247, 216, 120, 0.25);
+}
+
+.role-pick-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.10) !important;
+  color: var(--nx-gold, #d4af37) !important;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  transition: all 0.18s ease;
+}
+.role-pick-btn:hover .role-pick-icon,
+.role-pick-btn.is-active .role-pick-icon {
+  background: var(--nx-gold, #d4af37) !important;
+  color: #0c0b09 !important;
+  box-shadow: 0 0 16px rgba(212, 175, 55, 0.45);
+}
+
+.role-pick-label {
+  display: block;
+  font-size: 10.5px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .login-form { max-width: 100%; }
+  .form-title { font-size: 26px; }
+  .login-button { padding: 13px 16px; font-size: 12px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-title,
+  .login-button::after,
+  .selected-user-info { animation: none !important; }
+}

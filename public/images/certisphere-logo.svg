@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 240" role="img" aria-label="CertiSphere">
+  <defs>
+    <linearGradient id="g-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffefb0" />
+      <stop offset="18%" stop-color="#fde68a" />
+      <stop offset="42%" stop-color="#f5c130" />
+      <stop offset="65%" stop-color="#b07a0d" />
+      <stop offset="100%" stop-color="#4d3000" />
+    </linearGradient>
+    <linearGradient id="g-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#d7e9ff" />
+      <stop offset="22%" stop-color="#7fb7e6" />
+      <stop offset="50%" stop-color="#1f6bbf" />
+      <stop offset="78%" stop-color="#082351" />
+      <stop offset="100%" stop-color="#01081d" />
+    </linearGradient>
+    <linearGradient id="g-shine" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.85" />
+      <stop offset="38%" stop-color="#ffffff" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+  <g transform="translate(34 32)">
+    <path d="M96 2 L188 178 L4 178 Z" fill="none" stroke="#190a00" stroke-width="11" stroke-linejoin="round" />
+    <path d="M96 22 L174 168 L18 168 Z" fill="none" stroke="url(#g-gold)" stroke-width="12" stroke-linejoin="round" />
+    <circle cx="86" cy="118" r="34" fill="none" stroke="url(#g-blue)" stroke-width="9" />
+    <path d="M110 142 L130 162" fill="none" stroke="url(#g-blue)" stroke-width="9" stroke-linecap="round" />
+    <path d="M64 116 L82 134 L114 96" fill="none" stroke="url(#g-gold)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" />
+  </g>
+  <g font-family="Verdana, Geneva, 'DejaVu Sans', sans-serif" font-weight="900" font-style="italic" font-size="136" letter-spacing="-3" paint-order="stroke">
+    <text x="228" y="162" fill="url(#g-blue)" stroke="#01081d" stroke-width="6">Certi</text>
+    <text x="572" y="162" fill="url(#g-gold)" stroke="#190a00" stroke-width="6">Sphere</text>
+    <text x="228" y="162" fill="url(#g-shine)" stroke="none" pointer-events="none">Certi</text>
+    <text x="572" y="162" fill="url(#g-shine)" stroke="none" pointer-events="none">Sphere</text>
+  </g>
+</svg>
