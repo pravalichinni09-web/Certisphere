@@ -1174,21 +1174,21 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 2px auto 8px;
-  padding: 12px 18px;
-  background: #000000;
-  border: 1px solid rgba(245, 193, 48, 0.38);
-  border-radius: 14px;
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.32);
+  margin: 4px auto 10px;
+  padding: 6px 8px;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   width: fit-content;
   max-width: 100%;
 }
 .cs-sidebar-brand-img {
-  width: 100%;
-  max-width: 188px;
-  height: auto;
+  width: auto !important;
+  height: auto !important;
+  max-width: 190px !important;
+  max-height: 46px !important;
   display: block;
-  object-fit: contain;
+  object-fit: contain !important;
   transition: transform 0.18s ease;
 }
 .cs-sidebar-brand-img:hover {
@@ -1236,6 +1236,23 @@
   text-transform: uppercase;
 }
 
+/* Role responsibilities panel — fills the header space under the role badge */
+.cs-sidebar-resp {
+  margin: 12px auto 8px;
+  max-width: 218px;
+  padding: 11px 13px;
+  background: linear-gradient(160deg, rgba(255,255,255,0.10) 0%, rgba(31,107,191,0.20) 100%);
+  border: 1px solid rgba(245, 193, 48, 0.35);
+  border-radius: 12px;
+  color: #eef3fc !important;
+  font-size: 12px;
+  line-height: 1.55;
+  font-weight: 600;
+  text-align: center;
+  letter-spacing: 0.1px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
 /* Horizontal navbar variant (rarely used — kept for completeness) */
 .cs-navbar-brand {
   display: flex;
@@ -1258,5 +1275,5 @@
 
 /* Mobile sidebar (when collapsed) — slightly smaller logo */
 @media (max-width: 768px) {
-  .cs-sidebar-brand-img { max-width: 180px; }
+  .cs-sidebar-brand-img { max-width: 170px !important; max-height: 42px !important; }
 }

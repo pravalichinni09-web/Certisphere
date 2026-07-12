@@ -87,6 +87,15 @@ const ClientCoordinatorMenu: React.FC<{ items: MenuItem[]; onNavigate: () => voi
   );
 };
 
+const ROLE_RESPONSIBILITIES: Record<string, string> = {
+  'Management': 'Oversees assignments, auditor approvals, client onboarding and global settings.',
+  'Audit Coordinator': 'Coordinates enquiries, applications, scheduling, findings and certificate delivery.',
+  'Lead Auditor': 'Approves schedules, leads audits, and reviews findings & corrective actions.',
+  'Auditor': 'Confirms schedules, conducts audits and submits audit reports.',
+  'Auditee': 'Reviews applications, approves schedules and responds to audit findings.',
+  'Client Coordinator': "Tracks your organization's certifications, schedules and due dates.",
+};
+
 const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
@@ -354,11 +363,20 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
         <aside ref={sidebarRef} className={`vertical-sidebar ${isOpen ? 'open' : ''}`}>
           <div className="vertical-sidebar-header cs-sidebar-header-stacked">
             <div className="cs-sidebar-brand">
-              <CertiSphereLogo size={180} iconOnly={false} className="cs-sidebar-brand-img" />
+              <a
+                href="https://www.qcertisphere.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                title="Visit the CertiSphere website"
+                style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}
+              >
+                <CertiSphereLogo size={180} iconOnly={false} className="cs-sidebar-brand-img" />
+              </a>
             </div>
             <div className="cs-sidebar-meta">
-              <span className="cs-sidebar-accred">{globalConfig.accreditationBody}</span>
               <span className="cs-sidebar-role">{role}</span>
+              <p className="cs-sidebar-resp">{ROLE_RESPONSIBILITIES[role] || globalConfig.accreditationBody}</p>
+              <span className="cs-sidebar-accred">{globalConfig.accreditationBody}</span>
             </div>
           </div>
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import NotificationsBell from '../../components/NotificationsBell';
 import BackButton from '../../components/BackButton';
@@ -65,6 +65,8 @@ const AuditorCoordinatorLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/audit-analysis" element={<AuditAnalysis role="coordinator" />} />
           <Route path="/audit-intelligence" element={<AuditIntelligence />} />
           <Route path="/email-config" element={<EmailJSSettings />} />
+          <Route index element={<Navigate to="/auditor-coordinator/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/auditor-coordinator/dashboard" replace />} />
         </Routes>
       </div>
     </div>

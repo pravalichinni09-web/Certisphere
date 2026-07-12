@@ -163,7 +163,7 @@ const Reports: React.FC = () => {
                   </td>
                   <td style={td}>
                     <button onClick={() => setPreview({ name: `${r.standard}-${r.date}.pdf`, dataUrl: '' })}
-                      title="Open PDF (read-only)"
+                      title="Preview report (read-only)"
                       style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#0e7490', color: '#fff', border: 'none', padding: '5px 10px', borderRadius: 6, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>
                       <Download size={12} /> PDF
                     </button>

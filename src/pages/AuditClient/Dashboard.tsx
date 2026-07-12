@@ -52,7 +52,57 @@ const dashboardData = {
 
 const Dashboard = () => {
   const navigate = useNavigate();
-  const { user, metrics, auditStatusDist, recentActivities, upcomingDeadlines } = dashboardData;
+  const live = useMemo(() => {
+    try {
+      const safe = (k: string) => { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } };
+      const actions: any[] = safe('cms_corrective_actions_v1') || [];
+      const schedA: any[] = Array.isArray(safe('cms_audit_schedules')) ? safe('cms_audit_schedules') : [];
+      const schedB: any[] = Array.isArray(safe('cms_audit_schedules_v3')) ? safe('cms_audit_schedules_v3') : [];
+      const schedules = [...schedA, ...schedB];
+      if (actions.length === 0 && schedules.length === 0) return null;
+      const completed = actions.filter((a) => a.status === 'Approved').length;
+      const inProgress = actions.filter((a) => a.status === 'Submitted' || a.status === 'Auditor Reviewed').length;
+      const pending = actions.filter((a) => a.status === 'Open').length;
+      const total = Math.max(schedules.length, actions.length);
+      const compliance = actions.length ? Math.round((completed / actions.length) * 100) : 92;
+      const deadlines = actions
+        .filter((a) => a.status !== 'Approved' && a.dueDate)
+        .sort((a, b) => String(a.dueDate).localeCompare(String(b.dueDate)))
+        .slice(0, 3)
+        .map((a, i) => ({ id: `ld${i}`, title: `${a.capId || a.id} — ${a.clientName || 'Corrective action'}`, dueDate: String(a.dueDate), priority: a.severity === 'Major NC' ? 'high' : 'medium' }));
+      const activities = [...actions]
+        .sort((a, b) => String(b.submittedAt || b.dueDate || '').localeCompare(String(a.submittedAt || a.dueDate || '')))
+        .slice(0, 3)
+        .map((a, i) => ({
+          id: `la${i}`,
+          type: a.status === 'Approved' ? 'success' : a.status === 'Open' ? 'alert' : 'schedule',
+          message: `${a.capId || a.id}: ${a.auditTitle || a.description || 'Corrective action'} — ${a.status}`,
+          date: String(a.dueDate || ''),
+        }));
+      const dist = [
+        { status: 'Completed', count: completed, color: 'bg-green', percentage: actions.length ? Math.round((completed / actions.length) * 100) : 0 },
+        { status: 'In Progress', count: inProgress, color: 'bg-yellow', percentage: actions.length ? Math.round((inProgress / actions.length) * 100) : 0 },
+        { status: 'Pending', count: pending, color: 'bg-red', percentage: actions.length ? Math.round((pending / actions.length) * 100) : 0 },
+      ];
+      return {
+        metrics: [
+          { id: 'total', label: 'Total Audits', value: total, icon: 'FileText', trend: '', color: 'blue' },
+          { id: 'completed', label: 'Completed', value: completed, icon: 'CheckCircle', trend: '', color: 'green' },
+          { id: 'inProgress', label: 'In Progress', value: inProgress, icon: 'Clock', trend: '', color: 'yellow' },
+          { id: 'pending', label: 'Pending', value: pending, icon: 'AlertTriangle', trend: '', color: 'red' },
+          { id: 'compliance', label: 'Compliance Score', value: compliance, icon: 'Activity', trend: '', color: 'green' },
+        ],
+        auditStatusDist: dist,
+        recentActivities: activities.length ? activities : null,
+        upcomingDeadlines: deadlines.length ? deadlines : null,
+      };
+    } catch { return null; }
+  }, []);
+  const { user } = dashboardData;
+  const metrics = live?.metrics ?? dashboardData.metrics;
+  const auditStatusDist = live?.auditStatusDist ?? dashboardData.auditStatusDist;
+  const recentActivities = live?.recentActivities ?? dashboardData.recentActivities;
+  const upcomingDeadlines = live?.upcomingDeadlines ?? dashboardData.upcomingDeadlines;
 
   // --- AI Readiness Self-Assessment (feature 16) ---
   const [readyStandard, setReadyStandard] = useState<string>(READINESS_STANDARDS[0]);
@@ -231,7 +281,7 @@ const Dashboard = () => {
           <div className="dash-card">
             <div className="card-header">
               <h3>Upcoming Deadlines</h3>
-              <button className="btn-link">View Calendar</button>
+              <button className="btn-link" onClick={() => navigate('/audit-client/schedule-approvals')}>View Calendar</button>
             </div>
             <div className="deadline-list">
               {upcomingDeadlines.map((item) => (
@@ -256,7 +306,7 @@ const Dashboard = () => {
           <div className="dash-card h-full">
             <div className="card-header">
               <h3>Recent Activity</h3>
-              <button className="btn-icon">
+              <button className="btn-icon" onClick={() => navigate('/audit-client/audit-actions')} title="Open Audit Actions">
                 <ArrowRight className="icon-sm" />
               </button>
             </div>
@@ -275,7 +325,7 @@ const Dashboard = () => {
               ))}
             </div>
             <div className="card-footer">
-              <button className="btn-full">View All Notifications</button>
+              <button className="btn-full" onClick={() => navigate('/audit-client/audit-actions')}>View All Notifications</button>
             </div>
           </div>
         </div>

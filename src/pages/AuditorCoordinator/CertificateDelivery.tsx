@@ -6,7 +6,30 @@ import 'jspdf-autotable';
 import { qrModules } from '../../utils/qrcode';
 
 import '../../styles/AuditorCoordinator.css';
-import { clients, certificates as initialCertificatesMock } from './mockData';
+import { clients as mockClients, certificates as initialCertificatesMock } from './mockData';
+
+/** Live client list — registered clients first (cms_client_registrations), mock as fallback. */
+const readLiveClients = (): any[] => {
+  try {
+    const raw = localStorage.getItem('cms_client_registrations');
+    const regs = raw ? JSON.parse(raw) : [];
+    if (Array.isArray(regs) && regs.length > 0) {
+      const mapped = regs.map((r: any) => ({
+        id: String(r.id),
+        name: r.organizationName || r.companyName || r.name || `Client ${r.id}`,
+        email: r.email || r.contactEmail || '',
+        industry: r.industry || '',
+        address: r.address || '',
+        phone: r.phone || r.contactPhone || '',
+      }));
+      // keep mock demo clients too so seeded certificates stay resolvable
+      const seen = new Set(mapped.map((c: any) => c.id));
+      return [...mapped, ...mockClients.filter((c) => !seen.has(c.id))];
+    }
+  } catch { /* ignore */ }
+  return mockClients;
+};
+const clients = readLiveClients();
 
 // --- DISPATCH & REMINDER LOG ---
 const DISPATCH_LOG_KEY = 'cms_certificate_dispatch_log_v1';
@@ -183,8 +206,34 @@ const initialSurveillanceCertificates: CertificateData[] = [
 ];
 
 const CertificateDelivery: React.FC = () => {
-  const [certificates, setCertificates] = useState<CertificateData[]>(enhancedInitialCertificates);
-  const [survCertificates, setSurvCertificates] = useState<CertificateData[]>(initialSurveillanceCertificates);
+  const [certificates, setCertificates] = useState<CertificateData[]>(() => {
+    try {
+      const raw = localStorage.getItem('cms_certificate_delivery_v1');
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch { /* ignore */ }
+    return enhancedInitialCertificates;
+  });
+  const [survCertificates, setSurvCertificates] = useState<CertificateData[]>(() => {
+    try {
+      const raw = localStorage.getItem('cms_certificate_delivery_surv_v1');
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch { /* ignore */ }
+    return initialSurveillanceCertificates;
+  });
+  // Persist both certificate lists — issued/approved certificates must survive refresh.
+  useEffect(() => {
+    try {
+      localStorage.setItem('cms_certificate_delivery_v1', JSON.stringify(certificates));
+      window.dispatchEvent(new CustomEvent('cms-certificates-updated'));
+    } catch { /* ignore */ }
+  }, [certificates]);
+  useEffect(() => {
+    try {
+      localStorage.setItem('cms_certificate_delivery_surv_v1', JSON.stringify(survCertificates));
+    } catch { /* ignore */ }
+  }, [survCertificates]);
   
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);

@@ -8,6 +8,7 @@
 import React, { useEffect, useState } from 'react';
 import { Users, CheckCircle2, XCircle, ArrowLeftRight, FileText, Mail, Phone, Globe, Building2, Eye, Search } from 'lucide-react';
 import Tooltip from '../../components/Tooltip';
+import { ensureCredentialsForClients } from '../AuditorCoordinator/utils/clientCredentials';
 import ViewOnlyDoc from '../../components/ViewOnlyDoc';
 
 interface OnboardingClient {
@@ -85,7 +86,41 @@ const ClientOnboarding: React.FC = () => {
 
   const approve = (c: OnboardingClient) => {
     mutate(c.id, { status: 'Approved', approvedAt: new Date().toISOString() });
-    alert(`✓ ${c.organizationName} approved. Credentials will be issued.`);
+    // Issue real access: merge into client registrations + generate a login credential.
+    try {
+      const REG_KEY = 'cms_client_registrations';
+      const raw = localStorage.getItem(REG_KEY);
+      const regs: any[] = raw ? JSON.parse(raw) : [];
+      const exists = regs.some((r) =>
+        (r.email || '').toLowerCase() === (c.email || '').toLowerCase() ||
+        (r.organizationName || '').toLowerCase() === (c.organizationName || '').toLowerCase());
+      if (!exists) {
+        const numericIds = regs.map((r) => Number(r.id)).filter(Number.isFinite);
+        regs.push({
+          id: Math.max(1000, ...numericIds) + 1,
+          organizationName: c.organizationName,
+          contactPerson: c.contactPerson,
+          email: c.email,
+          country: (c as any).country || '',
+          industry: (c as any).industry || '',
+          status: 'Approved',
+          clientCode: `CMS-${new Date().getFullYear()}-${String(regs.length + 1).padStart(4, '0')}`,
+          registeredAt: new Date().toISOString(),
+        });
+        localStorage.setItem(REG_KEY, JSON.stringify(regs));
+      }
+      // Regenerate the credential set for ALL registered clients (keeps existing ones).
+      ensureCredentialsForClients(regs.map((r) => ({
+        id: Number(r.id),
+        organizationName: r.organizationName,
+        contactPerson: r.contactPerson,
+        email: r.email,
+      })));
+      window.dispatchEvent(new CustomEvent('cms-workflow-handoff'));
+      alert(`✓ ${c.organizationName} approved. Login credentials issued — see Client Credentials.`);
+    } catch {
+      alert(`✓ ${c.organizationName} approved. (Credential issue failed — check Client Credentials.)`);
+    }
   };
   const reject = (c: OnboardingClient, reason: string) => {
     mutate(c.id, { status: 'Rejected', rejectedAt: new Date().toISOString(), rejectionReason: reason || 'Not specified' });

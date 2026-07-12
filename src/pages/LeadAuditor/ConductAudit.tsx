@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   ClipboardList, 
   Calendar, 
@@ -17,6 +17,16 @@ import {
 } from 'lucide-react';
 import { Sparkles } from 'lucide-react';
 import '../../styles/LeadAuditor/ConductAudit.css';
+import {
+  MergedScheduleEntry,
+  SCHEDULES_UPDATED_EVENT,
+  StoredSchedule,
+  entryKey,
+  readMergedSchedules,
+  scheduleDate,
+  scheduleOrg,
+  scheduleStandard,
+} from '../../utils/auditScheduleStore';
 
 // --- Interfaces ---
 interface Audit {
@@ -28,6 +38,8 @@ interface Audit {
   startDate: string;
   endDate: string;
   status: 'planned' | 'in-progress' | 'completed';
+  /** Workflow client key used for cms_audit_findings_v1 (store-backed audits). */
+  clientId?: string;
 }
 
 interface ChecklistItem {
@@ -51,6 +63,67 @@ const mockAudits: Audit[] = [
   { id: 'AUD-102', title: 'Internal Safety Review', type: 'OHSMS', department: 'Warehouse', assignedAuditor: 'Jane Smith', startDate: '2025-10-25', endDate: '2025-10-26', status: 'planned' },
   { id: 'AUD-103', title: 'Supplier Compliance', type: 'QMS', department: 'Procurement', assignedAuditor: 'Mike Ross', startDate: '2025-11-01', endDate: '2025-11-03', status: 'planned' },
 ];
+
+// --- Shared findings store (cms_audit_findings_v1) — mirrors src/pages/Auditor/ConductAudit.tsx ---
+type FindingSeverity = 'Major NC' | 'Minor NC' | 'Observation' | 'Opportunity';
+
+interface Finding {
+  id: string;
+  severity: FindingSeverity;
+  clause: string;
+  description: string;
+  evidence: string;
+  createdAt: string;
+}
+
+const FINDINGS_KEY = 'cms_audit_findings_v1';
+
+const safeJSON = <T,>(k: string, fb: T): T => {
+  try { const r = localStorage.getItem(k); return r ? JSON.parse(r) as T : fb; } catch { return fb; }
+};
+
+const readFindings = (clientId: string | number): Finding[] => {
+  const all = safeJSON<Record<string, Finding[]>>(FINDINGS_KEY, {});
+  return all[String(clientId)] || [];
+};
+
+const writeFindings = (clientId: string | number, findings: Finding[]) => {
+  const all = safeJSON<Record<string, Finding[]>>(FINDINGS_KEY, {});
+  all[String(clientId)] = findings;
+  localStorage.setItem(FINDINGS_KEY, JSON.stringify(all));
+  window.dispatchEvent(new CustomEvent('cms-workflow-handoff'));
+};
+
+// --- Real audit list from the shared schedule store (mocks are only a fallback) ---
+const isActiveSchedule = (r: StoredSchedule): boolean => {
+  const s = (r.status || '').toLowerCase();
+  if (s === 'cancelled' || s === 'completed') return false;
+  if (r.auditorConfirmation === 'Confirmed') return true;
+  return s === 'approved' || s === 'in progress' || s === 'in-progress';
+};
+
+const mapScheduleToAudit = (e: MergedScheduleEntry): Audit => {
+  const r = e.record;
+  const s = (r.status || '').toLowerCase();
+  return {
+    id: entryKey(e),
+    title: r.auditName || r.auditTitle || `${scheduleOrg(r)} — ${scheduleStandard(r) || r.auditType || 'Audit'}`,
+    type: scheduleStandard(r) || r.auditType || 'QMS',
+    department: r.department || r.location || scheduleOrg(r),
+    assignedAuditor: r.leadAuditor || r.auditor || (r.assignedAuditors || [])[0] || 'Unassigned',
+    startDate: scheduleDate(r),
+    endDate: scheduleDate(r),
+    status: s.includes('progress') ? 'in-progress' : 'planned',
+    clientId: String(r.clientId ?? r.dispatchId ?? r.id),
+  };
+};
+
+const loadActiveAudits = (): Audit[] => {
+  const active = readMergedSchedules()
+    .filter((e) => isActiveSchedule(e.record))
+    .map(mapScheduleToAudit);
+  return active.length > 0 ? active : mockAudits;
+};
 
 // Load audit checklists from system data
 const loadSystemChecklists = (): ChecklistItem[] => {
@@ -76,7 +149,8 @@ const loadSystemChecklists = (): ChecklistItem[] => {
   }
 };
 
-const standardChecklist: ChecklistItem[] = loadSystemChecklists() || [
+const loadedChecklist = loadSystemChecklists();
+const fallbackChecklist: ChecklistItem[] = [
   { id: 'CL-01', text: 'Is the quality policy available and understood by staff?', category: 'Leadership', isRequired: true },
   { id: 'CL-02', text: 'Are quality objectives established and measured?', category: 'Planning', isRequired: true },
   { id: 'CL-03', text: 'Is documented information controlled and updated?', category: 'Support', isRequired: true },
@@ -84,9 +158,22 @@ const standardChecklist: ChecklistItem[] = loadSystemChecklists() || [
   { id: 'CL-05', text: 'Is non-conforming output controlled effectively?', category: 'Operation', isRequired: false },
   { id: 'CL-06', text: 'Are internal audits conducted at planned intervals?', category: 'Performance', isRequired: true },
 ];
+const standardChecklist = loadedChecklist.length > 0 ? loadedChecklist : fallbackChecklist;
 
 const ConductAudit: React.FC = () => {
+  const [audits, setAudits] = useState<Audit[]>(() => loadActiveAudits());
   const [conductingAuditId, setConductingAuditId] = useState<string | null>(null);
+
+  // Reload the audit list whenever the shared schedule store changes
+  useEffect(() => {
+    const refresh = () => setAudits(loadActiveAudits());
+    window.addEventListener(SCHEDULES_UPDATED_EVENT, refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener(SCHEDULES_UPDATED_EVENT, refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
   
   // State for dynamic checklist items
   const [checklistItems, setChecklistItems] = useState<ChecklistItem[]>([]);
@@ -103,7 +190,7 @@ const ConductAudit: React.FC = () => {
   const fileInputRef = useRef<{ [key: string]: HTMLInputElement }>({});
 
   // Derived state
-  const conductingAudit = conductingAuditId ? mockAudits.find(a => a.id === conductingAuditId) : null;
+  const conductingAudit = conductingAuditId ? audits.find(a => a.id === conductingAuditId) : null;
   
   // Handlers
   const handleStartAudit = (auditId: string) => {
@@ -228,6 +315,41 @@ const ConductAudit: React.FC = () => {
     setShowCASuggest(true);
   };
 
+  // Persist checkpoint results into the shared findings store, then close
+  const handleSaveAndClose = () => {
+    if (conductingAudit) {
+      const clientKey = conductingAudit.clientId || conductingAudit.id;
+      const toFindingSeverity = (t: CheckpointData['auditType']): FindingSeverity | null => {
+        if (t === 'Major NC') return 'Major NC';
+        if (t === 'Minor NC') return 'Minor NC';
+        if (t === 'Observation') return 'Observation';
+        if (t === 'OFI') return 'Opportunity';
+        return null; // Compliant / unanswered checkpoints are not findings
+      };
+      const now = new Date().toISOString();
+      const newFindings: Finding[] = [];
+      checkpoints.forEach((cp) => {
+        const severity = toFindingSeverity(cp.auditType);
+        if (!severity) return;
+        const item = checklistItems.find((i) => i.id === cp.checklistItemId);
+        newFindings.push({
+          id: `f-${Date.now()}-${cp.checklistItemId}`,
+          severity,
+          clause: item?.id || cp.checklistItemId,
+          description: [item?.text, cp.observationNotes].filter(Boolean).join(' — '),
+          evidence: cp.evidenceFiles.join(', '),
+          createdAt: now,
+        });
+      });
+      if (newFindings.length > 0) {
+        writeFindings(clientKey, [...readFindings(clientKey), ...newFindings]);
+      } else {
+        window.dispatchEvent(new CustomEvent('cms-workflow-handoff'));
+      }
+    }
+    setConductingAuditId(null);
+  };
+
   const getAuditTypeBadgeClass = (type: string) => {
     switch (type) {
       case 'Minor NC': return 'badge-minor';
@@ -287,7 +409,7 @@ const ConductAudit: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {mockAudits.filter(a => a.title.toLowerCase().includes(searchTerm.toLowerCase())).map(audit => (
+                {audits.filter(a => a.title.toLowerCase().includes(searchTerm.toLowerCase())).map(audit => (
                   <tr key={audit.id}>
                     <td>
                       <div className="audit-name">
@@ -307,7 +429,7 @@ const ConductAudit: React.FC = () => {
                     </td>
                   </tr>
                 ))}
-                {mockAudits.length === 0 && (
+                {audits.length === 0 && (
                   <tr><td colSpan={7} className="text-center">No audits found.</td></tr>
                 )}
               </tbody>
@@ -525,7 +647,7 @@ const ConductAudit: React.FC = () => {
             </div>
             <div className="action-buttons">
               <button className="btn-secondary" onClick={() => setConductingAuditId(null)}>Cancel</button>
-              <button className="btn-primary" onClick={() => setConductingAuditId(null)}>Save &amp; Close</button>
+              <button className="btn-primary" onClick={handleSaveAndClose}>Save &amp; Close</button>
             </div>
           </div>
         </div>

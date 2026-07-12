@@ -1,8 +1,21 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Trash2, Users, Bell, MapPin, X, Search, CheckCircle, Edit2, CalendarDays, Eye } from 'lucide-react';
 import '../../styles/LeadAuditor/AuditSchedules.css';
 import Tooltip from '../../components/Tooltip';
 import ViewOnlyDoc from '../../components/ViewOnlyDoc';
+import {
+  MergedScheduleEntry,
+  SCHEDULES_UPDATED_EVENT,
+  StoredSchedule,
+  entryKey,
+  readMergedSchedules,
+  scheduleDate,
+  scheduleOrg,
+  scheduleStandard,
+  scheduleStatus,
+  scheduleTitle,
+  updateSchedule,
+} from '../../utils/auditScheduleStore';
 
 // --- Interfaces ---
 interface User {
@@ -29,6 +42,13 @@ interface Schedule {
   notes: string;
   assignedAuditors: string[]; 
   status: 'scheduled' | 'completed' | 'cancelled' | 'confirmed' | 'approved' | 'rejected' | 'date-change-requested';
+  /** Present when the row is backed by the shared schedule store. */
+  entry?: MergedScheduleEntry;
+  auditTitle?: string;
+  clientName?: string;
+  auditStatus?: string;
+  attachmentName?: string;
+  attachmentDataUrl?: string;
 }
 
 // --- Mock Data ---
@@ -58,12 +78,72 @@ const MOCK_SCHEDULES: Schedule[] = [
   }
 ];
 
+// --- Shared schedule store -> local row mapping (mocks are only a fallback) ---
+const asOptString = (v: unknown): string | undefined =>
+  typeof v === 'string' && v ? v : undefined;
+
+const mapRowStatus = (r: StoredSchedule): Schedule['status'] => {
+  const s = scheduleStatus(r).toLowerCase();
+  if (s === 'cancelled') return 'cancelled';
+  if (s === 'completed') return 'completed';
+  if (s === 'approved') return 'approved';
+  if (r.auditorConfirmation === 'Declined') return 'rejected';
+  if (r.auditorConfirmation === 'Confirmed') return 'confirmed';
+  if ((r.auditorConfirmationNote || '').toLowerCase().includes('date change')) return 'date-change-requested';
+  return 'scheduled';
+};
+
+const mapEntryToRow = (e: MergedScheduleEntry): Schedule => {
+  const r = e.record;
+  const assigned = Array.from(new Set(
+    [r.leadAuditor, r.auditor, ...(r.assignedAuditors || [])]
+      .filter((n): n is string => Boolean(n && String(n).trim()))
+  ));
+  return {
+    id: entryKey(e),
+    auditId: '',
+    scheduledDate: scheduleDate(r),
+    startTime: r.startTime || '',
+    endTime: r.endTime || '',
+    location: r.location || '',
+    notes: r.notes || r.auditScope || '',
+    assignedAuditors: assigned,
+    status: mapRowStatus(r),
+    entry: e,
+    auditTitle: r.auditName || r.auditTitle || (scheduleStandard(r) ? `${scheduleStandard(r)} Audit` : scheduleTitle(r)),
+    clientName: scheduleOrg(r),
+    auditStatus: scheduleStatus(r),
+    attachmentName: asOptString(r.attachmentName),
+    attachmentDataUrl: asOptString(r.attachmentDataUrl),
+  };
+};
+
+/** Rows come from the shared schedule store; mock rows only when the store is empty. */
+const buildRows = (): Schedule[] => {
+  const merged = readMergedSchedules();
+  if (merged.length === 0) return MOCK_SCHEDULES;
+  return merged
+    .filter((e) => scheduleStatus(e.record).toLowerCase() !== 'cancelled')
+    .map(mapEntryToRow);
+};
+
 export default function AuditSchedules() {
   // --- State ---
-  const [schedules, setSchedules] = useState<Schedule[]>(MOCK_SCHEDULES);
+  const [schedules, setSchedules] = useState<Schedule[]>(() => buildRows());
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState<'table' | 'calendar'>('table');
   const [docPreview, setDocPreview] = useState<{ name: string; dataUrl: string } | null>(null);
+
+  // Reload rows whenever the shared schedule store changes (same tab or cross-tab)
+  useEffect(() => {
+    const refresh = () => setSchedules(buildRows());
+    window.addEventListener(SCHEDULES_UPDATED_EVENT, refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener(SCHEDULES_UPDATED_EVENT, refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
   
   // Edit Modal State
   const [editingSchedule, setEditingSchedule] = useState<Schedule | null>(null);
@@ -115,24 +195,51 @@ export default function AuditSchedules() {
     e.preventDefault();
     if (!editingSchedule) return;
 
-    const updatedSchedules = schedules.map(s => 
-      s.id === editingSchedule.id ? { ...s, ...formData } as Schedule : s
-    );
+    if (editingSchedule.entry) {
+      // Store-backed row: persist through the shared schedule store
+      updateSchedule(editingSchedule.entry, {
+        date: formData.scheduledDate,
+        scheduledDate: formData.scheduledDate,
+        startTime: formData.startTime,
+        endTime: formData.endTime,
+        location: formData.location,
+        notes: formData.notes,
+      });
+    } else {
+      const updatedSchedules = schedules.map(s => 
+        s.id === editingSchedule.id ? { ...s, ...formData } as Schedule : s
+      );
+      setSchedules(updatedSchedules);
+    }
 
-    setSchedules(updatedSchedules);
     alert('Schedule updated successfully.');
     setEditingSchedule(null);
   };
 
   const handleDelete = (id: string) => {
     if (window.confirm('Are you sure you want to delete this schedule?')) {
-      setSchedules(schedules.filter(s => s.id !== id));
+      const row = schedules.find(s => s.id === id);
+      if (row?.entry) {
+        // Store-backed row: hide via a status patch so the Coordinator still sees it
+        updateSchedule(row.entry, { status: 'Cancelled' });
+      } else {
+        setSchedules(schedules.filter(s => s.id !== id));
+      }
     }
   };
 
   const handleConfirm = (id: string) => {
     if (window.confirm('Confirm this audit schedule?')) {
-      setSchedules(schedules.map(s => s.id === id ? { ...s, status: 'confirmed' } : s));
+      const row = schedules.find(s => s.id === id);
+      if (row?.entry) {
+        updateSchedule(row.entry, {
+          auditorConfirmation: 'Confirmed',
+          auditorConfirmationAt: new Date().toISOString(),
+          auditorConfirmationNote: 'Confirmed by Lead Auditor',
+        });
+      } else {
+        setSchedules(schedules.map(s => s.id === id ? { ...s, status: 'confirmed' } : s));
+      }
     }
   };
 
@@ -144,16 +251,40 @@ export default function AuditSchedules() {
       return;
     }
 
-    setSchedules(schedules.map(s => {
-      if (s.id === responseSchedule.id) {
-        return { 
-          ...s, 
-          status: responseType === 'date-change' ? 'date-change-requested' : responseType,
-          notes: responseType === 'date-change' ? `${s.notes}\n[Date Change Requested: Suggested new date is ${suggestedDate}]` : s.notes
-        };
+    if (responseSchedule.entry) {
+      // Store-backed row: persist the decision so the Coordinator sees it
+      const nowIso = new Date().toISOString();
+      if (responseType === 'approved') {
+        updateSchedule(responseSchedule.entry, {
+          status: 'Approved',
+          auditorConfirmation: 'Confirmed',
+          auditorConfirmationAt: nowIso,
+          auditorConfirmationNote: 'Schedule approved by Lead Auditor',
+        });
+      } else if (responseType === 'rejected') {
+        updateSchedule(responseSchedule.entry, {
+          auditorConfirmation: 'Declined',
+          auditorConfirmationAt: nowIso,
+          auditorConfirmationNote: 'Schedule rejected by Lead Auditor',
+        });
+      } else {
+        updateSchedule(responseSchedule.entry, {
+          auditorConfirmationAt: nowIso,
+          auditorConfirmationNote: `Date change requested: suggested new date is ${suggestedDate}`,
+        });
       }
-      return s;
-    }));
+    } else {
+      setSchedules(schedules.map(s => {
+        if (s.id === responseSchedule.id) {
+          return { 
+            ...s, 
+            status: responseType === 'date-change' ? 'date-change-requested' : responseType,
+            notes: responseType === 'date-change' ? `${s.notes}\n[Date Change Requested: Suggested new date is ${suggestedDate}]` : s.notes
+          };
+        }
+        return s;
+      }));
+    }
 
     if (responseType === 'date-change') {
       alert(`Date change request sent to coordinator. Suggested Date: ${suggestedDate}`);
@@ -173,8 +304,8 @@ export default function AuditSchedules() {
     const client = audit ? getUser(audit.clientId) : null;
     
     return (
-      (audit?.title || '').toLowerCase().includes(search) ||
-      (client?.name || '').toLowerCase().includes(search) ||
+      (audit?.title || schedule.auditTitle || '').toLowerCase().includes(search) ||
+      (client?.name || schedule.clientName || '').toLowerCase().includes(search) ||
       (schedule.location || '').toLowerCase().includes(search)
     );
   });
@@ -246,7 +377,7 @@ export default function AuditSchedules() {
                 <div key={sc.id} style={{ padding: 12, border: '1px solid #e2e8f0', borderLeft: '4px solid #0e7490', borderRadius: 8, background: '#f8fafc', cursor: 'pointer' }}
                   onClick={() => openEditModal(sc)}>
                   <div style={{ fontSize: 11, color: '#0e7490', fontWeight: 700 }}>{sc.scheduledDate}</div>
-                  <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: '#0f172a' }}>{audit?.title || 'Audit'}</div>
+                  <div style={{ fontSize: 13, fontWeight: 700, marginTop: 4, color: '#0f172a' }}>{audit?.title || sc.auditTitle || 'Audit'}</div>
                   <div style={{ fontSize: 11, color: '#64748b', marginTop: 4 }}>{sc.startTime} – {sc.endTime}</div>
                   <div style={{ fontSize: 10, color: '#64748b', marginTop: 6, padding: '2px 6px', background: '#e2e8f0', borderRadius: 4, display: 'inline-block' }}>{sc.status}</div>
                 </div>
@@ -281,15 +412,17 @@ export default function AuditSchedules() {
               const audit = getAudit(schedule.auditId);
               const client = audit ? getUser(audit.clientId) : null;
               const assignedNames = schedule.assignedAuditors
-                .map(id => getUser(id))
-                .filter(Boolean)
-                .map(u => `${u!.name}${u!.role === 'lead-auditor' ? ' (Lead)' : ''}`);
+                .map(id => {
+                  const u = getUser(id);
+                  return u ? `${u.name}${u.role === 'lead-auditor' ? ' (Lead)' : ''}` : id;
+                })
+                .filter(Boolean);
 
               return (
                 <tr key={schedule.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
-                  <td style={{ padding: '16px 20px' }}><strong>{audit?.title || 'Unknown Audit'}</strong></td>
-                  <td style={{ padding: '16px 20px' }}>{client ? `${client.name}` : '—'}</td>
-                  <td style={{ padding: '16px 20px', textTransform: 'capitalize', color: '#334155' }}>{audit?.status}</td>
+                  <td style={{ padding: '16px 20px' }}><strong>{audit?.title || schedule.auditTitle || 'Unknown Audit'}</strong></td>
+                  <td style={{ padding: '16px 20px' }}>{client?.name || schedule.clientName || '—'}</td>
+                  <td style={{ padding: '16px 20px', textTransform: 'capitalize', color: '#334155' }}>{audit?.status || schedule.auditStatus || '—'}</td>
                   <td style={{ padding: '16px 20px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                       <Calendar size={14} color="#64748b"/> {schedule.scheduledDate}
@@ -326,11 +459,13 @@ export default function AuditSchedules() {
                   </td>
                   <td style={{ padding: '16px 20px', textAlign: 'right' }}>
                     <div style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}>
-                      <Tooltip label="View attached schedule document (read-only)">
-                        <button className="icon-btn" style={{ color: '#0e7490', background: '#cffafe' }} onClick={() => setDocPreview({ name: ((schedule as any).attachmentName || 'Schedule-' + schedule.id + '.pdf'), dataUrl: ((schedule as any).attachmentDataUrl || '') })}>
-                          <Eye size={16} />
-                        </button>
-                      </Tooltip>
+                      {schedule.attachmentDataUrl && (
+                        <Tooltip label="View attached schedule document (read-only)">
+                          <button className="icon-btn" style={{ color: '#0e7490', background: '#cffafe' }} onClick={() => setDocPreview({ name: (schedule.attachmentName || 'Schedule-' + schedule.id + '.pdf'), dataUrl: schedule.attachmentDataUrl! })}>
+                            <Eye size={16} />
+                          </button>
+                        </Tooltip>
+                      )}
                       <Tooltip label="Edit schedule">
                         <button className="icon-btn" style={{ color: '#2563eb', background: '#eff6ff' }} onClick={() => openEditModal(schedule)}>
                           <Edit2 size={16} />
@@ -392,7 +527,7 @@ export default function AuditSchedules() {
             <form onSubmit={handleEditSubmit}>
               <div className="form-group" style={{ marginBottom: '16px' }}>
                 <label style={{ display: 'block', marginBottom: '8px', fontWeight: 500 }}>Audit Title</label>
-                <input type="text" className="form-input" value={getAudit(formData.auditId)?.title || ''} disabled style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', backgroundColor: '#f1f5f9' }} />
+                <input type="text" className="form-input" value={getAudit(formData.auditId)?.title || editingSchedule.auditTitle || ''} disabled style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1', backgroundColor: '#f1f5f9' }} />
               </div>
 
               <div className="form-row" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>

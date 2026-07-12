@@ -17,6 +17,7 @@ import {
   Filter,
   ArrowRight,
 } from 'lucide-react';
+import { getAuditors, saveAuditorsData } from './utils/dataStorage';
 
 /* -----------------------------------------------------------
    Auditor Request — incoming applications from the website
@@ -413,20 +414,28 @@ const AuditorRequests: React.FC = () => {
     // Also create a real auditor record so they show up under Auditor Profiles
     try {
       const raw = localStorage.getItem('cms_auditors');
-      const existing = raw ? JSON.parse(raw) : [];
-      if (Array.isArray(existing) && !existing.some((a: any) => (a.email || '').toLowerCase() === r.email.toLowerCase())) {
-        const nextId = existing.length ? Math.max(...existing.map((a: any) => a.id || 0)) + 1 : 2001;
-        existing.push({
-          id: nextId, name: r.name, email: r.email, phone: r.phone,
-          role: r.role, specialization: r.specialization, department: r.department,
-          country: r.country, certifications: r.certifications, status: 'Active',
-          joinDate: new Date().toISOString().split('T')[0], skills: {}, ratings: [],
-          approvalStatus: 'Approved', approvedBy: 'Management Council', approvedAt: new Date().toISOString(),
-        });
-        localStorage.setItem('cms_auditors', JSON.stringify(existing));
-        localStorage.setItem('cms_auditors_data', JSON.stringify(existing));
-        window.dispatchEvent(new Event('cms-auditors-updated'));
+      const parsed = raw ? JSON.parse(raw) : [];
+      const registry: any[] = Array.isArray(parsed) ? parsed : [];
+      const dataList = getAuditors();
+      const sameAuditor = (a: any) => (a.email || '').toLowerCase() === r.email.toLowerCase();
+      const nextId = Math.max(2000, ...registry.map((a: any) => Number(a.id) || 0), ...dataList.map(a => Number(a.id) || 0)) + 1;
+      const newAuditor = {
+        id: nextId, name: r.name, email: r.email, phone: r.phone,
+        role: r.role, specialization: r.specialization, department: r.department,
+        country: r.country, certifications: r.certifications, status: 'Active' as const,
+        joinDate: new Date().toISOString().split('T')[0], skills: {}, ratings: [],
+        approvalStatus: 'Approved' as const, approvedBy: 'Management Council', approvedAt: new Date().toISOString(),
+      };
+      // Append into the `cms_auditors` registry (additive — never overwrite)
+      if (!registry.some(sameAuditor)) {
+        registry.push(newAuditor);
+        localStorage.setItem('cms_auditors', JSON.stringify(registry));
       }
+      // Merge into the current `cms_auditors_data` list without clobbering CreateAuditor entries
+      if (!dataList.some(sameAuditor)) {
+        saveAuditorsData([...dataList, newAuditor]);
+      }
+      window.dispatchEvent(new Event('cms-auditors-updated'));
     } catch {}
     alert(`${r.name} approved and added to Auditor Profiles.`);
   };

@@ -390,10 +390,52 @@ const AuditChecklists: React.FC = () => {
 
   // Handler for Template Upload
   const handleTemplateUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      console.log('Template uploaded:', e.target.files[0].name);
-      alert(`Template '${e.target.files[0].name}' selected. Items would be populated here.`);
-    }
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        const text = String(reader.result || '');
+        let texts: string[] = [];
+        if (file.name.toLowerCase().endsWith('.json')) {
+          const parsed = JSON.parse(text);
+          if (Array.isArray(parsed)) {
+            texts = parsed
+              .map((it: any) => (typeof it === 'string' ? it : it?.text))
+              .filter((t: any) => typeof t === 'string' && t.trim());
+          }
+        } else {
+          // CSV / plain text: first column of each non-empty line (header skipped if it says "question"/"text")
+          texts = text.split(/\r?\n/)
+            .map((line) => line.split(',')[0].trim().replace(/^"|"$/g, ''))
+            .filter((t) => t && !/^(question|text|item)s?$/i.test(t));
+        }
+        if (texts.length === 0) {
+          alert('No checklist items found in the file. Use a JSON array of strings/{text} or a CSV with questions in the first column.');
+          return;
+        }
+        const stamp = Date.now();
+        const newItems: ChecklistItem[] = texts.map((t, i) => ({ id: `imp-${stamp}-${i}`, text: t, notes: '' } as ChecklistItem));
+        if (selectedChecklist) {
+          setEditingItems((prev) => [...prev, ...newItems]);
+          alert(`Imported ${newItems.length} items into "${selectedChecklist.name}". Save to persist.`);
+        } else {
+          const nextId = Math.max(0, ...checklists.map((c) => Number(c.id)).filter(Number.isFinite)) + 1;
+          const name = file.name.replace(/\.[^.]+$/, '');
+          setChecklists((prev) => [...prev, {
+            id: nextId, name, type: 'Imported', standard: '',
+            items: newItems.length, created: new Date().toISOString().split('T')[0],
+            status: 'Draft', checklistItems: newItems,
+          } as Checklist]);
+          alert(`Created checklist "${name}" with ${newItems.length} imported items.`);
+        }
+      } catch {
+        alert('Could not parse the template file. Use JSON or CSV.');
+      } finally {
+        e.target.value = '';
+      }
+    };
+    reader.readAsText(file);
   };
 
   // Handler for Excel Download

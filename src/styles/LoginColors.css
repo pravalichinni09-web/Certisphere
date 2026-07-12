@@ -78,3 +78,10 @@
   border-radius: 12px;
 }
 .cs-login-shell .info-box strong { color: var(--nx-gold, #d4af37) !important; }
+
+/* QA FIX (Issue 9) — demo-credentials block readability */
+.cs-login-shell .credentials-header h2 { color: #f6d878 !important; }
+.cs-login-shell .cs-creds-toggle { color: #f6d878 !important; border-color: rgba(212,175,55,0.5) !important; }
+.cs-login-shell .cs-role-card-name { color: #f7f2e2 !important; }
+.cs-login-shell .cs-role-card-desc { color: rgba(247, 242, 226, 0.72) !important; }
+.cs-login-shell .info-box { color: rgba(247, 242, 226, 0.75) !important; }

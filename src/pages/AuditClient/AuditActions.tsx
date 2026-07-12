@@ -210,14 +210,20 @@ const AuditActions = () => {
   };
 
   const handleSubmitModal = () => {
-    const selectedCount = tempListItems.filter(i => i.selected).length;
-    
-    if (activeModal === 'rootCauses') {
-      alert(`Successfully submitted ${selectedCount} Root Causes.\n\nAn email confirmation has been sent to the client.`);
-    } else {
-      console.log(`Submitting ${activeModal} for Audit ID ${selectedRowId}:`, tempListItems);
+    const selected = tempListItems.filter(i => i.selected);
+    if (selectedRowId && selected.length > 0) {
+      const now = new Date().toISOString();
+      const label = activeModal === 'rootCauses' ? 'Root causes'
+        : activeModal === 'findings' ? 'Findings' : 'Corrections';
+      const summary = selected.map((i: any) => i.text || i.label || i.name || String(i.id)).join('; ');
+      const updated = updateCorrectiveAction(selectedRowId, (record) => withHistory({
+        ...record,
+        ...(activeModal === 'rootCauses' ? { rootCause: summary } : {}),
+        ...(activeModal === 'corrections' ? { correctivePlan: summary } : {}),
+      }, 'Auditee', `${label} submitted (${selected.length})`, now));
+      setRows(updated.map(toRow));
+      alert(`${label} submitted (${selected.length}) and recorded on ${selectedRowId}.`);
     }
-    
     closeModal();
   };
 
@@ -242,8 +248,22 @@ const AuditActions = () => {
   };
 
   const handleGenerateReport = () => {
-    console.log("Generating report with config:", reportConfig);
-    alert(`Report generated for ${reportConfig.auditName || 'All Audits'} in ${reportConfig.format} format.`);
+    // Build a simple text/CSV report from the live rows and download it.
+    const scope = reportConfig.auditName
+      ? rows.filter(r => r.auditName === reportConfig.auditName)
+      : rows;
+    const lines = [
+      'CAP ID,Audit,Department,Auditor,Status,Findings',
+      ...scope.map(r => [r.id, r.auditName, r.department, r.auditorName, r.status, r.findingsList.join('; ')]
+        .map(v => `"${String(v ?? '').replace(/"/g, '""')}"`).join(',')),
+    ];
+    const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Audit_Actions_Report_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
     closeModal();
   };
 
@@ -421,51 +441,6 @@ const AuditActions = () => {
 
               {/* Actions footer */}
               <footer className="audit-card-actions">
-                    <td style={{ fontWeight: 500 }}>{row.auditName}</td>
-                    <td className="text-muted">{row.department}</td>
-                    <td className="text-muted">{row.auditorName}</td>
-                    <td className="text-muted">{row.leadAuditor}</td>
-                    
-                    {/* Findings Trigger */}
-                    <td style={{ textAlign: 'center' }}>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); openListModal('findings', row.id); }}
-                        className="btn-count btn-findings"
-                      >
-                        <AlertCircle className="icon-xs" />
-                        {row.findingsList.length}
-                      </button>
-                    </td>
-
-                    {/* Root Causes Trigger */}
-                    <td style={{ textAlign: 'center' }}>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); openListModal('rootCauses', row.id); }}
-                        className="btn-count"
-                        style={{ backgroundColor: '#f3e8ff', color: '#7c3aed', border: '1px solid #d8b4fe' }}
-                      >
-                        <Search className="icon-xs" />
-                        {row.rootCausesList.length}
-                      </button>
-                    </td>
-
-                    {/* Corrections Trigger */}
-                    <td style={{ textAlign: 'center' }}>
-                      <button 
-                        onClick={(e) => { e.stopPropagation(); openListModal('corrections', row.id); }}
-                        className="btn-count btn-corrections"
-                      >
-                        <CheckCircle className="icon-xs" />
-                        {row.correctionsList.length}
-                      </button>
-                    </td>
-
-                    {/* Status */}
-                    <td>
-                      <span className={`status-badge ${getStatusClass(row.status || 'Pending Review')}`}>
-                        {row.status || 'Pending Review'}
-                      </span>
-                    </td>
 
                 {/* Action buttons row */}
                 <div className="audit-card-actions-row">
@@ -503,14 +478,14 @@ const AuditActions = () => {
                                    borderRadius: '6px', boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.1)',
                                    zIndex: 50, width: '150px', textAlign: 'left', overflow: 'hidden'
                                  }}>
-                                   <button className="menu-item" style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
+                                   <button className="menu-item" onClick={() => { setSelectedRowId(row.id); openListModal('findings', row.id); }} style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
                                      <Eye size={14} /> View Details
                                    </button>
-                                   <button className="menu-item" style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
+                                   <button className="menu-item" onClick={() => { setSelectedRowId(row.id); openListModal('corrections', row.id); }} style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
                                      <Edit2 size={14} /> Edit
                                    </button>
-                                   <button className="menu-item" style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
-                                     <Download size={14} /> Download PDF
+                                   <button className="menu-item" onClick={() => { setReportConfig((c: any) => ({ ...c, auditName: row.auditName })); handleGenerateReport(); }} style={{ width: '100%', padding: '8px 12px', display: 'flex', alignItems: 'center', gap: '8px', border: 'none', background: 'none', cursor: 'pointer', fontSize: '13px', color: '#374151' }}>
+                                     <Download size={14} /> Download CSV
                                    </button>
                                  </div>
                                )}

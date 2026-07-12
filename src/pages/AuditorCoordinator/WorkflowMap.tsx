@@ -400,8 +400,13 @@ const WorkflowMap: React.FC = () => {
                             </span>
                             <span style={{ fontSize: 13, color: '#0f172a' }}>{step.does}</span>
                             <button
-                              onClick={() => navigate(step.link)}
-                              title={'Open ' + step.linkLabel}
+                              onClick={() => {
+                                if (step.link.startsWith('/auditor-coordinator')) navigate(step.link);
+                              }}
+                              disabled={!step.link.startsWith('/auditor-coordinator')}
+                              title={step.link.startsWith('/auditor-coordinator')
+                                ? 'Open ' + step.linkLabel
+                                : 'Handled by the ' + step.role + ' role — sign in as that role to open'}
                               style={{
                                 display: 'inline-flex', alignItems: 'center', gap: 4,
                                 background: '#fff',
@@ -411,7 +416,8 @@ const WorkflowMap: React.FC = () => {
                                 borderRadius: 6,
                                 fontSize: 12,
                                 fontWeight: 600,
-                                cursor: 'pointer',
+                                cursor: step.link.startsWith('/auditor-coordinator') ? 'pointer' : 'not-allowed',
+                                opacity: step.link.startsWith('/auditor-coordinator') ? 1 : 0.55,
                                 whiteSpace: 'nowrap',
                               }}
                             >

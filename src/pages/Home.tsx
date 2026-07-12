@@ -21,7 +21,7 @@
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, ShieldCheck, FileText, Send, Users, ClipboardCheck, Workflow, AlertOctagon, Award, RefreshCw, Check, Star, ClipboardList, FolderOpen, Smartphone, Command, Phone, Globe, MapPin } from 'lucide-react';
-import { readGlobalConfig, flagOf } from '../utils/globalConfig';
+import { readGlobalConfig } from '../utils/globalConfig';
 import FlagImg from '../components/FlagImg';
 import { useScrollReveal } from '../hooks/useScrollReveal';
 import '../styles/Home.css';
@@ -100,6 +100,7 @@ const Home: React.FC = () => {
     '/images/founder.webp',
   ];
   const [founderImageIndex, setFounderImageIndex] = useState(0);
+  const [founderImageLoaded, setFounderImageLoaded] = useState(false);
   const [showContact, setShowContact] = useState(false);
   const founderImageSrc = founderImageSources[founderImageIndex];
 
@@ -138,7 +139,9 @@ const Home: React.FC = () => {
         <div className="cs-home-header-inner">
           <div className="cs-home-brand">
             <div className="cs-home-brand-plate">
-              <CertiSphereLogo size={56} iconOnly={false} />
+              <a href="https://www.qcertisphere.com" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
+                <CertiSphereLogo size={56} iconOnly={false} />
+              </a>
             </div>
           </div>
           <nav className="cs-home-nav">
@@ -198,17 +201,28 @@ const Home: React.FC = () => {
               Certification and Surveillance into one unified platform.
             </p>
             <div className="cs-home-cta-row">
-              <span className="cs-home-cta cs-home-cta-primary" aria-hidden="true">
+              <button
+                className="cs-home-cta cs-home-cta-primary"
+                onClick={() => navigate('/login')}
+                aria-label="Get Started — go to login"
+              >
                 Get Started
-              </span>
-              <span className="cs-home-cta cs-home-cta-secondary" aria-hidden="true">
+              </button>
+              <button
+                className="cs-home-cta cs-home-cta-secondary"
+                onClick={() => {
+                  const el = document.getElementById('modules');
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                aria-label="Explore Modules — scroll to modules section"
+              >
                 Explore Modules
-              </span>
+              </button>
             </div>
             <ul className="cs-home-trust">
               <li><Check size={14} /> ISO/IEC 17021-1 compliant</li>
               <li><Check size={14} /> {cfg.accreditationBody}</li>
-              <li><Check size={14} /> Operating in {cfg.supportedCountries.length}+ countries {flagOf(cfg.defaultCountryCode)}</li>
+              <li><Check size={14} /> Operating in {cfg.supportedCountries.length}+ countries <FlagImg code={cfg.defaultCountryCode} w={18} rounded /></li>
             </ul>
           </SpotlightCard>
 
@@ -294,15 +308,7 @@ const Home: React.FC = () => {
           ))}
         </section>
 
-        {/* ===== Brand showcase band — features the CertiSphere logo prominently ===== */}
-        <section className="cs-brand-showcase cs-reveal cs-reveal-zoom">
-          <div className="cs-brand-showcase-inner">
-            <div className="cs-brand-showcase-glow" aria-hidden="true" />
-            <CertiSphereLogo size={88} iconOnly={false} className="cs-brand-showcase-img" />
-            <p className="cs-brand-showcase-tag">{flagOf(cfg.defaultCountryCode)} {cfg.accreditationBody}</p>
-          </div>
-        </section>
-
+        
                 {/* ===== MODULES — Bento Grid ===== */}
         <section id="modules" className="cs-bento-section">
           <header className="cs-bento-section-head cs-reveal cs-reveal-up">
@@ -320,14 +326,14 @@ const Home: React.FC = () => {
                 key={i}
                 className={'bento-card bento-mod' + (m.featured ? ' bento-mod-featured' : '') + ' cs-reveal cs-reveal-up'}
                 data-reveal-delay={i * 70}
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/login?intent=' + encodeURIComponent(m.label + ' module'))}
                 style={{ cursor: 'pointer' }}
                 title="Sign in to access this module"
               >
                 <div className="bento-mod-icon">{m.icon}</div>
                 <h3>{m.label}</h3>
                 <p>{m.desc}</p>
-                <span className="bento-mod-demo">Sign In to Access</span>
+                <span className="bento-mod-demo">Open Demo →</span>
                 <span className="bento-mod-arrow"><ArrowRight size={14} /></span>
               </article>
             ))}
@@ -362,7 +368,7 @@ const Home: React.FC = () => {
                 key={i}
                 className="cs-cert-body-card cs-reveal cs-reveal-up"
                 data-reveal-delay={i * 80}
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/login?intent=' + encodeURIComponent(cb.code + ' — ' + cb.name))}
                 style={{ cursor: 'pointer' }}
                 title="Sign in to access this certification body"
               >
@@ -372,7 +378,7 @@ const Home: React.FC = () => {
                   <span className="cs-cert-body-name">{cb.name}</span>
                   <p className="cs-cert-body-desc">{cb.desc}</p>
                 </div>
-                <span className="cs-cert-body-cta">Sign In <ArrowRight size={13} /></span>
+                <span className="cs-cert-body-cta">Explore <ArrowRight size={13} /></span>
               </article>
             ))}
           </div>
@@ -446,6 +452,9 @@ const Home: React.FC = () => {
                   <a href="tel:9849499111" style={link}>
                     <span style={chip}><Phone size={18} /></span> 98494 99111
                   </a>
+                  <a href={`mailto:${cfg.contactEmail}`} style={link}>
+                    <span style={chip}><Send size={18} /></span> {cfg.contactEmail}
+                  </a>
                   <a href="https://www.qmicssolutions.com" target="_blank" rel="noopener noreferrer" style={link}>
                     <span style={chip}><Globe size={18} /></span> www.qmicssolutions.com
                   </a>
@@ -480,16 +489,7 @@ const Home: React.FC = () => {
               }}>
               ✉️ Send Us a Message
             </button>
-            <button
-              onClick={() => window.location.href = '/login'}
-              style={{
-                padding: '13px 32px', borderRadius: 10,
-                border: '1px solid rgba(212,175,55,0.55)',
-                background: 'transparent', color: '#f6d878', fontWeight: 700,
-                fontSize: 16, cursor: 'pointer',
-              }}>
-              Sign In →
-            </button>
+
           </div>
         </div>
       </section>
@@ -506,6 +506,20 @@ const Home: React.FC = () => {
             {cfg.orgShortName} is the audit intelligence platform behind CertiSphere, backed by 35 years of
             experience in auditing, compliance and certification workflows across global standards.
           </p>
+          <a
+            href="https://qmicscertifications.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="cs-link-btn"
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 6, marginTop: 12,
+              padding: '9px 20px', borderRadius: 999, textDecoration: 'none',
+              border: '1px solid rgba(212,175,55,0.5)', color: '#f6d878',
+              fontSize: 13, fontWeight: 600, letterSpacing: 0.6,
+            }}
+          >
+            <FolderOpen size={14} /> View Company Profile →
+          </a>
         </header>
 
         <div className="cs-aboutus-card cs-reveal cs-reveal-zoom">
@@ -516,18 +530,17 @@ const Home: React.FC = () => {
                 src={founderImageSrc}
                 alt="Mr. Ramakrishna Chinmaya — Founder & CEO"
                 className="cs-founder-img"
-                onError={(e) => {
+                style={{ display: founderImageLoaded ? 'block' : 'none' }}
+                onLoad={() => setFounderImageLoaded(true)}
+                onError={() => {
                   if (founderImageIndex < founderImageSources.length - 1) {
                     setFounderImageIndex((idx) => idx + 1);
-                    return;
                   }
-                  const el = e.currentTarget as HTMLImageElement;
-                  el.style.display = 'none';
-                  const fb = el.parentElement?.querySelector('.cs-founder-photo-fallback') as HTMLElement | null;
-                  if (fb) fb.style.display = 'grid';
                 }}
               />
-              <div className="cs-founder-photo-fallback" aria-hidden="true">RC</div>
+              {!founderImageLoaded && (
+                <div className="cs-founder-photo-fallback" style={{ display: 'grid' }} aria-hidden="true">RC</div>
+              )}
               <span className="cs-founder-star"><Star size={14} /></span>
             </div>
             <h3 className="cs-founder-name">Mr. Ramakrishna Chinmaya</h3>
@@ -588,15 +601,14 @@ const Home: React.FC = () => {
               >
                 <FolderOpen size={15} /> Company Profile
               </a>
-              <a
-                href="https://qmicscertifications.com"
-                target="_blank"
-                rel="noreferrer"
+              <button
+                type="button"
+                onClick={() => setShowContact(true)}
                 className="cs-profile-link-btn"
-                style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'9px 20px', borderRadius:8, background:'#F5A623', color:'#1E3A8A', fontWeight:600, fontSize:14, textDecoration:'none' }}
+                style={{ display:'inline-flex', alignItems:'center', gap:6, padding:'9px 20px', borderRadius:8, border:'none', cursor:'pointer', background:'#F5A623', color:'#1E3A8A', fontWeight:600, fontSize:14, textDecoration:'none' }}
               >
                 <Send size={15} /> Get In Touch
-              </a>
+              </button>
             </div>
           </div>
         </div>
@@ -607,7 +619,9 @@ const Home: React.FC = () => {
         <div className="cs-footer-grid">
           <div className="cs-footer-brand">
             <div className="cs-footer-logo-plate">
-              <CertiSphereLogo size={52} iconOnly={false} />
+              <a href="https://www.qcertisphere.com" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
+                <CertiSphereLogo size={52} iconOnly={false} />
+              </a>
             </div>
             <p className="cs-footer-tagline">
               A unified platform for managing certification programmes end-to-end
@@ -640,7 +654,7 @@ const Home: React.FC = () => {
             <a href={`tel:${cfg.contactPhone.replace(/\s+/g, '')}`}>{cfg.contactPhone}</a>
             <a href={cfg.website} target="_blank" rel="noreferrer">{cfg.website.replace(/^https?:\/\//, '')}</a>
             <span className="cs-footer-static">
-              {flagOf(cfg.defaultCountryCode)} {cfg.defaultCountry}
+              <FlagImg code={cfg.defaultCountryCode} w={18} rounded /> {cfg.defaultCountry}
             </span>
             <span className="cs-footer-static">
 {cfg.accreditationBody}</span>

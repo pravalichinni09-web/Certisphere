@@ -202,7 +202,7 @@
   align-items: center;
   gap: 4px;
   line-height: 1;
-  filter: saturate(0.35) brightness(1.05);
+  filter: saturate(1) brightness(1.05);
   transition: filter 0.25s ease;
 }
 .cs-top-strip-inner:hover .cs-flag-chip { filter: saturate(1); }

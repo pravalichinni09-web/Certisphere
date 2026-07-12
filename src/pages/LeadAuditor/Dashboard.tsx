@@ -148,7 +148,7 @@ const Dashboard: React.FC = () => {
                 <div className="qa-icon green"><CheckCircle2 size={20} /></div>
                 <span>Review Actions</span>
               </button>
-              <button onClick={() => navigate('/lead-auditor/submit-schedule')}>
+              <button onClick={() => navigate('/lead-auditor/audit-schedules')}>
                 <div className="qa-icon orange"><CalendarClock size={20} /></div>
                 <span>Plan Schedule</span>
               </button>

@@ -1354,3 +1354,103 @@
 .cs-home .cs-prefooter a svg,
 [data-theme="light"] .cs-home .cs-prefooter a svg,
 [data-theme="dark"] .cs-home .cs-prefooter a svg { color: #d4af37 !important; }
+
+/* =============================================================
+   QA FIXES — readability under Modules / Cert Bodies / About Us
+   (Issue 2) and the light contact-form modal (Issue 4)
+   ============================================================= */
+
+/* Section sub-lines: bigger, brighter, roomier */
+.cs-home .cs-home-section-sub,
+[data-theme="light"] .cs-home .cs-home-section-sub,
+[data-theme="dark"] .cs-home .cs-home-section-sub {
+  color: rgba(247, 242, 226, 0.82) !important;
+  font-size: 15.5px !important;
+  line-height: 1.7 !important;
+  font-weight: 400 !important;
+  max-width: 640px;
+  margin-left: auto;
+  margin-right: auto;
+  letter-spacing: 0.2px;
+}
+
+/* Card body copy: raise from faint to comfortably readable */
+.cs-home .bento-mod p, .cs-home .bento-benefit p, .cs-home .cs-cert-body-desc,
+[data-theme="light"] .cs-home .bento-mod p,
+[data-theme="light"] .cs-home .bento-benefit p,
+[data-theme="light"] .cs-home .cs-cert-body-desc,
+[data-theme="dark"] .cs-home .bento-mod p,
+[data-theme="dark"] .cs-home .bento-benefit p,
+[data-theme="dark"] .cs-home .cs-cert-body-desc {
+  color: rgba(247, 242, 226, 0.80) !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+}
+.cs-home .bento-mod h3, .cs-home .bento-benefit h3, .cs-home .cs-cert-body-name,
+[data-theme="light"] .cs-home .bento-mod h3,
+[data-theme="dark"] .cs-home .bento-mod h3 {
+  letter-spacing: 0.3px;
+  margin-bottom: 8px !important;
+}
+
+/* About Us / founder copy */
+.cs-home .cs-founder-bio p,
+[data-theme="light"] .cs-home .cs-founder-bio p,
+[data-theme="dark"] .cs-home .cs-founder-bio p {
+  color: rgba(247, 242, 226, 0.82) !important;
+  line-height: 1.75 !important;
+  font-size: 14px !important;
+}
+.cs-home .cs-expertise-pill,
+[data-theme="light"] .cs-home .cs-expertise-pill,
+[data-theme="dark"] .cs-home .cs-expertise-pill {
+  color: rgba(247, 242, 226, 0.95) !important;
+  font-weight: 500;
+}
+.cs-home .cs-bio-sub,
+[data-theme="light"] .cs-home .cs-bio-sub,
+[data-theme="dark"] .cs-home .cs-bio-sub {
+  color: rgba(247, 242, 226, 0.75) !important;
+}
+
+/* Light contact-form modal: exempt from the dark-page cream catch-all */
+.cs-home .cs-light-modal,
+.cs-home .cs-light-modal :where(h1, h2, h3, h4, h5, h6),
+[data-theme="light"] .cs-home .cs-light-modal :where(h1, h2, h3, h4, h5, h6),
+[data-theme="dark"] .cs-home .cs-light-modal :where(h1, h2, h3, h4, h5, h6) {
+  color: #111827 !important;
+}
+.cs-home .cs-light-modal :where(p, li, label, td, th, figcaption),
+[data-theme="light"] .cs-home .cs-light-modal :where(p, li, label, td, th, figcaption),
+[data-theme="dark"] .cs-home .cs-light-modal :where(p, li, label, td, th, figcaption) {
+  color: #374151 !important;
+}
+.cs-home .cs-light-modal input,
+.cs-home .cs-light-modal select,
+.cs-home .cs-light-modal textarea,
+[data-theme="dark"] .cs-home .cs-light-modal input,
+[data-theme="dark"] .cs-home .cs-light-modal select,
+[data-theme="dark"] .cs-home .cs-light-modal textarea {
+  background: #ffffff !important;
+  color: #111827 !important;
+  border-color: #cbd5e1 !important;
+}
+.cs-home .cs-light-modal input:focus,
+.cs-home .cs-light-modal textarea:focus {
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.18) !important;
+}
+
+/* =============================================================
+   QA FIX (Issue 7) — sharper, clearer CertiSphere logo everywhere
+   ============================================================= */
+.cs-home-brand-plate img,
+.cs-footer-logo-plate img,
+.cs-sidebar-brand img,
+.cs-sidebar-brand-img,
+.cs-logo-img {
+  filter: brightness(1.08) contrast(1.12) saturate(1.05)
+          drop-shadow(0 2px 10px rgba(0, 0, 0, 0.55)) !important;
+  image-rendering: auto;
+}
+.cs-home-brand-plate img { height: 42px !important; }

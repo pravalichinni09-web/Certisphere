@@ -2,7 +2,7 @@
    AI Assistant — Floating chat widget for CMS
    ============================================================= */
 
-/* Floating Action Button */
+/* Floating Action Button — CertiSphere noir & gold brand mark */
 .ai-fab {
   position: fixed;
   right: 24px;
@@ -10,44 +10,57 @@
   z-index: 9998;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
-  border: none;
+  gap: 10px;
+  padding: 10px 20px 10px 12px;
+  border: 1px solid rgba(212, 175, 55, 0.55);
   border-radius: 999px;
-  background: linear-gradient(135deg, #1f6bbf 0%, #1f6bbf 50%, #1f6bbf 100%);
-  color: #fff;
+  background: linear-gradient(145deg, #1c1810 0%, #0c0b09 55%, #14110b 100%);
+  color: #f6d878;
   font-weight: 700;
-  font-size: 14px;
-  letter-spacing: 0.3px;
+  font-size: 13px;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
   cursor: pointer;
   box-shadow:
-    0 12px 32px rgba(14, 165, 233, 0.40),
-    0 4px 10px rgba(99, 102, 241, 0.25);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(247, 216, 120, 0.18),
+    0 0 0 3px rgba(212, 175, 55, 0.08);
+  transition: transform 0.18s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .ai-fab:hover {
   transform: translateY(-2px) scale(1.03);
+  border-color: #d4af37;
   box-shadow:
-    0 16px 40px rgba(14, 165, 233, 0.50),
-    0 6px 14px rgba(99, 102, 241, 0.35);
+    0 18px 44px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(247, 216, 120, 0.25),
+    0 0 22px rgba(212, 175, 55, 0.35);
 }
 
 .ai-fab-label {
   display: inline-block;
+  background: linear-gradient(100deg, #f7f2e2 0%, #f6d878 45%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
-
-/* White circular badge that holds the Qmics brand logo on the gradient FAB */
+/* Gold-ringed medallion holding the QCSAI mark */
 .ai-fab-badge {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  background: #ffffff;
+  background:
+    radial-gradient(60% 60% at 32% 28%, rgba(212, 175, 55, 0.28) 0%, transparent 70%),
+    #0c0b09;
+  border: 1.5px solid #d4af37;
+  color: #f6d878;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) inset;
+  box-shadow:
+    0 0 10px rgba(212, 175, 55, 0.35),
+    inset 0 1px 2px rgba(247, 216, 120, 0.25);
   flex-shrink: 0;
 }
 
@@ -56,13 +69,13 @@
 }
 
 .ai-fab.pulse {
-  animation: ai-pulse 2.4s ease-out infinite;
+  animation: ai-pulse 2.6s ease-out infinite;
 }
 
 @keyframes ai-pulse {
-  0%   { box-shadow: 0 12px 32px rgba(14, 165, 233, 0.40), 0 0 0 0 rgba(14, 165, 233, 0.55); }
-  70%  { box-shadow: 0 12px 32px rgba(14, 165, 233, 0.40), 0 0 0 22px rgba(14, 165, 233, 0); }
-  100% { box-shadow: 0 12px 32px rgba(14, 165, 233, 0.40), 0 0 0 0 rgba(14, 165, 233, 0); }
+  0%   { box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 0 0 0 rgba(212, 175, 55, 0.45); }
+  70%  { box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 0 0 20px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 14px 36px rgba(0,0,0,0.45), 0 0 0 0 rgba(212, 175, 55, 0); }
 }
 
 /* ===================== Chat Panel ===================== */
@@ -622,29 +635,50 @@
 }
 
 /* =============================================================
-   QC AI — chatbot launcher + header restyle
+   QCSAI — launcher logo (CertiSphere noir & gold)
    ============================================================= */
 .ai-fab {
-  background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%) !important;
+  background: linear-gradient(145deg, #1c1810 0%, #0c0b09 55%, #14110b 100%) !important;
+  border: 1px solid rgba(212, 175, 55, 0.6) !important;
   gap: 10px !important;
-  padding: 11px 18px 11px 12px !important;
-  box-shadow: 0 14px 34px rgba(37, 99, 235, 0.38), 0 4px 10px rgba(79, 70, 229, 0.30) !important;
+  padding: 10px 20px 10px 12px !important;
+  box-shadow:
+    0 14px 36px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(247, 216, 120, 0.18),
+    0 0 0 3px rgba(212, 175, 55, 0.08) !important;
 }
 .ai-fab:hover {
-  box-shadow: 0 18px 44px rgba(37, 99, 235, 0.50), 0 6px 14px rgba(79, 70, 229, 0.38) !important;
+  border-color: #d4af37 !important;
+  box-shadow:
+    0 18px 44px rgba(0, 0, 0, 0.55),
+    inset 0 1px 0 rgba(247, 216, 120, 0.25),
+    0 0 22px rgba(212, 175, 55, 0.35) !important;
 }
-.ai-fab-label { font-weight: 800 !important; letter-spacing: 0.4px; }
+.ai-fab-label {
+  font-weight: 800 !important;
+  letter-spacing: 2.2px;
+  text-transform: uppercase;
+  font-size: 12.5px;
+  background: linear-gradient(100deg, #f7f2e2 0%, #f6d878 45%, #d4af37 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
 
-/* Translucent circular bubble badge with an "online" dot */
+/* Gold medallion holding the QCSAI mark, with a live dot */
 .ai-fab-badge {
   position: relative;
-  width: 34px !important;
-  height: 34px !important;
+  width: 36px !important;
+  height: 36px !important;
   border-radius: 50% !important;
-  background: rgba(255, 255, 255, 0.20) !important;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.30) !important;
+  background:
+    radial-gradient(60% 60% at 32% 28%, rgba(212, 175, 55, 0.28) 0%, transparent 70%),
+    #0c0b09 !important;
+  box-shadow:
+    inset 0 0 0 1.5px #d4af37,
+    0 0 10px rgba(212, 175, 55, 0.35) !important;
 }
-.ai-fab-badge svg { color: #ffffff; }
+.ai-fab-badge svg { color: #f6d878; }
 .ai-fab-badge::after {
   content: '';
   position: absolute;
@@ -654,7 +688,8 @@
   height: 10px;
   border-radius: 50%;
   background: #22c55e;
-  border: 2px solid #2563eb;
+  border: 2px solid #0c0b09;
+  box-shadow: 0 0 6px rgba(34, 197, 94, 0.6);
 }
 
 /* Panel header bubble icon */

@@ -15,6 +15,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { Sparkles } from 'lucide-react';
+import { suggestActions } from '../../ai/correctiveActions';
 import '../../styles/Auditor/ActionReview.css';
 import {
   CORRECTIVE_ACTIONS_EVENT,
@@ -101,7 +102,7 @@ const ActionReview: React.FC = () => {
   const [selectedItem, setSelectedItem] = useState<ActionItem | null>(null);
   const [showAudReg, setShowAudReg] = useState(false);
   const [reviewNotes, setReviewNotes] = useState('');
-  const [, setShowCASuggest] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [filterStatus, setFilterStatus] = useState('All');
 
@@ -181,9 +182,17 @@ const ActionReview: React.FC = () => {
     }
   };
 
-  const filteredItems = filterStatus === 'All' 
-    ? items 
-    : items.filter(i => i.status === filterStatus);
+  const filteredItems = (filterStatus === 'All' ? items : items.filter(i => i.status === filterStatus))
+    .filter(i => {
+      const q = searchTerm.toLowerCase().trim();
+      if (!q) return true;
+      return (
+        (i.findingTitle || '').toLowerCase().includes(q) ||
+        (i.auditTitle || '').toLowerCase().includes(q) ||
+        (i.description || '').toLowerCase().includes(q) ||
+        (i.id || '').toLowerCase().includes(q)
+      );
+    });
 
 
   const handleDownloadFile = (fileName: string) => {
@@ -248,7 +257,12 @@ const ActionReview: React.FC = () => {
         <div className="toolbar">
           <div className="search-bar">
             <Search size={18} />
-            <input type="text" placeholder="Search findings or audits..." />
+            <input
+              type="text"
+              placeholder="Search findings or audits..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
           <div className="filter-group">
             <Filter size={16} />
@@ -394,7 +408,15 @@ const ActionReview: React.FC = () => {
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}><AlertTriangle size={18}/> Auditor Assessment</span>
                   <button
                     type="button"
-                    onClick={() => setShowCASuggest(true)}
+                    onClick={() => {
+                      if (!selectedItem) return;
+                      const sugg = suggestActions({ description: selectedItem.description || selectedItem.findingTitle }, 3);
+                      if (sugg.length === 0) return;
+                      const text = sugg
+                        .map((sg, i) => `${i + 1}. ${sg.title}: ${sg.correctiveAction} (Preventive: ${sg.preventiveAction})`)
+                        .join('\n');
+                      setReviewNotes((prev) => (prev ? prev + '\n\n' : '') + 'AI-suggested actions:\n' + text);
+                    }}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 5,
                       padding: '5px 10px', borderRadius: 6, fontSize: 12, fontWeight: 600,

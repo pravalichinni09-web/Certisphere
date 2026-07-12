@@ -43,11 +43,55 @@ export const safeJSON = <T,>(key: string, fallback: T): T => {
 };
 
 export const loadFindings = (): AuditFinding[] => {
-  return safeJSON<AuditFinding[]>(FINDINGS_KEY, []);
+  const raw = safeJSON<unknown>(FINDINGS_KEY, []);
+  // Flat array (analysis-native shape)
+  if (Array.isArray(raw)) return raw.map((f) => normalizeFinding(f));
+  // Object keyed by clientId (shape written by Conduct Audit pages)
+  if (raw && typeof raw === 'object') {
+    const out: AuditFinding[] = [];
+    for (const [clientId, list] of Object.entries(raw as Record<string, unknown>)) {
+      if (!Array.isArray(list)) continue;
+      for (const item of list) out.push(normalizeFinding(item, clientId));
+    }
+    return out;
+  }
+  return [];
+};
+
+/** Coerce any finding-ish record (from any writer) into a safe AuditFinding. */
+const normalizeFinding = (f: any, clientId?: string): AuditFinding => {
+  const sevRaw = String(f?.severity || f?.category || 'Minor');
+  const category: FindingCategory =
+    /major/i.test(sevRaw) ? 'Major'
+    : /minor/i.test(sevRaw) ? 'Minor'
+    : /(ofi|opportunit)/i.test(sevRaw) ? 'OFI'
+    : 'Observation';
+  return {
+    id: String(f?.id ?? `fin-${Math.random().toString(36).slice(2, 9)}`),
+    auditId: String(f?.auditId ?? (clientId ? `client-${clientId}` : 'unknown')),
+    auditTitle: String(f?.auditTitle ?? f?.audit ?? (clientId ? `Client ${clientId} audit` : 'Audit')),
+    client: String(f?.client ?? f?.organization ?? (clientId ? `Client ${clientId}` : 'Unknown client')),
+    standard: String(f?.standard ?? 'ISO 9001:2015'),
+    date: String(f?.date ?? (f?.createdAt ? String(f.createdAt).slice(0, 10) : new Date().toISOString().slice(0, 10))),
+    category,
+    severity: (f?.severity === 'High' || f?.severity === 'Medium' || f?.severity === 'Low')
+      ? f.severity
+      : (category === 'Major' ? 'High' : category === 'Minor' ? 'Medium' : 'Low'),
+    clause: String(f?.clause ?? '—'),
+    department: String(f?.department ?? 'General'),
+    title: String(f?.title ?? f?.description ?? 'Finding').slice(0, 120),
+    description: String(f?.description ?? ''),
+    recommendation: String(f?.recommendation ?? ''),
+    status: (f?.status === 'Open' || f?.status === 'In Progress' || f?.status === 'Closed') ? f.status : 'Open',
+    reportedAt: String(f?.reportedAt ?? f?.createdAt ?? new Date().toISOString()),
+  };
 };
 
 export const saveFindings = (rows: AuditFinding[]) => {
   try {
+    // Preserve the object-shaped store if that's what's on disk (Conduct Audit writers).
+    const existing = safeJSON<unknown>(FINDINGS_KEY, []);
+    if (existing && !Array.isArray(existing) && typeof existing === 'object') return;
     localStorage.setItem(FINDINGS_KEY, JSON.stringify(rows));
   } catch {
     /* ignore */

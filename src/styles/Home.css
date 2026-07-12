@@ -2290,3 +2290,15 @@ html { scroll-behavior: smooth; scroll-padding-top: 84px; }
   background: rgba(10, 42, 95, 0.12);
   border-color: rgba(10, 42, 95, 0.3);
 }
+
+/* ── CTA buttons (converted from span to button) ── */
+button.cs-home-cta {
+  font-family: inherit;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+button.cs-home-cta:focus-visible {
+  outline: 2px solid #f5c130;
+  outline-offset: 3px;
+}

@@ -19,8 +19,10 @@ import {
   AuditReportsMap,
   deriveReportStatus,
   loadAuditReports,
+  notifyAuditReportsUpdated,
   subscribeAuditReports,
   updateAuditReport,
+  upsertAuditReport,
 } from '../../services/auditReports';
 import AIPanel from '../../components/AIPanel';
 import { onCmsChange } from '../../ai/liveData';
@@ -285,6 +287,41 @@ const AuditReport: React.FC = () => {
       return;
     }
     const submittedCount = selectedFindingIndices.length;
+
+    if (findingsAuditContext) {
+      const key = findingsAuditContext.id;
+      const now = new Date().toISOString();
+      const selected = selectedFindingIndices
+        .map(i => currentFindingsList[i])
+        .filter(Boolean);
+      const summaryText = selected
+        .map((f, i) => `${i + 1}. [${f.severity.toUpperCase()}] ${f.title}: ${f.description}`)
+        .join('\n');
+      const note = `Findings submitted by Lead Auditor on ${now.split('T')[0]}:\n${summaryText}`;
+      const existing = sharedReports[key];
+      if (existing) {
+        // Append the findings summary to the matching shared report record
+        updateAuditReport(key, {
+          reviewComment: existing.reviewComment ? `${existing.reviewComment}\n\n${note}` : note,
+        });
+      } else {
+        // No matching record yet — create one carrying the submitted findings
+        upsertAuditReport(key, {
+          summary: note,
+          scope: findingsAuditContext.department || '',
+          conclusion: '',
+          recommendation: 'Recommend with conditions',
+          draftedAt: now,
+          draftedBy: 'Lead Auditor',
+          submittedAt: now,
+          status: 'Submitted',
+          source: 'LeadAuditor',
+          clientName: findingsAuditContext.title,
+        });
+      }
+      notifyAuditReportsUpdated();
+    }
+
     alert(`Successfully submitted ${submittedCount} selected findings for ${findingsAuditContext?.title}.`);
     setShowFindingsModal(false);
   };

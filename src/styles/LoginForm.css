@@ -303,3 +303,18 @@
   .login-button::after,
   .selected-user-info { animation: none !important; }
 }
+
+/* =============================================================
+   QA FIX (Issue 9) — stronger contrast inside the login box
+   ============================================================= */
+.role-picker-label { color: #f6d878 !important; }
+.role-pick-btn {
+  color: rgba(247, 242, 226, 0.92) !important;
+  border-color: rgba(212, 175, 55, 0.38) !important;
+}
+.role-pick-label { font-weight: 600; }
+.form-label { color: #f7f2e2 !important; }
+.form-input { color: #ffffff !important; }
+.form-input::placeholder { color: rgba(247, 242, 226, 0.5) !important; }
+.info-label { color: rgba(247, 242, 226, 0.75) !important; }
+.info-value { color: #f6d878 !important; }

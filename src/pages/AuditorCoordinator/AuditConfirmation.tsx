@@ -55,9 +55,20 @@ interface ExtendedConfirmation extends Omit<Confirmation, 'status'> {
 
 const AuditConfirmation: React.FC = () => {
   const [viewTab, setViewTab] = useState<'confirmations' | 'alerts'>('confirmations');
-  const [confirmations, setConfirmations] = useState<ExtendedConfirmation[]>(
-    initialConfirmations.map(c => ({ ...c, dueDate2: '' }))
-  );
+  const [confirmations, setConfirmations] = useState<ExtendedConfirmation[]>(() => {
+    try {
+      const raw = localStorage.getItem('cms_audit_confirmations_v1');
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch { /* ignore */ }
+    return initialConfirmations.map(c => ({ ...c, dueDate2: '' }));
+  });
+  // Persist confirmations so approvals survive refresh and other surfaces can read them.
+  useEffect(() => {
+    try {
+      localStorage.setItem('cms_audit_confirmations_v1', JSON.stringify(confirmations));
+    } catch { /* ignore */ }
+  }, [confirmations]);
   
   const [showForm, setShowForm] = useState(false);
   const [viewModalData, setViewModalData] = useState<{conf: ExtendedConfirmation, clientName: string, clientAddress: string} | null>(null);
@@ -121,7 +132,7 @@ const AuditConfirmation: React.FC = () => {
   const getClientEmail = (clientId?: string) => clients.find(c => c.id === clientId)?.email || 'client@example.com';
   
   const getScheduleDetails = (scheduleId: string | number) => {
-    const sched = schedules.find(s => String(s.id) === String(scheduleId));
+    const sched = liveSchedules.find(s => String(s.id) === String(scheduleId));
     if (!sched) return 'Unknown Schedule';
     return `${getClientName(sched.clientId)} - ${(sched as any).date ?? (sched as any).scheduledDate ?? 'N/A'}`;
   }; 
@@ -247,7 +258,7 @@ const AuditConfirmation: React.FC = () => {
   };
 
   const handleViewRow = (conf: ExtendedConfirmation) => {
-    const sched = schedules.find(s => String(s.id) === String(conf.scheduleId));
+    const sched = liveSchedules.find(s => String(s.id) === String(conf.scheduleId));
     const clientName = sched ? getClientName(sched.clientId) : 'Unknown';
     const clientAddress = sched ? getClientAddress(sched.clientId) : 'Unknown';
     setViewModalData({ conf, clientName, clientAddress });
@@ -266,7 +277,27 @@ const AuditConfirmation: React.FC = () => {
     }
   };
 
-  const pendingSchedules = schedules.filter(s => 
+  const liveSchedules = React.useMemo(() => {
+    try {
+      const a = JSON.parse(localStorage.getItem('cms_audit_schedules_v3') || '[]');
+      const b = JSON.parse(localStorage.getItem('cms_audit_schedules') || '[]');
+      const merged = [...(Array.isArray(a) ? a : []), ...(Array.isArray(b) ? b : [])];
+      if (merged.length > 0) {
+        return merged.map((sch: any) => ({
+          id: sch.id,
+          auditName: sch.organization ? `${sch.organization} — ${sch.auditType || 'Audit'}` : (sch.title || `Audit ${sch.id}`),
+          client: sch.clientId || sch.organization || '',
+          clientId: sch.clientId || '',
+          date: sch.date || sch.startDate || '',
+          auditor: sch.auditor || sch.assignedAuditor || '',
+          status: sch.status || 'Scheduled',
+        }));
+      }
+    } catch { /* ignore */ }
+    return schedules;
+  }, [confirmations]);
+
+  const pendingSchedules = liveSchedules.filter(s => 
     !confirmations.find(c => String(c.scheduleId) === String(s.id))
   );
 
@@ -295,7 +326,7 @@ const AuditConfirmation: React.FC = () => {
   // --- Filtering Logic for Search ---
   const filteredConfirmations = sortedConfirmations.filter(conf => {
     const search = searchTerm.toLowerCase();
-    const sched = schedules.find(s => String(s.id) === String(conf.scheduleId));
+    const sched = liveSchedules.find(s => String(s.id) === String(conf.scheduleId));
     const clientName = sched ? getClientName(sched.clientId).toLowerCase() : '';
     const ref = `ref: ${conf.scheduleId}`.toLowerCase();
     return clientName.includes(search) || ref.includes(search) || (conf.confirmedBy || '').toLowerCase().includes(search);
@@ -429,7 +460,7 @@ const AuditConfirmation: React.FC = () => {
               </thead>
               <tbody>
                 {filteredConfirmations.map(conf => {
-                  const schedule = schedules.find(s => String(s.id) === String(conf.scheduleId));
+                  const schedule = liveSchedules.find(s => String(s.id) === String(conf.scheduleId));
                   return (
                     <tr key={conf.id}>
                       <td><span className="mono" style={{ fontSize: '12px' }}>{schedule ? `Ref: ${schedule.id}` : 'N/A'}</span></td>

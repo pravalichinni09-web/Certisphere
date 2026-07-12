@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import NotificationsBell from '../../components/NotificationsBell';
 import BackButton from '../../components/BackButton';
@@ -29,6 +29,8 @@ const ManagementLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/auditor-approvals" element={<AuditorApprovals />} />
           <Route path="/global-settings" element={<GlobalSettings />} />
           <Route path="/client-onboarding" element={<ClientOnboarding />} />
+          <Route index element={<Navigate to="/management/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/management/dashboard" replace />} />
         </Routes>
       </div>
     </div>

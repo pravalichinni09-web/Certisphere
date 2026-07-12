@@ -471,9 +471,43 @@ const RequestSchedule: React.FC = () => {
   };
 
   const confirmRequest = (id: string) => {
+    // Flip request status AND commit a real schedule so downstream pages
+    // (Audit Schedules, Auditor confirmations, Auditee approvals) receive it.
+    const req = requests.find((r) => r.id === id);
     setRequests((prev) =>
       prev.map((r) => (r.id === id ? { ...r, status: 'Confirmed' } : r))
     );
+    if (!req) return;
+    try {
+      const raw = localStorage.getItem(SCHEDULES_KEY);
+      const list: any[] = raw ? JSON.parse(raw) : [];
+      const dup = list.some((sch) => sch?.requestId === req.id);
+      if (!dup) {
+        list.push({
+          id: `s-${Date.now()}`,
+          requestId: req.id,
+          clientId: '',
+          organization: req.organization,
+          leadAuditor: req.leadAuditor,
+          leadAuditorEmail: '',
+          auditor: req.auditor,
+          auditorEmail: '',
+          auditee: req.organization,
+          auditeeEmail: '',
+          auditeePhone: '',
+          date: req.date,
+          status: 'Scheduled',
+          auditType: req.auditType,
+          department: '',
+          duration: req.duration,
+          certificationStandard: req.certificationStandard,
+          notes: req.notes || '',
+        });
+        localStorage.setItem(SCHEDULES_KEY, JSON.stringify(list));
+        setSchedules(list);
+        window.dispatchEvent(new CustomEvent('cms-schedules-updated'));
+      }
+    } catch { /* ignore */ }
   };
 
   const rejectRequest = (id: string) => {

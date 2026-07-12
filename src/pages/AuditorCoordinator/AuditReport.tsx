@@ -129,10 +129,11 @@ const demoReports: AuditReport[] = [
 const AuditReports: React.FC = () => {
   const [reports, setReports] = useState<AuditReport[]>([]);
   const [showForm, setShowForm] = useState(false);
+  const [showView, setShowView] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<AuditReport | null>(null);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [availableSchedules, setAvailableSchedules] = useState<DispatchRecord[]>([]);
-  const [, setSelectedReport] = useState<AuditReport | null>(null);
 
   const [formData, setFormData] = useState({
     scheduleId: '',
@@ -227,8 +228,7 @@ const AuditReports: React.FC = () => {
 
     if (newReport) {
       handleToast('Audit Report created successfully');
-      const stored = getAuditReports();
-      setReports(stored); 
+      setReports([...getAuditReports(), ...mapSharedToCoordinator()]);
       setShowForm(false);
       setFormData({
         scheduleId: '',
@@ -276,13 +276,45 @@ const AuditReports: React.FC = () => {
         updateReportStatus(report.id, newStatus);
     }
 
-    // 3. Show Notification
+    // 3. Approved reports unlock the certification stage — upsert a
+    //    cms_audit_certifications entry so Audit Certifications sees it.
+    if (decision === 'Approved') {
+      try {
+        const KEY = 'cms_audit_certifications';
+        const raw = localStorage.getItem(KEY);
+        const certs: any[] = raw ? JSON.parse(raw) : [];
+        const clientName = report.clientName || report.organization;
+        const exists = certs.some((c) =>
+          (c?.client || '').toLowerCase() === (clientName || '').toLowerCase() &&
+          (c?.description || '').includes(report.audit || ''));
+        if (!exists && clientName) {
+          const year = new Date().getFullYear();
+          const seq = certs.length + 1;
+          certs.push({
+            id: Date.now(),
+            name: `${report.audit || 'Audit'} Certification`,
+            certificateId: `CERT-${year}-${String(seq).padStart(4, '0')}`,
+            certificateDate: new Date().toISOString().split('T')[0],
+            client: clientName,
+            clientId: '',
+            description: `Auto-created from approved report: ${report.audit || report.id}`,
+            standard: (report as any).standard || (report as any).certificationStandard || 'ISO 9001:2015',
+            validity: 36,
+            renewalPeriod: 'Annual surveillance',
+          });
+          localStorage.setItem(KEY, JSON.stringify(certs));
+          window.dispatchEvent(new CustomEvent('cms-audit-certifications-updated'));
+        }
+      } catch { /* ignore */ }
+    }
+
+    // 4. Show Notification
     handleToast(`Audit Report ${actionMsg} & Email sent to ${report.clientName}`);
   };
 
   const handleViewReport = (report: AuditReport) => {
     setSelectedReport(report);
-    alert(`Viewing Report Details:\nClient: ${report.clientName}\nOrganization: ${report.organization}\nAudit: ${report.audit}\nStatus: ${report.status}`);
+    setShowView(true);
   };
 
   const getStatusColor = (status: string) => {
@@ -535,6 +567,35 @@ const AuditReports: React.FC = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Read-only report details modal */}
+      {showView && selectedReport && (
+        <div className="modal-overlay" onClick={() => setShowView(false)}
+          style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.45)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2000 }}>
+          <div onClick={(e) => e.stopPropagation()}
+            style={{ background: 'var(--card-bg, #fff)', color: 'var(--text-dark, #0f172a)', borderRadius: 12, padding: 24, maxWidth: 520, width: '92%', boxShadow: '0 24px 60px rgba(0,0,0,0.3)' }}>
+            <h3 style={{ marginTop: 0 }}>Audit Report — {selectedReport.clientName}</h3>
+            {[
+              ['Organization', selectedReport.organization],
+              ['Audit', selectedReport.audit],
+              ['Department', selectedReport.department],
+              ['Audit Type', selectedReport.auditType],
+              ['Audit Date', selectedReport.auditDate],
+              ['Lead Auditor', selectedReport.leadAuditor],
+              ['Assigned Auditor', selectedReport.assignedAuditor],
+              ['Submitted', selectedReport.submittedDate],
+              ['Status', selectedReport.status],
+            ].map(([k, v]) => (
+              <p key={k as string} style={{ margin: '6px 0', fontSize: 14 }}>
+                <strong>{k}:</strong> {v || '—'}
+              </p>
+            ))}
+            <div style={{ textAlign: 'right', marginTop: 14 }}>
+              <button className="link-btn" onClick={() => setShowView(false)}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

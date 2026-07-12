@@ -536,7 +536,8 @@ const ClientRegistration: React.FC = () => {
       setEditingId(null);
       setNotification(`Client Updated & Email sent to ${clientEmail}`);
     } else {
-      const nextId = clients.length > 0 ? Math.max(...clients.map(c => c.id)) + 1 : 1;
+      const numericIds = clients.map(c => Number(c.id)).filter(n => Number.isFinite(n));
+      const nextId = Math.max(0, ...numericIds) + 1;
       const newItem: ClientData = { id: nextId, ...formData, clientCode };
       persist([...clients, newItem]);
       setNotification(`Client ${clientCode} Registered & Email sent to ${clientEmail}`);

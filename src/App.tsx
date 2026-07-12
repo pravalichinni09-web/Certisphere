@@ -24,6 +24,7 @@ import AuditClientLayout from './pages/AuditClient/Layout';
 import ManagementLayout from './pages/Management/Layout';
 import ClientCoordinatorLayout from './pages/ClientCoordinator/Layout';
 import AIAssistant from './components/AIAssistant';
+import WelcomeToast from './components/WelcomeToast';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -194,6 +195,7 @@ function App() {
         />
       </Routes>
       <AIAssistant role={isLoggedIn ? loggedInUser : 'Guest'} />
+      <WelcomeToast />
     </Router>
   );
 }

@@ -359,3 +359,218 @@ export const planAudits = (findings?: AuditFinding[]): AuditPlanItem[] => {
     return rank[a.priority] - rank[b.priority];
   });
 };
+
+/* =========================================================================
+ * 5. NC PREDICTOR — Claude-enhanced narrative analysis
+ * =======================================================================*/
+export interface NCAnalysis {
+  summary: string;
+  topRisks: string[];
+  recommendations: string[];
+}
+
+export const analyseNCWithClaude = async (
+  predictions: NCPrediction[],
+  signal?: AbortSignal
+): Promise<NCAnalysis | null> => {
+  if (!predictions.length) return null;
+  const system =
+    'You are a senior ISO certification auditor. Given a risk summary of clients, provide a brief strategic analysis. ' +
+    'Respond ONLY as JSON: {"summary":"2-3 sentence overview","topRisks":["...","...","..."],"recommendations":["...","...","..."]}. ' +
+    'Be specific, concise, and actionable.';
+  const data = predictions.slice(0, 8).map(p =>
+    `${p.client}: Risk=${p.level} (${p.riskScore}/100), Drivers=${p.drivers.join(', ')}, Areas=${p.likelyAreas.join(', ')}`
+  ).join('\n');
+  const prompt = `NC Risk Predictions:\n${data}\n\nProvide strategic analysis.`;
+  try {
+    const out = await (await import('./claudeClient')).complete(prompt, {
+      system, maxTokens: 600, temperature: 0.35, signal
+    });
+    const m = out.match(/\{[\s\S]*\}/);
+    if (!m) return null;
+    const j = JSON.parse(m[0]);
+    return {
+      summary: String(j.summary || '').slice(0, 400),
+      topRisks: Array.isArray(j.topRisks) ? j.topRisks.slice(0, 5).map(String) : [],
+      recommendations: Array.isArray(j.recommendations) ? j.recommendations.slice(0, 5).map(String) : [],
+    };
+  } catch { return null; }
+};
+
+/* =========================================================================
+ * 6. AI AUDIT PLANNER — Claude-enhanced schedule suggestions
+ * =======================================================================*/
+export const planAuditsWithClaude = async (
+  plan: AuditPlanItem[],
+  signal?: AbortSignal
+): Promise<string | null> => {
+  if (!plan.length) return null;
+  const system =
+    'You are an ISO audit scheduling specialist. Review this audit plan and provide prioritised scheduling advice. ' +
+    'Be concise — 3-5 sentences covering top priorities, resource allocation, and scheduling conflicts to watch.';
+  const data = plan.slice(0, 8).map(p =>
+    `${p.client}: ${p.priority} | Window: ${p.suggestedWindow} | ${p.reason}${p.suggestedAuditor ? ` | Auditor: ${p.suggestedAuditor}` : ''}`
+  ).join('\n');
+  const prompt = `Proposed Audit Schedule:\n${data}\n\nProvide scheduling recommendations.`;
+  try {
+    const out = await (await import('./claudeClient')).complete(prompt, {
+      system, maxTokens: 400, temperature: 0.3, signal
+    });
+    return out.trim();
+  } catch { return null; }
+};
+
+/* =========================================================================
+ * 7. AI REPORT WRITER — full streaming audit report draft
+ * =======================================================================*/
+export interface ReportContext {
+  clientName: string;
+  standard: string;
+  auditDate: string;
+  auditType: 'Initial' | 'Surveillance' | 'Recertification' | 'Special';
+  scope: string;
+  leadAuditor: string;
+  findings: string; // free-text or structured
+  overallResult: 'Conforming' | 'Minor NCs' | 'Major NCs' | 'Not Recommended';
+}
+
+export const generateReportHeuristic = (ctx: ReportContext): string => {
+  const date = ctx.auditDate || new Date().toLocaleDateString('en-GB');
+  return `AUDIT REPORT — DRAFT
+
+Client:         ${ctx.clientName || 'N/A'}
+Standard:       ${ctx.standard || 'N/A'}
+Audit Type:     ${ctx.auditType || 'N/A'}
+Audit Date:     ${date}
+Lead Auditor:   ${ctx.leadAuditor || 'N/A'}
+Overall Result: ${ctx.overallResult || 'N/A'}
+
+1. SCOPE
+${ctx.scope || 'The audit covered the management system as defined in the client\'s quality manual.'}
+
+2. AUDIT SUMMARY
+The ${ctx.auditType?.toLowerCase()} audit of ${ctx.clientName} was conducted on ${date} against ${ctx.standard}. ${
+  ctx.overallResult === 'Conforming'
+    ? 'The organization demonstrated effective implementation and maintenance of its management system. No non-conformities were identified.'
+    : ctx.overallResult === 'Minor NCs'
+    ? 'The organization\'s management system is generally effective. Minor non-conformities were identified and corrective action is required.'
+    : ctx.overallResult === 'Major NCs'
+    ? 'Significant gaps were identified in the management system. Major non-conformities require immediate corrective action before certification can proceed.'
+    : 'The management system does not meet the requirements of the standard. Certification is not recommended at this time.'
+}
+
+3. FINDINGS
+${ctx.findings || 'No findings recorded.'}
+
+4. CONCLUSION
+[To be completed by Lead Auditor]
+
+5. SIGNATURES
+Lead Auditor: ________________________   Date: __________
+Client Representative: _______________   Date: __________`;
+};
+
+export const generateReportWithClaude = async (
+  ctx: ReportContext,
+  onChunk?: (chunk: string) => void,
+  signal?: AbortSignal
+): Promise<string | null> => {
+  const system =
+    'You are a professional ISO lead auditor. Write a formal, structured audit report. ' +
+    'Use professional certification body language. Include: Executive Summary, Scope, ' +
+    'Audit Process, Findings Summary, Detailed Findings, Conclusion, and Recommendations. ' +
+    'Be thorough but concise. Format with clear section headers.';
+  const prompt = `Write a complete audit report for:\n
+Client: ${ctx.clientName}
+Standard: ${ctx.standard}
+Audit Type: ${ctx.auditType}
+Audit Date: ${ctx.auditDate}
+Lead Auditor: ${ctx.leadAuditor}
+Audit Scope: ${ctx.scope}
+Overall Result: ${ctx.overallResult}
+Findings / Notes: ${ctx.findings || 'No specific findings noted.'}`;
+
+  const apiKey = (await import('./claudeClient')).getApiKey();
+  if (!apiKey) return null;
+  const model = (await import('./claudeClient')).getModel();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model,
+        max_tokens: 1800,
+        temperature: 0.4,
+        stream: true,
+        system,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+      signal,
+    });
+
+    if (!res.ok || !res.body) return null;
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let full = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const lines = dec.decode(value).split('\n');
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const raw = line.slice(6).trim();
+        if (raw === '[DONE]') break;
+        try {
+          const ev = JSON.parse(raw);
+          const delta = ev?.delta?.text || '';
+          if (delta) { full += delta; onChunk?.(delta); }
+        } catch { /* ignore parse errors */ }
+      }
+    }
+    return full || null;
+  } catch { return null; }
+};
+
+/* =========================================================================
+ * 8. CERTIFICATE EXPIRY RISK SCORER
+ * =======================================================================*/
+export interface CertRisk {
+  client: string;
+  expiryDate: string;
+  daysLeft: number;
+  risk: 'Critical' | 'High' | 'Medium' | 'Low';
+  action: string;
+}
+
+export const scoreCertExpiryRisk = (): CertRisk[] => {
+  const certs = safeArr<any>('cms_certificates');
+  const now = Date.now();
+  const results: CertRisk[] = [];
+  for (const c of certs) {
+    const exp = new Date(c.expiryDate || c.expiry_date || '').getTime();
+    if (isNaN(exp)) continue;
+    const daysLeft = Math.round((exp - now) / 86400000);
+    let risk: CertRisk['risk'] = 'Low';
+    let action = 'No action needed — schedule routine surveillance.';
+    if (daysLeft < 0) { risk = 'Critical'; action = 'EXPIRED — immediate recertification required.'; }
+    else if (daysLeft <= 30) { risk = 'Critical'; action = 'Expires within 30 days — initiate recertification now.'; }
+    else if (daysLeft <= 90) { risk = 'High'; action = 'Expires within 90 days — schedule recertification audit.'; }
+    else if (daysLeft <= 180) { risk = 'Medium'; action = 'Expires within 6 months — plan surveillance audit.'; }
+    results.push({
+      client: c.clientName || c.company || `Cert #${c.id}`,
+      expiryDate: c.expiryDate || c.expiry_date || '—',
+      daysLeft,
+      risk,
+      action,
+    });
+  }
+  return results.sort((a, b) => a.daysLeft - b.daysLeft);
+};

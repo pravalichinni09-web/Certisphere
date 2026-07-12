@@ -1,6 +1,5 @@
 import React from 'react';
 import { useState, useEffect, type FormEvent } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { User, ShieldCheck, Globe, Award, Sparkles } from 'lucide-react';
 import '../styles/LoginPage.css';
 import '../styles/LoginColors.css';
@@ -8,6 +7,7 @@ import '../styles/LoginBlack.css';
 import UserCredentials from '../components/UserCredentials';
 import LoginForm from '../components/LoginForm';
 import DemoAccountModal, { DemoAccount } from '../components/DemoAccountModal';
+import { showWelcomeToast } from '../components/WelcomeToast';
 import { findCredentialByLogin, ensureCredentialsForClients, readCredentials } from './AuditorCoordinator/utils/clientCredentials';
 import { signIn } from '../services/supabase/authService';
 import { triggerSync } from '../utils/supabaseSync';
@@ -82,7 +82,11 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     setDemoRole(user.role);
   };
   const cfg = readGlobalConfig();
-  const navigate = useNavigate();
+  // "Sign in to access …" context carried from Home page cards (TC_CS_1.2)
+  const loginIntent = React.useMemo(() => {
+    try { return new URLSearchParams(window.location.search).get('intent') || ''; }
+    catch { return ''; }
+  }, []);
 
   const handleUserSelect = (user: SelectedUser) => {
     setSelectedUser(user);
@@ -101,12 +105,12 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       if (cred) {
         try { localStorage.setItem('cms_active_client_id', String(cred.clientId)); } catch { /* ignore */ }
         onLogin('Auditee');
-        setTimeout(() => alert(`Welcome ${cred.organizationName}! You have logged in as Auditee.`), 300);
+        setTimeout(() => showWelcomeToast(`Welcome ${cred.organizationName}! You have logged in as Auditee.`), 350);
         return;
       }
     }
     onLogin(user.role);
-    setTimeout(() => alert(`Welcome ${user.role}! You have successfully logged in.`), 300);
+    setTimeout(() => showWelcomeToast(`Welcome ${user.role}! You have successfully logged in.`), 350);
   };
 
   // Consume a one-click demo tour request from the home page (if any).
@@ -116,14 +120,18 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
     try {
       const raw = sessionStorage.getItem('cms_pending_demo');
       if (!raw) return;
-      const { role, path, at } = JSON.parse(raw) as { role: string; path: string; at: number };
+      const { role, at } = JSON.parse(raw) as { role: string; path: string; at: number };
       sessionStorage.removeItem('cms_pending_demo');
       // Ignore stale entries older than 30 s
-      if (!role || !path || Date.now() - (at || 0) > 30000) return;
-      onLogin(role);
-      // App.tsx will redirect / handle the dashboard route; queue up the
-      // specific target right after.
-      setTimeout(() => navigate(path, { replace: true }), 30);
+      if (!role || Date.now() - (at || 0) > 30000) return;
+      // SECURITY (TC_CS_1.1): never auto-sign-in. Pre-fill the role's demo
+      // credentials and let the user click Sign In explicitly.
+      const demo = ROLE_DEMO[role];
+      if (demo) {
+        setSelectedUser({ role, email: demo.email, password: demo.password });
+        setEmail(demo.email);
+        setPassword(demo.password);
+      }
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -172,7 +180,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       if (cred) {
         try { localStorage.setItem('cms_active_client_id', String(cred.clientId)); } catch { /* ignore */ }
         onLogin('Auditee');
-        setTimeout(() => alert(`Welcome ${cred.organizationName}! You have logged in as Auditee.`), 300);
+        setTimeout(() => showWelcomeToast(`Welcome ${cred.organizationName}! You have logged in as Auditee.`), 350);
         return true;
       }
       return false;
@@ -191,7 +199,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         } catch { /* ignore */ }
       }
       onLogin(selectedUser.role);
-      setTimeout(() => alert(`Welcome ${selectedUser.role}! You have successfully logged in.`), 500);
+      setTimeout(() => showWelcomeToast(`Welcome ${selectedUser.role}! You have successfully logged in.`), 350);
       return;
     }
     if (tryClientLogin()) return;
@@ -234,6 +242,15 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       <div className="login-section">
         {/* Glass-morphism form card */}
         <div className="cs-glass-card">
+          {loginIntent && (
+            <div style={{
+              marginBottom: 14, padding: '9px 14px', borderRadius: 10,
+              background: 'rgba(212,175,55,0.10)', border: '1px solid rgba(212,175,55,0.4)',
+              color: '#f6d878', fontSize: 12.5, fontWeight: 600, letterSpacing: 0.4,
+            }}>
+              Sign in to access: {loginIntent}
+            </div>
+          )}
           <LoginForm
             selectedUser={selectedUser}
             email={email}
@@ -266,6 +283,13 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
         <div className="logo-section">
           {/* Logo plate */}
           <div className="cs-logo-plate">
+            <a
+              href="https://www.qcertisphere.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="Visit the CertiSphere website"
+              style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}
+            >
             <img
               src="/images/certisphere-logo-hd.png"
               alt="CertiSphere"
@@ -278,6 +302,7 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               }}
             />
             <span className="cs-logo-sheen" aria-hidden="true" />
+            </a>
           </div>
           <div className="logo-icon-fallback" style={{ display: 'none' }}>
             <User size={32} />

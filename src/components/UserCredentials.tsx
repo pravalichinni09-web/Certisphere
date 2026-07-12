@@ -28,7 +28,7 @@ const ROLE_ICONS: Record<string, { icon: React.ReactNode; color: string; bg: str
   Auditee:           { icon: <Building2 size={14} />,      color: '#d4af37', bg: 'rgba(212,175,55,0.12)' },
 };
 
-const UserCredentials: React.FC<UserCredentialsProps> = ({ onUserSelect, selectedUser, onQuickSignIn }) => {
+const UserCredentials: React.FC<UserCredentialsProps> = ({ onUserSelect, selectedUser }) => {
   // Demo creds collapsed by default — user clicks the toggle to reveal them.
   const [open, setOpen] = useState(false);
 
@@ -41,10 +41,9 @@ const UserCredentials: React.FC<UserCredentialsProps> = ({ onUserSelect, selecte
     { role: 'Client Coordinator', email: 'coord.client@cms.com', password: 'ClientCoord@123', description: 'Client-side coordinator for an organisation' },
   ];
 
-  // Clicking a role: prefer the quick-sign-in handler if provided, else just populate the form.
+  // Clicking a role fills the login form with that role's credentials (clear + predictable).
   const onCardClick = (user: User) => {
-    if (onQuickSignIn) onQuickSignIn(user);
-    else onUserSelect(user);
+    onUserSelect(user);
   };
 
   return (
@@ -89,7 +88,7 @@ const UserCredentials: React.FC<UserCredentialsProps> = ({ onUserSelect, selecte
                   className={`credential-card cs-role-card cs-creds-card-anim ${selectedUser?.role === user.role ? 'selected' : ''}`}
                   onClick={() => onCardClick(user)}
                   style={{ animationDelay: open ? `${i * 70}ms` : '0ms' }}
-                  title={`Sign in as ${user.role}`}
+                  title={`Use ${user.role} credentials`}
                 >
                   <span className="cs-role-card-icon" style={{ background: meta?.bg, color: meta?.color }}>
                     {meta?.icon}
@@ -99,7 +98,7 @@ const UserCredentials: React.FC<UserCredentialsProps> = ({ onUserSelect, selecte
                     <span className="cs-role-card-desc">{user.description}</span>
                   </span>
                   <span className="cs-role-card-cta">
-                    Sign in <ArrowRight size={13} />
+                    Use <ArrowRight size={13} />
                   </span>
                 </button>
               );

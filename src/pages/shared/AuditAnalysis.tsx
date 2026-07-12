@@ -83,12 +83,12 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
       if (standardFilter !== 'all' && f.standard !== standardFilter) return false;
       if (!q) return true;
       return (
-        f.title.toLowerCase().includes(q) ||
-        f.client.toLowerCase().includes(q) ||
-        f.standard.toLowerCase().includes(q) ||
-        f.clause.toLowerCase().includes(q) ||
-        f.department.toLowerCase().includes(q) ||
-        f.auditTitle.toLowerCase().includes(q)
+        (f.title || '').toLowerCase().includes(q) ||
+        (f.client || '').toLowerCase().includes(q) ||
+        (f.standard || '').toLowerCase().includes(q) ||
+        (f.clause || '').toLowerCase().includes(q) ||
+        (f.department || '').toLowerCase().includes(q) ||
+        (f.auditTitle || '').toLowerCase().includes(q)
       );
     });
   }, [findings, period, clientFilter, standardFilter, searchQuery]);

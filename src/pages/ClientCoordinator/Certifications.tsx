@@ -106,7 +106,7 @@ const Certifications: React.FC = () => {
                         <Eye size={12} /> View
                       </button>
                       <button onClick={() => setPreview({ name: `${c.standard}-${c.certNumber}.pdf`, dataUrl: '' })}
-                        title="Download certificate" style={{ ...btnSm, background: '#6366f1' }}>
+                        title="Preview certificate (read-only)" style={{ ...btnSm, background: '#6366f1' }}>
                         <Download size={12} />
                       </button>
                     </div>

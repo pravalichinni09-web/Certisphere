@@ -318,16 +318,17 @@ const PublicEnquiry: React.FC = () => {
             marginBottom: 18,
           }}
         >
-          <h1 style={{ margin: 0, fontSize: 28, fontWeight: 800, letterSpacing: -0.5 }}>
+          <h1 style={{ margin: 0, fontSize: 30, fontWeight: 800, letterSpacing: -0.5, color: '#ffffff', textShadow: '0 2px 12px rgba(0,0,0,0.45)' }}>
             Submit a certification enquiry
           </h1>
           <p
             style={{
-              margin: '6px 0 0',
-              fontSize: 14,
-              opacity: 0.85,
+              margin: '8px 0 0',
+              fontSize: 15,
+              color: 'rgba(255,255,255,0.92)',
               maxWidth: 640,
-              lineHeight: 1.6,
+              lineHeight: 1.65,
+              textShadow: '0 1px 8px rgba(0,0,0,0.4)',
             }}
           >
             Tell us a little about your organisation. An Audit Coordinator will reach out
