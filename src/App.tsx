@@ -24,11 +24,13 @@ import AuditClientLayout from './pages/AuditClient/Layout';
 import ManagementLayout from './pages/Management/Layout';
 import ClientCoordinatorLayout from './pages/ClientCoordinator/Layout';
 import AIAssistant from './components/AIAssistant';
+import ErrorBoundary from './components/ErrorBoundary';
 import WelcomeToast from './components/WelcomeToast';
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loggedInUser, setLoggedInUser] = useState<string>('');
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Load Supabase DB data into localStorage whenever user logs in
   useSupabaseData(isLoggedIn);
@@ -87,11 +89,15 @@ function App() {
   };
 
   const handleLogout = async () => {
+    setIsLoggingOut(true);
     if (isSupabaseEnabled()) {
       await supabase!.auth.signOut();
     }
+    // Clear auth state — the logout splash covers the blank-page flash
     setIsLoggedIn(false);
     setLoggedInUser('');
+    // Keep splash up briefly so the navigate to /login feels instant
+    setTimeout(() => setIsLoggingOut(false), 600);
   };
 
   const getRedirectPath = (role: string) => {
@@ -111,6 +117,49 @@ function App() {
 
   return (
     <Router>
+      <ErrorBoundary>
+      {/* ── Logout splash — covers blank-page flash between roles ── */}
+      {isLoggingOut && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 99999,
+          background: '#0f2547',
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          gap: 24,
+          animation: 'cs-logout-fadein 0.15s ease-out',
+        }}>
+          <style>{`
+            @keyframes cs-logout-fadein { from { opacity: 0 } to { opacity: 1 } }
+            @keyframes cs-logout-pulse  { 0%,100% { opacity:1; transform:scale(1) } 50% { opacity:.7; transform:scale(0.96) } }
+            @keyframes cs-logout-spin   { to { transform: rotate(360deg) } }
+          `}</style>
+          <img
+            src="/images/certisphere-logo.png"
+            alt="CertiSphere"
+            style={{ height: 72, objectFit: 'contain', animation: 'cs-logout-pulse 1.2s ease-in-out infinite' }}
+            onError={e => {
+              (e.currentTarget as HTMLImageElement).src = '/images/certisphere-logo-transparent.png';
+            }}
+          />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{
+              width: 20, height: 20, borderRadius: '50%',
+              border: '2.5px solid rgba(201,146,42,0.25)',
+              borderTopColor: '#c9922a',
+              animation: 'cs-logout-spin 0.8s linear infinite',
+            }} />
+            <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, fontFamily: 'Inter,system-ui,sans-serif', letterSpacing: '0.04em' }}>
+              Signing out…
+            </span>
+          </div>
+          <img
+            src="/images/qmics-logo.png"
+            alt="QMICS"
+            style={{ position: 'absolute', bottom: 28, height: 32, objectFit: 'contain', opacity: 0.45 }}
+            onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+          />
+        </div>
+      )}
       <Routes>
         {/* Public enquiry route — accessible without login */}
         <Route path="/enquiry" element={<PublicEnquiry />} />
@@ -194,6 +243,7 @@ function App() {
           }
         />
       </Routes>
+      </ErrorBoundary>
       <AIAssistant role={isLoggedIn ? loggedInUser : 'Guest'} />
       <WelcomeToast />
     </Router>

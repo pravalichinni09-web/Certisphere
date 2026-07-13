@@ -16,33 +16,38 @@ export const safeJSON = <T,>(key: string, fallback: T): T => {
 };
 
 /* ---------- Core entity readers (merged across key versions) ---------- */
-export const getClients = (): any[] => safeJSON<any[]>('cms_client_registrations', []);
+/** Always returns an array, even if the stored value is malformed. */
+const getArr = (key: string): any[] => {
+  const v = safeJSON<any>(key, []);
+  return Array.isArray(v) ? v.filter((x) => x != null) : [];
+};
+export const getClients = (): any[] => getArr('cms_client_registrations');
 export const getAuditors = (): any[] => {
-  const a = safeJSON<any[]>('cms_auditors', []);
-  return a.length ? a : safeJSON<any[]>('cms_auditors_data', []);
+  const a = getArr('cms_auditors');
+  return a.length ? a : getArr('cms_auditors_data');
 };
 export const getSchedules = (): any[] => ([
-  ...safeJSON<any[]>('cms_audit_schedules', []),
-  ...safeJSON<any[]>('cms_audit_schedules_v3', []),
+  ...getArr('cms_audit_schedules'),
+  ...getArr('cms_audit_schedules_v3'),
 ]);
-export const getDispatches = (): any[] => safeJSON<any[]>('cms_application_dispatch_v7', []);
-export const getEnquiries = (): any[] => safeJSON<any[]>('cms_client_enquiries_v1', []);
+export const getDispatches = (): any[] => getArr('cms_application_dispatch_v7');
+export const getEnquiries = (): any[] => getArr('cms_client_enquiries_v1');
 export const getCertificates = (): any[] => ([
-  ...safeJSON<any[]>('cms_certificates', []),
-  ...safeJSON<any[]>('cms_audit_certifications', []),
+  ...getArr('cms_certificates'),
+  ...getArr('cms_audit_certifications'),
 ]);
-export const getFindings = (): any[] => safeJSON<any[]>('cms_audit_findings_v1', []);
-export const getCorrectiveActions = (): any[] => safeJSON<any[]>('cms_corrective_actions_v1', []);
+export const getFindings = (): any[] => getArr('cms_audit_findings_v1');
+export const getCorrectiveActions = (): any[] => getArr('cms_corrective_actions_v1');
 export const getReports = (): any[] => {
   const v1 = safeJSON<any>('cms_audit_reports_v1', null);
-  const legacy = safeJSON<any[]>('cms_audit_reports', []);
+  const legacy = getArr('cms_audit_reports');
   // cms_audit_reports_v1 may be a map or an array depending on writer — normalise.
   if (Array.isArray(v1)) return [...v1, ...legacy];
-  if (v1 && typeof v1 === 'object') return [...Object.values(v1).flat() as any[], ...legacy];
+  if (v1 && typeof v1 === 'object') return [...(Object.values(v1).flat() as any[]).filter((x) => x != null), ...legacy];
   return legacy;
 };
-export const getScheduleRequests = (): any[] => safeJSON<any[]>('cms_schedule_requests_v1', []);
-export const getScopes = (): any[] => safeJSON<any[]>('cms_audit_scopes', []);
+export const getScheduleRequests = (): any[] => getArr('cms_schedule_requests_v1');
+export const getScopes = (): any[] => getArr('cms_audit_scopes');
 
 /* ---------- Change subscription (live refresh) ---------- */
 const CHANGE_EVENTS = [

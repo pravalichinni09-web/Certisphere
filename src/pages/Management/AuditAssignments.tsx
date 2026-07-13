@@ -33,6 +33,7 @@ import {
   scheduleStandard,
   scheduleStatus,
   scheduleTitle,
+  updateSchedule,
 } from '../../utils/auditScheduleStore';
 import EmptyState from '../../components/EmptyState';
 import { SkeletonRow } from '../../components/Skeleton';
@@ -82,6 +83,9 @@ const AuditAssignments: React.FC = () => {
   const [filter, setFilter] = useState<'pending' | 'all'>('pending');
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [leadPick, setLeadPick] = useState('');
+  const [auditorPick, setAuditorPick] = useState('');
+  const [saved, setSaved] = useState(false);
 
   // ---- Anomaly Detection (AI) ---------------------------------------------
   const [anomalies, setAnomalies] = useState<AssignmentAnomaly[]>([]);
@@ -167,6 +171,46 @@ const AuditAssignments: React.FC = () => {
     [entries, selectedKey]
   );
 
+  const auditorNames = useMemo(
+    () => auditors.map((a) => a.name).filter(Boolean) as string[],
+    [auditors]
+  );
+
+  // Keep the assignment pickers in sync with the selected schedule.
+  useEffect(() => {
+    if (selected) {
+      setLeadPick(selected.record.leadAuditor || '');
+      setAuditorPick(selected.record.auditor || '');
+      setSaved(false);
+    }
+  }, [selected]);
+
+  const handleAssign = () => {
+    if (!selected) return;
+    const leadInfo = findAuditorByName(leadPick);
+    const audInfo = findAuditorByName(auditorPick);
+    const assignedAuditors = Array.from(
+      new Set([leadPick, auditorPick].filter(Boolean))
+    ) as string[];
+    const curStatus = scheduleStatus(selected.record);
+    updateSchedule(selected, {
+      leadAuditor: leadPick || undefined,
+      leadAuditorEmail: leadInfo?.email,
+      auditor: auditorPick || undefined,
+      auditorEmail: audInfo?.email,
+      assignedAuditors,
+      status: !selected.record.status || /unassigned/i.test(curStatus) ? 'Scheduled' : selected.record.status,
+      // Reassigning restarts the auditor confirmation loop.
+      auditorConfirmation: 'Pending',
+      auditorConfirmationAt: '',
+      auditorConfirmationNote: '',
+    });
+    refresh();
+    runAnomalyScan();
+    setSaved(true);
+    window.setTimeout(() => setSaved(false), 2600);
+  };
+
   const team = useMemo(() => {
     if (!selected) return [];
     const r = selected.record;
@@ -192,7 +236,7 @@ const AuditAssignments: React.FC = () => {
             <ClipboardList size={14} /> Workflow Console · {auditors.length} registered auditors
           </div>
           <h1><ClipboardList size={28} /> Audit Assignments</h1>
-          <p>Consolidated, read-only view of every audit schedule, its assigned auditors and the confirmation loop across Coordinator, Auditor and Auditee.</p>
+          <p>Assign auditors to every audit schedule and track the confirmation loop across Coordinator, Auditor and Auditee.</p>
         </div>
         <div className="aa-hero-stats">
           <div className="aa-stat">
@@ -364,6 +408,35 @@ const AuditAssignments: React.FC = () => {
                       <span style={{ color: badge.color }}>{badge.label}</span>
                     </span>
                   </div>
+
+                  <h3 className="aa-section-title">Assign / Reassign Team</h3>
+                  <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'flex-end' }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 5, fontSize: 12, fontWeight: 700, color: '#475569', flex: 1, minWidth: 190 }}>
+                      Lead Auditor
+                      <select value={leadPick} onChange={(ev) => setLeadPick(ev.target.value)}
+                        style={{ padding: '9px 11px', border: '1.5px solid #cbd5e1', borderRadius: 9, fontSize: 14, color: '#0f172a', background: '#fff' }}>
+                        <option value="">— Select lead auditor —</option>
+                        {auditorNames.map((n) => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 5, fontSize: 12, fontWeight: 700, color: '#475569', flex: 1, minWidth: 190 }}>
+                      Auditor
+                      <select value={auditorPick} onChange={(ev) => setAuditorPick(ev.target.value)}
+                        style={{ padding: '9px 11px', border: '1.5px solid #cbd5e1', borderRadius: 9, fontSize: 14, color: '#0f172a', background: '#fff' }}>
+                        <option value="">— Select auditor —</option>
+                        {auditorNames.map((n) => <option key={n} value={n}>{n}</option>)}
+                      </select>
+                    </label>
+                    <button type="button" onClick={handleAssign} disabled={!leadPick && !auditorPick}
+                      style={{ padding: '10px 20px', borderRadius: 9, border: 'none', background: 'linear-gradient(135deg,#2563eb,#1d4ed8)', color: '#fff', fontWeight: 700, fontSize: 14, cursor: (!leadPick && !auditorPick) ? 'not-allowed' : 'pointer', opacity: (!leadPick && !auditorPick) ? 0.6 : 1, whiteSpace: 'nowrap' }}>
+                      Save Assignment
+                    </button>
+                  </div>
+                  {saved && (
+                    <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8, background: '#dcfce7', color: '#166534', border: '1px solid #a7f3d0', borderRadius: 9, padding: '9px 12px', fontSize: 13, fontWeight: 600 }}>
+                      <CheckCircle2 size={16} /> Assignment saved — sent to the auditor for confirmation.
+                    </div>
+                  )}
 
                   <h3 className="aa-section-title">Assigned Audit Team</h3>
                   {team.length === 0 ? (

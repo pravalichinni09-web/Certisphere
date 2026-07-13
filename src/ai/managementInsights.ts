@@ -31,11 +31,11 @@ export type ChipLevel = 'high' | 'med' | 'low' | 'info';
 const str = (v: unknown): string => (v == null ? '' : String(v));
 const lower = (v: unknown): string => str(v).toLowerCase();
 
-const certExpiry = (c: any): string => str(c.expiryDate || c.expirationDate || c.validUntil || '');
-const certClient = (c: any): string => str(c.organizationName || c.client || c.clientName || '');
-const scheduleClient = (s: any): string => str(s.organizationName || s.client || s.clientName || '');
-const scheduleWhen = (s: any): string => str(s.date || s.scheduledDate || s.startDate || '');
-const isClosedCA = (ca: any): boolean => lower(ca.status) === 'approved' || lower(ca.status) === 'closed';
+const certExpiry = (c: any): string => (c ? str(c.expiryDate || c.expirationDate || c.validUntil || '') : '');
+const certClient = (c: any): string => (c ? str(c.organizationName || c.client || c.clientName || '') : '');
+const scheduleClient = (s: any): string => (s ? str(s.organizationName || s.client || s.clientName || '') : '');
+const scheduleWhen = (s: any): string => (s ? str(s.date || s.scheduledDate || s.startDate || '') : '');
+const isClosedCA = (ca: any): boolean => !!ca && (lower(ca.status) === 'approved' || lower(ca.status) === 'closed');
 
 /* ======================================================================
    1. EXECUTIVE AI BRIEFING — Management Dashboard
@@ -303,8 +303,8 @@ export const detectAssignmentAnomalies = (): AssignmentAnomaly[] => {
   });
 
   // 2. Zero-finding audits (report says 0 findings, or completed audit left no trace)
-  const clientsWithFindings = new Set(findings.map((f) => str(f.client)));
-  const clientsWithReports = new Set(reports.map((r) => str(r.client || r.organizationName)));
+  const clientsWithFindings = new Set(findings.filter(Boolean).map((f) => str(f.client)));
+  const clientsWithReports = new Set(reports.filter(Boolean).map((r) => str(r.client || r.organizationName)));
   reports.forEach((r, i) => {
     const total = Number(r.findingsTotal ?? r.findings);
     if (Number.isFinite(total) && total === 0) {
