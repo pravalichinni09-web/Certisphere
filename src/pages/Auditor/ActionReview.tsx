@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Sparkles } from 'lucide-react';
 import { suggestActions } from '../../ai/correctiveActions';
+import { recommendActions } from '../../ai/models';
 import '../../styles/Auditor/ActionReview.css';
 import {
   CORRECTIVE_ACTIONS_EVENT,
@@ -415,7 +416,12 @@ const ActionReview: React.FC = () => {
                       const text = sugg
                         .map((sg, i) => `${i + 1}. ${sg.title}: ${sg.correctiveAction} (Preventive: ${sg.preventiveAction})`)
                         .join('\n');
-                      setReviewNotes((prev) => (prev ? prev + '\n\n' : '') + 'AI-suggested actions:\n' + text);
+                      const knn = recommendActions(selectedItem.description || selectedItem.findingTitle, 2)
+                        .map((r, i) => `${i + 1}. From "${r.basis}" (similarity ${r.similarity}): ${r.recommended}`)
+                        .join('\n');
+                      setReviewNotes((prev) =>
+                        (prev ? prev + '\n\n' : '') + 'AI-suggested actions:\n' + text +
+                        (knn ? '\n\nSimilar past cases (kNN model):\n' + knn : ''));
                     }}
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: 5,

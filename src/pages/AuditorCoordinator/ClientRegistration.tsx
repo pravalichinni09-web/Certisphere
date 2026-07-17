@@ -110,6 +110,7 @@ const ClientRegistration: React.FC = () => {
   const [notification, setNotification] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [logoError, setLogoError] = useState<string | null>(null);
+  const [previewDoc, setPreviewDoc] = useState<{ title: string; html: string; fileName: string } | null>(null);
 
   const [formData, setFormData] = useState({
     clientCode: '',
@@ -448,15 +449,12 @@ const ClientRegistration: React.FC = () => {
         </div>
       </body></html>
     `;
-    const blob = new Blob([docContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `${client.organizationName.replace(/\s+/g, '_')}_Application.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    setNotification('Opening Application Document...');
+    // Preview inline (no download) — the Download button still saves the file.
+    setPreviewDoc({
+      title: `${client.organizationName} — Application for Certification`,
+      html: docContent,
+      fileName: `${client.organizationName.replace(/\s+/g, '_')}_Application.doc`,
+    });
   };
 
   const handleDownload = (client: ClientData) => {
@@ -600,6 +598,42 @@ const ClientRegistration: React.FC = () => {
       </div>
       {/* AI: registration validation & duplicate detection */}
       <RegistrationValidationPanel clients={clients} />
+
+      {previewDoc && (
+        <div
+          onClick={() => setPreviewDoc(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(2,6,23,.6)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          role="dialog" aria-modal="true" aria-label="Document preview"
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 820, height: '88vh', background: '#fff', borderRadius: 14, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(2,6,23,.45)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 16px', background: 'linear-gradient(135deg,#0a2a5f,#1f6bbf)', color: '#fff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                <Eye size={18} />
+                <span style={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{previewDoc.title}</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button type="button" title="Download"
+                  onClick={() => {
+                    const blob = new Blob([previewDoc.html], { type: 'application/msword' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = previewDoc.fileName;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.16)', border: 'none', color: '#fff', borderRadius: 8, padding: '7px 12px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  <Download size={15} /> Download
+                </button>
+                <button type="button" title="Close" onClick={() => setPreviewDoc(null)}
+                  style={{ background: 'rgba(255,255,255,.16)', border: 'none', color: '#fff', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            <iframe title="Document preview" srcDoc={previewDoc.html} style={{ flex: 1, width: '100%', border: 'none', background: '#fff' }} />
+          </div>
+        </div>
+      )}
 
       {notification && (
         <div className="notification-toast" style={{

@@ -3,6 +3,7 @@
  * 7 AI-powered tools, each with a heuristic fallback and Claude upgrade.
  */
 import React, { useMemo, useState, useRef } from 'react';
+import { vectorSearch, ragAnswer, ensureVectorIndex, VectorHit } from '../../ai/models';
 import {
   BrainCircuit, Sparkles, ClipboardCheck, AlertTriangle, CalendarClock,
   Loader2, Wand2, ShieldAlert, FileText, RefreshCw, Award, ChevronDown, ChevronUp,
@@ -80,6 +81,18 @@ const AuditIntelligence: React.FC = () => {
   const [fcStd, setFcStd] = useState(STANDARDS[0]);
   const [fcRes, setFcRes] = useState<FindingClassification | null>(null);
   const [fcBusy, setFcBusy] = useState(false);
+
+  /* ── 8. Semantic Search + RAG (Vector DB) ────────────────────────── */
+  const [ssQuery, setSsQuery] = useState('');
+  const [ssHits, setSsHits] = useState<VectorHit[] | null>(null);
+  const [ssAnswer, setSsAnswer] = useState<string>('');
+  const runSemanticSearch = () => {
+    if (!ssQuery.trim()) return;
+    ensureVectorIndex();
+    setSsHits(vectorSearch(ssQuery, 6));
+    const r = ragAnswer(ssQuery);
+    setSsAnswer(r.answer);
+  };
   const runClassify = async () => {
     if (!fcText.trim()) return;
     setFcRes(classifyFinding(fcText, fcStd));
@@ -512,6 +525,44 @@ const AuditIntelligence: React.FC = () => {
               </div>
             ))}
           </div>
+        )}
+      </div>
+
+      {/* ═══ 8. SEMANTIC SEARCH + RAG (Vector DB) ═══ */}
+      <div style={card}>
+        <SectionHead icon={<BrainCircuit size={20} color={GOLD} />} title="Semantic Search & RAG (Vector DB)"
+          desc="256-dim embedding index over every finding, corrective action and report — search by meaning and get a grounded answer." />
+        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+          <input
+            value={ssQuery}
+            onChange={(e) => setSsQuery(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') runSemanticSearch(); }}
+            placeholder="e.g. how were calibration issues handled?"
+            style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)', color: '#f1f5f9', fontSize: 13 }}
+          />
+          <button onClick={runSemanticSearch}
+            style={{ padding: '10px 18px', borderRadius: 10, border: 'none', background: GOLD, color: '#0d1929', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+            Search
+          </button>
+        </div>
+        {ssAnswer && (
+          <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(201,146,42,0.10)', border: '1px solid rgba(201,146,42,0.35)', fontSize: 13, color: '#f1f5f9', marginBottom: 10 }}>
+            <strong style={{ color: GOLD }}>RAG answer:</strong> {ssAnswer}
+          </div>
+        )}
+        {ssHits && (
+          ssHits.length === 0
+            ? <p style={{ fontSize: 13, color: '#94a3b8' }}>No matches in the knowledge base yet.</p>
+            : (
+              <div style={{ display: 'grid', gap: 8 }}>
+                {ssHits.map((h, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontSize: 13 }}>
+                    <span style={{ color: '#f1f5f9' }}>{h.title}</span>
+                    <span style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{h.kind} · sim {h.similarity}</span>
+                  </div>
+                ))}
+              </div>
+            )
         )}
       </div>
 

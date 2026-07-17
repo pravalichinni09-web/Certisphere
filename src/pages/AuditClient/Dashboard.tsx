@@ -1,5 +1,6 @@
 
 import { useMemo, useState } from 'react';
+import RoleAIGuide from '../../components/RoleAIGuide';
 import { 
   Activity, 
   CheckCircle, 
@@ -126,6 +127,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <RoleAIGuide />
       <RoleWorkflowOverview role="Auditee" />
       {/* Welcome Banner */}
       <div className="welcome-section">

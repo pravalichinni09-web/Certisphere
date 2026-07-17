@@ -1,4 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import AIPanel from '../../components/AIPanel';
+import { clusterFindings } from '../../ai/models';
+import { Layers } from 'lucide-react';
 import {
   BarChart3,
   TrendingUp,
@@ -228,6 +231,17 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
 
   return (
     <div style={{ padding: '0 8px', maxWidth: 1280, margin: '0 auto' }}>
+      <AIPanel title="Systemic Themes (k-means)" subtitle="Clusters findings into recurring themes — spot systemic issues" icon={<Layers size={15} />}>
+        <ul className="ai-insight-list">
+          {clusterFindings(3).map((c, i) => (
+            <li key={i}>
+              <strong style={{ fontSize: 12.5 }}>{c.label}</strong>
+              <span className="ai-chip info" style={{ marginLeft: 8 }}>{c.size} finding(s)</span>
+              <div style={{ fontSize: 12, marginTop: 4, opacity: 0.85 }}>Top terms: {c.topTerms.join(', ') || '—'}. e.g. {c.members[0] || ''}</div>
+            </li>
+          ))}
+        </ul>
+      </AIPanel>
       {/* Header */}
       <div
         style={{

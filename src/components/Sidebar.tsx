@@ -29,6 +29,14 @@ import {
   Building2,
   Timer,
   BrainCircuit,
+  FileSearch,
+  MessageCircle,
+  TrendingUp,
+  ShieldAlert,
+  FileCheck,
+  MessageSquare,
+  LayoutList,
+  CalendarDays,
 } from 'lucide-react';
 import { loadProfile, CoordinatorProfile } from '../pages/AuditorCoordinator/Profile';
 import { readGlobalConfig, flagOf, onGlobalConfigChange, GlobalConfig } from '../utils/globalConfig';
@@ -166,6 +174,8 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
         { path: '/auditor-coordinator/certificate-delivery', icon: <Award size={16} />, label: 'Certificate Delivery' },
         { path: '/auditor-coordinator/audit-analysis', icon: <BarChart3 size={16} />, label: 'Audit Analysis' },
         { path: '/auditor-coordinator/audit-intelligence', icon: <BrainCircuit size={16} />, label: 'Audit Intelligence' },
+        { path: '/auditor-coordinator/smart-scheduler', icon: <CalendarDays size={16} />, label: 'Smart Scheduler' },
+        { path: '/auditor-coordinator/auditor-assignment', icon: <UserCheck size={16} />, label: 'Auditor Assignment' },
       ],
     },
     {
@@ -197,6 +207,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
     { path: '/auditor/conduct-audit', icon: <ClipboardCheck size={18} />, label: 'Conduct Audit' },
     { path: '/auditor/audit-report', icon: <FileSpreadsheet size={18} />, label: 'Audit Report' },
     { path: '/auditor/action-review', icon: <ClipboardList size={18} />, label: 'Action Review' },
+    { path: '/auditor/smart-checklist', icon: <ClipboardCheck size={18} />, label: 'Smart Checklist' },
+    { path: '/auditor/anomaly-detection', icon: <ShieldAlert size={18} />, label: 'Anomaly Detection' },
+    { path: '/auditor/evidence-validation', icon: <FileCheck size={18} />, label: 'Evidence Validation' },
+    { path: '/auditor/audit-assistant', icon: <MessageSquare size={18} />, label: 'Audit Assistant' },
+    { path: '/auditor/findings-categorization', icon: <LayoutList size={18} />, label: 'Findings Categorization' },
   ];
 
   // Flat items for the Auditee (client) vertical sidebar
@@ -207,6 +222,11 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
     { path: '/audit-client/schedule-approvals', icon: <CalendarCheck size={18} />, label: 'Schedule Approvals' },
     { path: '/audit-client/audit-actions', icon: <ClipboardList size={18} />, label: 'Audit Actions' },
     { path: '/audit-client/submit-report', icon: <FileSpreadsheet size={18} />, label: 'Submit Report' },
+    { path: '/audit-client/document-analysis', icon: <FileSearch size={18} />, label: 'Document Analysis' },
+    { path: '/audit-client/smart-compliance', icon: <BrainCircuit size={18} />, label: 'Smart Compliance' },
+    { path: '/audit-client/ai-chat', icon: <MessageCircle size={18} />, label: 'AI Chat Support' },
+    { path: '/audit-client/action-risk', icon: <TrendingUp size={18} />, label: 'Action Risk Predictor' },
+    { path: '/audit-client/auto-report', icon: <FileText size={18} />, label: 'Auto Report' },
   ];
 
   const clientCoordinatorItems: MenuItem[] = [

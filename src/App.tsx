@@ -125,37 +125,78 @@ function App() {
           background: '#0f2547',
           display: 'flex', flexDirection: 'column',
           alignItems: 'center', justifyContent: 'center',
-          gap: 24,
-          animation: 'cs-logout-fadein 0.15s ease-out',
+          gap: 20,
+          animation: 'cs-lo-in 0.15s ease-out',
         }}>
           <style>{`
-            @keyframes cs-logout-fadein { from { opacity: 0 } to { opacity: 1 } }
-            @keyframes cs-logout-pulse  { 0%,100% { opacity:1; transform:scale(1) } 50% { opacity:.7; transform:scale(0.96) } }
-            @keyframes cs-logout-spin   { to { transform: rotate(360deg) } }
+            @keyframes cs-lo-in    { from { opacity:0 } to { opacity:1 } }
+            @keyframes cs-lo-spin  { to { transform: rotate(360deg) } }
+            @keyframes cs-lo-pulse { 0%,100%{transform:scale(1)}50%{transform:scale(0.94)} }
           `}</style>
-          <img
-            src="/images/certisphere-logo.png"
-            alt="CertiSphere"
-            style={{ height: 72, objectFit: 'contain', animation: 'cs-logout-pulse 1.2s ease-in-out infinite' }}
-            onError={e => {
-              (e.currentTarget as HTMLImageElement).src = '/images/certisphere-logo-transparent.png';
-            }}
-          />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+
+          {/* Icon + circular spinner wrapper */}
+          <div style={{ position: 'relative', width: 108, height: 108 }}>
+            {/* Outer spinning arc — gold */}
+            <svg
+              viewBox="0 0 108 108"
+              style={{
+                position: 'absolute', inset: 0, width: 108, height: 108,
+                animation: 'cs-lo-spin 1.2s linear infinite',
+              }}
+            >
+              <circle cx="54" cy="54" r="50"
+                fill="none" stroke="rgba(201,146,42,0.18)" strokeWidth="4" />
+              <circle cx="54" cy="54" r="50"
+                fill="none" stroke="#c9922a" strokeWidth="4"
+                strokeDasharray="80 235" strokeLinecap="round"
+                transform="rotate(-90 54 54)" />
+            </svg>
+            {/* Inner spinning arc — blue, counter-rotate */}
+            <svg
+              viewBox="0 0 108 108"
+              style={{
+                position: 'absolute', inset: 6, width: 96, height: 96,
+                animation: 'cs-lo-spin 1.8s linear infinite reverse',
+              }}
+            >
+              <circle cx="48" cy="48" r="44"
+                fill="none" stroke="#1d4ed8" strokeWidth="3"
+                strokeDasharray="55 221" strokeLinecap="round"
+                transform="rotate(-90 48 48)" />
+            </svg>
+            {/* Triangle icon centre */}
             <div style={{
-              width: 20, height: 20, borderRadius: '50%',
-              border: '2.5px solid rgba(201,146,42,0.25)',
-              borderTopColor: '#c9922a',
-              animation: 'cs-logout-spin 0.8s linear infinite',
-            }} />
-            <span style={{ color: 'rgba(255,255,255,0.55)', fontSize: 13, fontFamily: 'Inter,system-ui,sans-serif', letterSpacing: '0.04em' }}>
-              Signing out…
-            </span>
+              position: 'absolute', inset: 14,
+              borderRadius: '50%',
+              background: 'rgba(255,255,255,0.06)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              animation: 'cs-lo-pulse 1.8s ease-in-out infinite',
+            }}>
+              <img
+                src="/images/certisphere-icon.png"
+                alt="CertiSphere"
+                style={{ width: 52, height: 52, objectFit: 'contain' }}
+                onError={e => {
+                  (e.currentTarget as HTMLImageElement).src = '/images/certisphere-logo-transparent.png';
+                }}
+              />
+            </div>
           </div>
+
+          {/* Label */}
+          <span style={{
+            color: 'rgba(255,255,255,0.5)', fontSize: 13,
+            fontFamily: 'Inter,system-ui,sans-serif',
+            letterSpacing: '0.06em', textTransform: 'uppercase',
+          }}>
+            Signing out…
+          </span>
+
+          {/* QMICS logo bottom */}
           <img
             src="/images/qmics-logo.png"
             alt="QMICS"
-            style={{ position: 'absolute', bottom: 28, height: 32, objectFit: 'contain', opacity: 0.45 }}
+            style={{ position: 'absolute', bottom: 28, height: 30, objectFit: 'contain', opacity: 0.35 }}
             onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
         </div>

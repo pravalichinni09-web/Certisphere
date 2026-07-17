@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { recommendActions } from '../../ai/models';
+import { GitBranch } from 'lucide-react';
 import { 
   Filter, 
   ChevronDown, 
@@ -304,6 +306,31 @@ const AuditActions = () => {
       </div>
 
       {/* AI Corrective Action Coach */}
+      <AIPanel title="Similar-Case Recommender" subtitle="kNN model — approaches accepted for similar past findings" icon={<GitBranch size={15} />}>
+
+        <ul className="ai-insight-list">
+
+          {rows.slice(0, 2).map((r) => (
+
+            recommendActions(r.findingsList[0] || r.auditName, 2).map((rec, i) => (
+
+              <li key={r.id + '-' + i}>
+
+                <strong style={{ fontSize: 12 }}>{r.auditName}</strong>
+
+                <div style={{ fontSize: 12, marginTop: 3, opacity: 0.88 }}>{rec.recommended}</div>
+
+                <span className="ai-chip info" style={{ marginTop: 4 }}>from {rec.basis} · sim {rec.similarity}</span>
+
+              </li>
+
+            ))
+
+          ))}
+
+        </ul>
+
+      </AIPanel>
       <AIPanel
         title="Corrective Action Coach"
         subtitle="5-Why root-cause scaffold and plan suggestions for open actions"

@@ -10,6 +10,7 @@
  * Findings are stored per-workflow under `cms_audit_findings_v1[clientId]`.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { predictSeverity } from '../../ai/models';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ClipboardCheck, PlayCircle, CheckCircle2, AlertOctagon, Plus, Trash2, Mic, MicOff } from 'lucide-react';
 import { readWorkflows, WorkflowRecord } from '../../utils/auditWorkflow';
@@ -349,6 +350,23 @@ const ConductAudit: React.FC = () => {
                     <input placeholder="Clause / checklist item (e.g. 8.5.1)" value={newF.clause} onChange={(e) => setNewF({ ...newF, clause: e.target.value })} style={inp} />
                   </div>
                   <textarea placeholder="Describe the finding" value={newF.description} onChange={(e) => setNewF({ ...newF, description: e.target.value })} rows={2} style={{ ...inp, marginTop: 6, resize: 'vertical' }} />
+                  {newF.description.trim().length > 12 && (() => {
+                    const pred = predictSeverity(newF.description);
+                    const mapped = pred.label === 'OFI' ? 'Opportunity' : pred.label;
+                    const differs = mapped !== newF.severity;
+                    return (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6, padding: '6px 10px', borderRadius: 8, background: 'rgba(212,175,55,0.08)', border: '1px solid rgba(212,175,55,0.3)', fontSize: 12 }}>
+                        <span style={{ fontWeight: 700, color: '#b8860b' }}>ML model:</span>
+                        <span>{pred.label} ({Math.round(pred.confidence * 100)}%)</span>
+                        {differs && (
+                          <button type="button" onClick={() => setNewF({ ...newF, severity: (mapped as Severity) })}
+                            style={{ marginLeft: 'auto', padding: '3px 10px', borderRadius: 6, border: '1px solid #d4af37', background: 'transparent', color: '#b8860b', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+                            Apply
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })()}
                   <input placeholder="Evidence reference (record / interview / observation)" value={newF.evidence} onChange={(e) => setNewF({ ...newF, evidence: e.target.value })} style={{ ...inp, marginTop: 6 }} />
                   <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 8 }}>
                     <button onClick={addFinding} style={btnPrimary}><Plus size={13} /> Add finding</button>

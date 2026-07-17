@@ -698,3 +698,86 @@
   border-radius: 12px;
 }
 .ai-panel-icon svg { color: #ffffff; }
+
+/* =============================================================
+   QCSAI agent avatar — dynamic animation set
+   ============================================================= */
+.qcsai-agent .qcsai-agent-head {
+  transform-origin: 24px 26px;
+  animation: qcsai-bob 3.6s ease-in-out infinite;
+}
+@keyframes qcsai-bob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  30%      { transform: translateY(-1.2px) rotate(-2deg); }
+  65%      { transform: translateY(0.6px) rotate(2deg); }
+}
+
+/* Blinking eyes */
+.qcsai-agent .qcsai-eye {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: qcsai-blink 4.2s ease-in-out infinite;
+}
+@keyframes qcsai-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  93%, 96%      { transform: scaleY(0.12); }
+}
+
+/* Antenna beacon pulse */
+.qcsai-agent .qcsai-antenna-dot {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: qcsai-beacon 2.2s ease-in-out infinite;
+}
+@keyframes qcsai-beacon {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.35); }
+}
+
+/* Visor scanning sweep */
+.qcsai-agent .qcsai-visor {
+  animation: qcsai-scan 3.4s ease-in-out infinite;
+}
+@keyframes qcsai-scan {
+  0%, 100% { transform: translateX(0); }
+  50%      { transform: translateX(19px); }
+}
+
+/* Spark twinkle */
+.qcsai-agent .qcsai-spark {
+  transform-origin: center;
+  transform-box: fill-box;
+  animation: qcsai-twinkle 2.8s ease-in-out infinite;
+}
+@keyframes qcsai-twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.8) rotate(0deg); }
+  50%      { opacity: 1;    transform: scale(1.15) rotate(20deg); }
+}
+
+/* Orbiting halo ring around the launcher medallion */
+.ai-fab-badge {
+  position: relative;
+}
+.ai-fab-badge::before {
+  content: '';
+  position: absolute;
+  inset: -5px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(212, 175, 55, 0.55);
+  animation: qcsai-orbit 9s linear infinite;
+  pointer-events: none;
+}
+@keyframes qcsai-orbit {
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .qcsai-agent .qcsai-agent-head,
+  .qcsai-agent .qcsai-eye,
+  .qcsai-agent .qcsai-antenna-dot,
+  .qcsai-agent .qcsai-visor,
+  .qcsai-agent .qcsai-spark,
+  .ai-fab-badge::before {
+    animation: none !important;
+  }
+}

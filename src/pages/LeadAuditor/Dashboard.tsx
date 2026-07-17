@@ -1,4 +1,5 @@
 import React from 'react';
+import RoleAIGuide from '../../components/RoleAIGuide';
 import { 
   LayoutDashboard, 
   CalendarClock, 
@@ -56,6 +57,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="lead-dashboard">
+      <RoleAIGuide />
       <RoleWorkflowOverview role="Lead Auditor" />
       {/* Header Section */}
       <div className="dashboard-header">

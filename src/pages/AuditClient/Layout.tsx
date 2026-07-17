@@ -10,6 +10,11 @@ import SubmitReport from './SubmitReport';
 import ScheduleApprovals from './ScheduleApprovals';
 import PreAuditee from './PreAuditee';
 import AuditWorkflow from './AuditWorkflow';
+import DocumentAnalysis from './DocumentAnalysis';
+import SmartCompliance from './SmartCompliance';
+import AIChatSupport from './AIChatSupport';
+import ActionRiskPrediction from './ActionRiskPrediction';
+import AutoReportGeneration from './AutoReportGeneration';
 import '../../styles/AuditClient/Layout.css';
 
 interface LayoutProps {
@@ -31,6 +36,11 @@ const AuditClientLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/schedule-approvals" element={<ScheduleApprovals />} />
           <Route path="/pre-auditee" element={<PreAuditee />} />
           <Route path="/audit-workflow" element={<AuditWorkflow />} />
+          <Route path="/document-analysis" element={<DocumentAnalysis />} />
+          <Route path="/smart-compliance" element={<SmartCompliance />} />
+          <Route path="/ai-chat" element={<AIChatSupport />} />
+          <Route path="/action-risk" element={<ActionRiskPrediction />} />
+          <Route path="/auto-report" element={<AutoReportGeneration />} />
           <Route index element={<Navigate to="/audit-client/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/audit-client/dashboard" replace />} />
         </Routes>

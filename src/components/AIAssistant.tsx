@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { ragAnswer, ragAnswerWithClaude } from '../ai/models';
 import { useNavigate } from 'react-router-dom';
 import {
   X,
@@ -159,6 +160,13 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
     system: string;
   } | null => {
     const t = text.trim();
+    if (/^\/rag\b/i.test(t)) {
+      return {
+        command: 'ask',
+        body: t.replace(/^\/rag\b\s*/i, '').trim(),
+        system: '__RAG__',
+      };
+    }
     if (/^\/draft-ncr\b/i.test(t)) {
       return {
         command: 'draft-ncr',
@@ -214,6 +222,25 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
     setThinking(true);
 
     const cmd = parseClaudeCommand(text);
+
+    // /rag — retrieval-augmented answer over the live knowledge base.
+    // Works without Claude (grounded heuristic answer); upgrades when configured.
+    if (cmd && cmd.system === '__RAG__') {
+      const question = cmd.body || 'summarize recent findings';
+      const finish = (r: { answer: string; sources: Array<{ title: string; kind: string; similarity: number }>; generator: string }) => {
+        const src = r.sources.length
+          ? '\n\n**Sources:**\n' + r.sources.map((x, i) => `${i + 1}. ${x.title} _(${x.kind}, sim ${x.similarity})_`).join('\n')
+          : '';
+        const resp: AssistantResponse = {
+          blocks: [{ kind: 'text', text: `${r.answer}${src}\n\n_Generator: ${r.generator}_` }],
+          suggestions: ['/rag how were calibration issues resolved?', '/rag which clauses fail most often?'],
+        };
+        setMessages((prev) => [...prev, { id: idRef.current++, type: 'assistant', response: resp }]);
+        setThinking(false);
+      };
+      ragAnswerWithClaude(question).then(finish).catch(() => finish(ragAnswer(question)));
+      return;
+    }
 
     // Slash command routes through Claude (if configured), else hint the user to set a key.
     if (cmd) {
@@ -630,7 +657,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
           </div>
           <div className="ai-footer-hint">
             Press <kbd>Enter</kbd> to send. {claudeReady
-              ? <>Ask anything — CMS, ISO, or general knowledge. Slash: <kbd>/draft-ncr</kbd>, <kbd>/summarize</kbd>, <kbd>/explain</kbd>.</>
+              ? <>Ask anything — CMS, ISO, or general knowledge. Slash: <kbd>/rag</kbd>, <kbd>/draft-ncr</kbd>, <kbd>/summarize</kbd>, <kbd>/explain</kbd>.</>
               : <>Connect Claude (⚙) to answer general questions on any topic.</>}
           </div>
         </div>

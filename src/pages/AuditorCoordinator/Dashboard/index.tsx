@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import RoleAIGuide from '../../../components/RoleAIGuide';
 import { useNavigate } from 'react-router-dom';
 import {
   Users,
@@ -275,6 +276,7 @@ const Dashboard: React.FC = () => {
   /* -------------------- Render -------------------- */
   return (
     <div className="dashboard-container coord-dashboard">
+      <RoleAIGuide />
       <RoleWorkflowOverview role="Audit Coordinator" />
       {/* HERO */}
       <div className="dash-hero">

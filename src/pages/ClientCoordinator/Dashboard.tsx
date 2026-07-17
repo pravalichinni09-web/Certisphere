@@ -1,4 +1,5 @@
 import React from 'react';
+import RoleAIGuide from '../../components/RoleAIGuide';
 import { Award, CalendarClock, AlertTriangle, FileCheck, Building2, ClipboardList, Bell, FileSpreadsheet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getCertifications, getAuditSchedules, getOrg, getNotifications } from './scope';
@@ -60,6 +61,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div style={{ padding: 24, maxWidth: 1100 }}>
+      <RoleAIGuide />
       <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#0f172a' }}>
         Welcome, {org?.organizationName || 'Client Coordinator'}
       </h1>

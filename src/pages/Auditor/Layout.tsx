@@ -8,6 +8,11 @@ import ScheduleConfirmations from './ScheduleConfirmations';
 import ConductAudit from './ConductAudit';
 import AuditReport from './AuditReport';
 import ActionReview from './ActionReview';
+import SmartChecklist from './SmartChecklist';
+import AnomalyDetection from './AnomalyDetection';
+import EvidenceValidation from './EvidenceValidation';
+import AuditAssistant from './AuditAssistant';
+import FindingsCategorization from './FindingsCategorization';
 import '../../styles/Auditor/Layout.css';
 
 interface LayoutProps {
@@ -27,6 +32,11 @@ const AuditorLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/conduct-audit" element={<ConductAudit />} />
           <Route path="/audit-report" element={<AuditReport />} />
           <Route path="/action-review" element={<ActionReview />} />
+          <Route path="/smart-checklist" element={<SmartChecklist />} />
+          <Route path="/anomaly-detection" element={<AnomalyDetection />} />
+          <Route path="/evidence-validation" element={<EvidenceValidation />} />
+          <Route path="/audit-assistant" element={<AuditAssistant />} />
+          <Route path="/findings-categorization" element={<FindingsCategorization />} />
           <Route index element={<Navigate to="/auditor/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/auditor/dashboard" replace />} />
         </Routes>

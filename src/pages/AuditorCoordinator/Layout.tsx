@@ -26,6 +26,8 @@ import AuditWorkflowPage from './AuditWorkflow';
 import WorkflowMap from './WorkflowMap';
 import AuditAnalysis from '../shared/AuditAnalysis';
 import AuditIntelligence from './AuditIntelligence';
+import SmartScheduler from './SmartScheduler';
+import AuditorAssignment from './AuditorAssignment';
 import EmailJSSettings from '../../components/EmailJSSettings';
 import '../../styles/AuditorCoordinator.css';
 
@@ -64,6 +66,8 @@ const AuditorCoordinatorLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/workflow-map" element={<WorkflowMap />} />
           <Route path="/audit-analysis" element={<AuditAnalysis role="coordinator" />} />
           <Route path="/audit-intelligence" element={<AuditIntelligence />} />
+          <Route path="/smart-scheduler" element={<SmartScheduler />} />
+          <Route path="/auditor-assignment" element={<AuditorAssignment />} />
           <Route path="/email-config" element={<EmailJSSettings />} />
           <Route index element={<Navigate to="/auditor-coordinator/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/auditor-coordinator/dashboard" replace />} />

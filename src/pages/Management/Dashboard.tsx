@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from 'react';
+import { forecastFindings } from '../../ai/models';
+import { TrendingUp } from 'lucide-react';
+import RoleAIGuide from '../../components/RoleAIGuide';
 import 'chart.js/auto';
 import { Bar, Pie, Scatter } from 'react-chartjs-2';
 import * as XLSX from 'xlsx'; // Requires: npm install xlsx
@@ -239,6 +242,27 @@ const ManagementDashboard: React.FC = () => {
 
   return (
     <div className="management-dashboard">
+      <RoleAIGuide />
+      <AIPanel title="Compliance Forecast" subtitle="Holt time-series model — findings volume projected 3 months ahead" icon={<TrendingUp size={15} />}>
+        {(() => {
+          const fc = forecastFindings(3);
+          return (
+            <div>
+              <p style={{ margin: '0 0 8px', fontWeight: 600 }}>{fc.reading}</p>
+              {fc.history.length > 0 && (
+                <div style={{ fontSize: 12, opacity: 0.85 }}>
+                  History: {fc.history.map((h) => `${h.month}: ${h.count}`).join(' · ')}
+                </div>
+              )}
+              {fc.forecast.length > 0 && (
+                <div style={{ fontSize: 12.5, marginTop: 6 }}>
+                  <strong>Forecast:</strong> {fc.forecast.map((f) => `${f.month}: ~${f.predicted}`).join(' · ')}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+      </AIPanel>
       <RoleWorkflowOverview role="Management" />
 
       {/* Executive AI Briefing — computed live from cms_* stores */}
