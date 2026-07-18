@@ -16,8 +16,10 @@ import { buildCorpus, CorpusDoc } from './advancedIntelligence';
 import { completeSafe, isClaudeConfigured } from './claudeClient';
 
 const safeJSON = <T,>(key: string, fallback: T): T => {
-  try { const r = localStorage.getItem(key); return r ? (JSON.parse(r) as T) : fallback; } catch { return fallback; }
+  try { const r = localStorage.getItem(key); if (!r) return fallback; const v = JSON.parse(r); return (Array.isArray(v) ? v.filter((x: unknown) => x != null) : v) as T; } catch { return fallback; }
 };
+/** Array-guaranteed read (some keys hold objects/maps, not arrays). */
+const arr = (key: string): any[] => { const v = safeJSON<any>(key, []); return Array.isArray(v) ? v : []; };
 const tokenize = (s: string): string[] =>
   (s || '').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter((w) => w.length > 2);
 
@@ -38,13 +40,14 @@ export const trainSeverityModel = (): NBModel => {
   const norm = (sev: string): string =>
     /major/i.test(sev) ? 'Major NC' : /minor/i.test(sev) ? 'Minor NC' : /(ofi|opportun)/i.test(sev) ? 'OFI' : 'Observation';
   const rawFindings = safeJSON<unknown>('cms_audit_findings_v1', []);
-  const flat: any[] = Array.isArray(rawFindings)
+  const flat: any[] = (Array.isArray(rawFindings)
     ? rawFindings
-    : Object.values(rawFindings as Record<string, unknown>).flatMap((l) => (Array.isArray(l) ? l : []));
+    : Object.values(rawFindings as Record<string, unknown>).flatMap((l) => (Array.isArray(l) ? l : []))
+  ).filter((f) => f && typeof f === 'object');
   flat.forEach((f: any) => {
     if (f?.description && (f.severity || f.category)) rows.push({ text: f.description, label: norm(f.severity || f.category) });
   });
-  safeJSON<any[]>('cms_corrective_actions_v1', []).forEach((a) => {
+  arr('cms_corrective_actions_v1').filter((a) => a && typeof a === 'object').forEach((a) => {
     if (a?.description && a.severity) rows.push({ text: a.description, label: norm(a.severity) });
   });
   // Bootstrap corpus so the model always has a floor of ISO knowledge
@@ -199,10 +202,10 @@ export const clusterFindings = (k = 3): Cluster[] => {
 export interface ForecastResult { history: Array<{ month: string; count: number }>; forecast: Array<{ month: string; predicted: number }>; reading: string; }
 export const forecastFindings = (horizon = 3): ForecastResult => {
   const raw = safeJSON<unknown>('cms_audit_findings_v1', []);
-  const flat: any[] = Array.isArray(raw) ? raw : Object.values(raw as Record<string, unknown>).flatMap((l) => (Array.isArray(l) ? l : []));
-  const actions = safeJSON<any[]>('cms_corrective_actions_v1', []);
+  const flat: any[] = (Array.isArray(raw) ? raw : Object.values(raw as Record<string, unknown>).flatMap((l) => (Array.isArray(l) ? l : []))).filter((f) => f && typeof f === 'object');
+  const actions = arr('cms_corrective_actions_v1');
   const byMonth = new Map<string, number>();
-  [...flat, ...actions].forEach((f: any) => {
+  [...flat, ...actions].filter((f) => f && typeof f === 'object').forEach((f: any) => {
     const d = (f.date || f.createdAt || f.dueDate || '').slice(0, 7);
     if (d) byMonth.set(d, (byMonth.get(d) || 0) + 1);
   });

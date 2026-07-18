@@ -296,7 +296,7 @@ const CONF_STYLE: Record<Confidence, { color: string; bg: string }> = {
   Low:    { color: '#ef4444', bg: 'rgba(239,68,68,0.12)'   },
 };
 const SCORE_COLOR = (s: number) => s >= 80 ? '#22c55e' : s >= 60 ? '#f59e0b' : '#ef4444';
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 20, marginBottom: 16 };
+const cardS: React.CSSProperties = { background: 'var(--cms-bg-surface, #ffffff)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 16, padding: 20, marginBottom: 16 };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 10, fontWeight: 700 };
 
@@ -307,7 +307,7 @@ const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 5
   return (
     <div style={{ position: 'relative', width: size, height: size, flexShrink: 0 }}>
       <svg width={size} height={size} style={{ transform: 'rotate(-90deg)' }}>
-        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="5" />
+        <circle cx={size/2} cy={size/2} r={r} fill="none" stroke="var(--cms-border-strong, rgba(15,23,42,0.16))" strokeWidth="5" />
         <circle cx={size/2} cy={size/2} r={r} fill="none" stroke={color} strokeWidth="5" strokeLinecap="round"
           strokeDasharray={`${(score/100)*circ} ${circ}`} style={{ transition: 'stroke-dasharray 0.6s ease' }} />
       </svg>
@@ -321,11 +321,11 @@ const ScoreRing: React.FC<{ score: number; size?: number }> = ({ score, size = 5
 /* ─── Criteria bar ───────────────────────────────────────────────── */
 const CriteriaBar: React.FC<{ label: string; val: number; weight: string }> = ({ label, val, weight }) => (
   <div>
-    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5, color: '#94a3b8', marginBottom: 2 }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5, color: 'var(--cms-text-muted, #64748b)', marginBottom: 2 }}>
       <span>{label} <span style={{ color: '#475569' }}>({weight})</span></span>
       <span style={{ fontWeight: 700, color: SCORE_COLOR(val) }}>{val}</span>
     </div>
-    <div style={{ height: 5, background: 'rgba(255,255,255,0.06)', borderRadius: 999, overflow: 'hidden' }}>
+    <div style={{ height: 5, background: 'var(--cms-bg-elevated, #f8fafc)', borderRadius: 999, overflow: 'hidden' }}>
       <div style={{ height: '100%', width: `${val}%`, background: SCORE_COLOR(val), borderRadius: 999, transition: 'width 0.5s ease' }} />
     </div>
   </div>
@@ -398,8 +398,8 @@ const AuditorAssignment: React.FC = () => {
           <Users size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Auditor Assignment AI</h1>
-          <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: 'var(--cms-text-primary, #0f172a)' }}>Auditor Assignment AI</h1>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>
             {claude ? 'AI-powered matching — scores every auditor across 5 weighted criteria per job' : 'Heuristic matching engine — expertise, availability, proximity, capacity, history'}
           </p>
         </div>
@@ -408,7 +408,7 @@ const AuditorAssignment: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={14} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — weighted scoring across all 5 criteria using live certification, schedule, and location data. Configure Claude API key in <strong>AI Settings</strong> for AI-depth matching analysis.
           </p>
         </div>
@@ -423,7 +423,7 @@ const AuditorAssignment: React.FC = () => {
               { label: 'Active auditors',  val: liveAuditors.length, color: '#7c3aed' },
               { label: 'Possible matches', val: liveJobs.length * liveAuditors.length, color: GOLD },
             ].map(s => (
-              <div key={s.label} style={{ background: '#070f1a', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 90 }}>
+              <div key={s.label} style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 90 }}>
                 <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.val}</div>
                 <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>{s.label}</div>
               </div>
@@ -437,7 +437,7 @@ const AuditorAssignment: React.FC = () => {
                 : <><Wand2 size={14} />{claude ? ' Match with Claude' : ' Run Matching'}</>}
             </button>
             {matches.length > 0 && !busy && (
-              <button style={btnS('transparent', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={run}>
+              <button style={btnS('transparent', { border: '1px solid var(--cms-border-input, #cbd5e1)', color: 'var(--cms-text-muted, #64748b)' })} onClick={run}>
                 <RefreshCw size={13} /> Re-run
               </button>
             )}
@@ -446,7 +446,7 @@ const AuditorAssignment: React.FC = () => {
         {streamMsg && (
           <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 7 }}>
             <Loader2 size={13} color={GOLD} style={{ animation: 'aa2-spin 0.8s linear infinite' }} />
-            <span style={{ fontSize: 12, color: '#94a3b8' }}>{streamMsg}</span>
+            <span style={{ fontSize: 12, color: 'var(--cms-text-muted, #64748b)' }}>{streamMsg}</span>
           </div>
         )}
       </div>
@@ -456,11 +456,11 @@ const AuditorAssignment: React.FC = () => {
         <div style={{ ...cardS, padding: '12px 18px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
             <CheckCircle2 size={15} color="#22c55e" />
-            <span style={{ fontWeight: 800, fontSize: 14, color: '#f1f5f9' }}>{matches.length} jobs matched</span>
+            <span style={{ fontWeight: 800, fontSize: 14, color: 'var(--cms-text-primary, #0f172a)' }}>{matches.length} jobs matched</span>
             {source === 'claude'    && <span style={aiBadge}><Sparkles size={9} /> Claude AI</span>}
-            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
+            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: 'var(--cms-text-muted, #64748b)' }}>Heuristic</span>}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 7 }}>
-              <button style={btnS('#1e293b', { padding: '5px 11px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' })} onClick={copyReport}>
+              <button style={btnS('#1e293b', { padding: '5px 11px', fontSize: 12, border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.12))' })} onClick={copyReport}>
                 <Copy size={12} />{copied ? ' Copied!' : ' Copy'}
               </button>
               <button style={btnS('#064e3b', { padding: '5px 11px', fontSize: 12 })} onClick={exportCSV}>
@@ -485,11 +485,11 @@ const AuditorAssignment: React.FC = () => {
             {/* Job header */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 14 }}>
               <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 900, fontSize: 15, color: '#f1f5f9', marginBottom: 3 }}>{m.job.clientName}</div>
+                <div style={{ fontWeight: 900, fontSize: 15, color: 'var(--cms-text-primary, #0f172a)', marginBottom: 3 }}>{m.job.clientName}</div>
                 <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <span style={{ fontSize: 11, color: '#64748b' }}>{m.job.standard}</span>
+                  <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{m.job.standard}</span>
                   <span style={{ fontSize: 11, color: '#475569' }}>•</span>
-                  <span style={{ fontSize: 11, color: '#64748b' }}>{m.job.auditType}</span>
+                  <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{m.job.auditType}</span>
                   {m.job.location !== 'TBD' && (
                     <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#475569' }}>
                       <MapPin size={10} /> {m.job.location}
@@ -505,19 +505,19 @@ const AuditorAssignment: React.FC = () => {
             </div>
 
             {/* Top recommendation */}
-            <div style={{ background: '#070f1a', borderRadius: 12, padding: '14px 16px', border: `1px solid ${cs.color}30` }}>
+            <div style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', borderRadius: 12, padding: '14px 16px', border: `1px solid ${cs.color}30` }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                 <ScoreRing score={top.totalScore} />
 
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 4 }}>
-                    <span style={{ fontWeight: 900, fontSize: 15, color: '#f1f5f9' }}>{top.auditorName}</span>
-                    <span style={{ fontSize: 11, color: '#64748b' }}>{top.auditorRole}</span>
+                    <span style={{ fontWeight: 900, fontSize: 15, color: 'var(--cms-text-primary, #0f172a)' }}>{top.auditorName}</span>
+                    <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{top.auditorRole}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, fontWeight: 800, padding: '2px 9px', borderRadius: 999, color: cs.color, background: cs.bg, border: `1px solid ${cs.color}44` }}>
                       <Star size={10} /> {top.confidence} Confidence
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#64748b', marginBottom: 6 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: 'var(--cms-text-muted, #64748b)', marginBottom: 6 }}>
                     <Clock size={11} /> {top.availableDates}
                   </div>
                   <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
@@ -535,7 +535,7 @@ const AuditorAssignment: React.FC = () => {
 
               {/* Expanded detail */}
               {isExp && (
-                <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+                <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--cms-bg-elevated, #f8fafc)' }}>
                   {/* Criteria breakdown */}
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 14 }}>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
@@ -546,15 +546,15 @@ const AuditorAssignment: React.FC = () => {
                       <CriteriaBar label="Capacity"     val={top.capacityScore}     weight="15%" />
                       <CriteriaBar label="History"      val={top.historyScore}      weight="5%"  />
                     </div>
-                    <div style={{ background: '#0a1525', borderRadius: 9, padding: '12px 14px' }}>
+                    <div style={{ background: 'var(--cms-bg-elevated, #f8fafc)', borderRadius: 9, padding: '12px 14px' }}>
                       <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 7 }}>💬 Reasoning</div>
-                      <p style={{ margin: 0, fontSize: 12.5, color: '#94a3b8', lineHeight: 1.6 }}>{top.reasoning}</p>
+                      <p style={{ margin: 0, fontSize: 12.5, color: 'var(--cms-text-muted, #64748b)', lineHeight: 1.6 }}>{top.reasoning}</p>
                       <div style={{ marginTop: 10 }}>
                         <div style={{ fontSize: 10, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>✅ All Strengths</div>
                         {top.strengths.map((s, i) => (
                           <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 5, marginBottom: 3 }}>
                             <CheckCircle2 size={11} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />
-                            <span style={{ fontSize: 12, color: '#cbd5e1' }}>{s}</span>
+                            <span style={{ fontSize: 12, color: 'var(--cms-text-secondary, #475569)' }}>{s}</span>
                           </div>
                         ))}
                       </div>
@@ -576,11 +576,11 @@ const AuditorAssignment: React.FC = () => {
                 {isAlt && (
                   <div style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {alts.map((alt, idx) => (
-                      <div key={alt.auditorId} style={{ background: '#070f1a', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div key={alt.auditorId} style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', borderRadius: 10, padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 10, border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.08))' }}>
                         <span style={{ fontSize: 11, fontWeight: 800, color: '#475569', minWidth: 20 }}>#{idx + 2}</span>
                         <ScoreRing score={alt.totalScore} size={44} />
                         <div style={{ flex: 1 }}>
-                          <div style={{ fontWeight: 700, fontSize: 13, color: '#cbd5e1' }}>{alt.auditorName} <span style={{ fontSize: 11, color: '#475569', fontWeight: 400 }}>{alt.auditorRole}</span></div>
+                          <div style={{ fontWeight: 700, fontSize: 13, color: 'var(--cms-text-secondary, #475569)' }}>{alt.auditorName} <span style={{ fontSize: 11, color: '#475569', fontWeight: 400 }}>{alt.auditorRole}</span></div>
                           <div style={{ fontSize: 11, color: '#475569', marginTop: 2 }}>{alt.strengths[0]} · {alt.availableDates}</div>
                         </div>
                         <span style={{ fontSize: 11, fontWeight: 700, color: CONF_STYLE[alt.confidence].color, background: CONF_STYLE[alt.confidence].bg, padding: '2px 8px', borderRadius: 999, border: `1px solid ${CONF_STYLE[alt.confidence].color}44` }}>

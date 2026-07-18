@@ -11,37 +11,39 @@
  */
 
 const safeJSON = <T,>(key: string, fallback: T): T => {
-  try { const r = localStorage.getItem(key); return r ? (JSON.parse(r) as T) : fallback; } catch { return fallback; }
+  try { const r = localStorage.getItem(key); if (!r) return fallback; const v = JSON.parse(r); return (Array.isArray(v) ? v.filter((x: unknown) => x != null) : v) as T; } catch { return fallback; }
 };
+/** Array-guaranteed read (some keys hold objects/maps, not arrays). */
+const arr = (key: string): any[] => { const v = safeJSON<any>(key, []); return Array.isArray(v) ? v : []; };
 
 /* ================= corpus (RAG knowledge base) ================= */
 export interface CorpusDoc { id: string; kind: string; title: string; text: string; ref?: string; }
 
 const flattenFindings = (): any[] => {
   const raw = safeJSON<unknown>('cms_audit_findings_v1', []);
-  if (Array.isArray(raw)) return raw;
+  if (Array.isArray(raw)) return raw.filter((f) => f && typeof f === 'object');
   if (raw && typeof raw === 'object') {
     return Object.entries(raw as Record<string, unknown>).flatMap(([cid, list]) =>
-      Array.isArray(list) ? list.map((f) => ({ ...(f as object), clientId: cid })) : []);
+      Array.isArray(list) ? list.filter((f) => f && typeof f === 'object').map((f) => ({ ...(f as object), clientId: cid })) : []);
   }
   return [];
 };
 
 export const buildCorpus = (): CorpusDoc[] => {
   const docs: CorpusDoc[] = [];
-  flattenFindings().forEach((f: any, i) => docs.push({
+  flattenFindings().filter(Boolean).forEach((f: any, i) => docs.push({
     id: `finding-${f.id ?? i}`, kind: 'Finding',
     title: f.title || f.description?.slice(0, 60) || 'Finding',
     text: [f.title, f.description, f.clause, f.standard, f.department, f.severity].filter(Boolean).join(' '),
     ref: f.clause ? `Clause ${f.clause}` : undefined,
   }));
-  safeJSON<any[]>('cms_corrective_actions_v1', []).forEach((a, i) => docs.push({
+  arr('cms_corrective_actions_v1').filter(Boolean).forEach((a, i) => docs.push({
     id: `cap-${a.id ?? i}`, kind: 'Corrective action',
     title: `${a.capId || a.id} — ${a.clientName || ''}`,
     text: [a.description, a.rootCause, a.correctivePlan, a.standard, a.severity, a.auditTitle].filter(Boolean).join(' '),
     ref: a.status,
   }));
-  safeJSON<any[]>('cms_audit_reports_v1', []).forEach((r, i) => docs.push({
+  arr('cms_audit_reports_v1').filter(Boolean).forEach((r, i) => docs.push({
     id: `report-${r.id ?? i}`, kind: 'Report',
     title: `${r.client || r.organization || 'Report'} — ${r.standard || ''}`,
     text: [r.summary, r.recommendation, r.reviewComment, r.auditType, r.standard].filter(Boolean).join(' '),
@@ -113,7 +115,8 @@ export const detectDuplicateFindings = (threshold = 0.55): DuplicatePair[] => {
 /* ================= ML: predictive compliance score ================= */
 export interface ComplianceScore { score: number; grade: string; trajectory: 'improving' | 'stable' | 'declining'; factors: string[]; }
 export const predictComplianceScore = (orgName?: string): ComplianceScore => {
-  const actions = safeJSON<any[]>('cms_corrective_actions_v1', [])
+  const actions = arr('cms_corrective_actions_v1')
+    .filter((a) => a && typeof a === 'object')
     .filter((a) => !orgName || (a.clientName || '').toLowerCase() === orgName.toLowerCase());
   const findings = flattenFindings();
   const today = new Date().toISOString().slice(0, 10);
@@ -137,7 +140,8 @@ export const predictComplianceScore = (orgName?: string): ComplianceScore => {
 /* ================= Decision AI: certification recommendation ================= */
 export interface CertDecision { recommendation: 'Approve' | 'Conditional approval' | 'Reject'; confidence: number; rationale: string[]; }
 export const certificationDecision = (client?: string): CertDecision => {
-  const actions = safeJSON<any[]>('cms_corrective_actions_v1', [])
+  const actions = arr('cms_corrective_actions_v1')
+    .filter((a) => a && typeof a === 'object')
     .filter((a) => !client || (a.clientName || '').toLowerCase() === (client || '').toLowerCase());
   const majorsOpen = actions.filter((a) => /major/i.test(a.severity || '') && a.status !== 'Approved').length;
   const minorsOpen = actions.filter((a) => /minor/i.test(a.severity || '') && a.status !== 'Approved').length;
@@ -160,8 +164,8 @@ export const certificationDecision = (client?: string): CertDecision => {
 /* ================= ML: churn / satisfaction prediction ================= */
 export interface ChurnRisk { client: string; risk: number; drivers: string[]; }
 export const predictChurn = (): ChurnRisk[] => {
-  const clients = safeJSON<any[]>('cms_client_registrations', []);
-  const actions = safeJSON<any[]>('cms_corrective_actions_v1', []);
+  const clients = arr('cms_client_registrations').filter((c) => c && typeof c === 'object');
+  const actions = arr('cms_corrective_actions_v1').filter((a) => a && typeof a === 'object');
   const today = new Date().toISOString().slice(0, 10);
   return clients.map((c) => {
     const mine = actions.filter((a) => (a.clientName || '').toLowerCase() === (c.organizationName || '').toLowerCase());
@@ -189,17 +193,17 @@ export const analyzeSentiment = (text: string): SentimentResult => {
   return { text: text.slice(0, 90), sentiment: s > 0 ? 'positive' : s < 0 ? 'negative' : 'neutral', score: s };
 };
 export const clientSentiment = (): SentimentResult[] =>
-  safeJSON<any[]>('cms_client_enquiries_v1', [])
-    .filter((e) => e.message)
+  arr('cms_client_enquiries_v1')
+    .filter((e) => e && e.message)
     .slice(0, 6)
     .map((e) => analyzeSentiment(`${e.company}: ${e.message}`));
 
 /* ================= ML: auditor performance scoring ================= */
 export interface AuditorPerformance { name: string; score: number; drivers: string[]; }
 export const auditorPerformance = (): AuditorPerformance[] => {
-  const auditors = safeJSON<any[]>('cms_auditors', []);
-  const schedA = safeJSON<any[]>('cms_audit_schedules', []);
-  const schedB = safeJSON<any[]>('cms_audit_schedules_v3', []);
+  const auditors = arr('cms_auditors').filter((a) => a && typeof a === 'object');
+  const schedA = arr('cms_audit_schedules');
+  const schedB = arr('cms_audit_schedules_v3');
   const schedules = [...schedA, ...schedB];
   return auditors.slice(0, 8).map((a) => {
     const load = schedules.filter((s) => (s.auditor || '') === a.name || (s.leadAuditor || '') === a.name).length;
@@ -215,8 +219,8 @@ export const auditorPerformance = (): AuditorPerformance[] => {
 /* ================= ML: workload balancing ================= */
 export interface WorkloadEntry { name: string; assignments: number; status: 'overloaded' | 'balanced' | 'idle'; }
 export const workloadBalance = (): { entries: WorkloadEntry[]; advice: string } => {
-  const auditors = safeJSON<any[]>('cms_auditors', []);
-  const schedules = [...safeJSON<any[]>('cms_audit_schedules', []), ...safeJSON<any[]>('cms_audit_schedules_v3', [])];
+  const auditors = arr('cms_auditors').filter((a) => a && typeof a === 'object');
+  const schedules = [...arr('cms_audit_schedules'), ...arr('cms_audit_schedules_v3')];
   const entries: WorkloadEntry[] = auditors.map((a) => {
     const n = schedules.filter((s) => s.auditor === a.name || s.leadAuditor === a.name).length;
     const status: WorkloadEntry['status'] = n >= 5 ? 'overloaded' : n === 0 ? 'idle' : 'balanced';
@@ -235,7 +239,7 @@ export interface TrendPoint { month: string; count: number; }
 export const findingsTrend = (): { points: TrendPoint[]; direction: string } => {
   const fs = flattenFindings();
   const byMonth = new Map<string, number>();
-  fs.forEach((f) => {
+  fs.filter((f) => f).forEach((f) => {
     const d = (f.date || f.createdAt || '').slice(0, 7);
     if (d) byMonth.set(d, (byMonth.get(d) || 0) + 1);
   });

@@ -312,7 +312,7 @@ const AuditActions = () => {
 
           {rows.slice(0, 2).map((r) => (
 
-            recommendActions(r.findingsList[0] || r.auditName, 2).map((rec, i) => (
+            recommendActions((r.findingsList && r.findingsList[0]) || r.auditName || '', 2).map((rec, i) => (
 
               <li key={r.id + '-' + i}>
 

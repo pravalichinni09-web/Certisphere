@@ -28,7 +28,7 @@ import {
 interface FeatureRow { name: string; where: string; path: string; what: string; }
 
 const safeGet = (k: string): any[] => {
-  try { const r = localStorage.getItem(k); const p = r ? JSON.parse(r) : []; return Array.isArray(p) ? p : []; } catch { return []; }
+  try { const r = localStorage.getItem(k); const p = r ? JSON.parse(r) : []; return Array.isArray(p) ? p.filter((x: unknown) => x != null) : []; } catch { return []; }
 };
 const SAMPLE_ENQ = { company: 'Sample Co', contactName: 'A', contactEmail: 'a@s.com', standards: ['ISO 9001:2015'], message: 'Need ISO 9001 certification in 8 weeks for a tender.', industry: 'Manufacturing', employees: '120', status: 'New' };
 const SAMPLE_ACTION = { capId: 'CAP-X', clientName: 'Sample Co', standard: 'ISO 9001:2015', severity: 'Minor NC' as const, description: 'Calibration records missing for measurement equipment.' };

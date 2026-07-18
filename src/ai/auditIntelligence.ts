@@ -19,7 +19,7 @@ const safeArr = <T,>(key: string): T[] => {
     const raw = localStorage.getItem(key);
     if (!raw) return [];
     const v = JSON.parse(raw);
-    return Array.isArray(v) ? (v as T[]) : [];
+    return Array.isArray(v) ? (v.filter((x) => x != null) as T[]) : [];
   } catch {
     return [];
   }

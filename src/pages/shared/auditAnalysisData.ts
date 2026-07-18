@@ -36,7 +36,8 @@ export const safeJSON = <T,>(key: string, fallback: T): T => {
   try {
     const raw = localStorage.getItem(key);
     if (!raw) return fallback;
-    return JSON.parse(raw) as T;
+    const v = JSON.parse(raw);
+    return (Array.isArray(v) ? v.filter((x: unknown) => x != null) : v) as T;
   } catch {
     return fallback;
   }

@@ -177,7 +177,11 @@ export const loadCorrectiveActions = (): CorrectiveActionRecord[] => {
     if (raw) {
       const parsed: unknown = JSON.parse(raw);
       if (Array.isArray(parsed) && parsed.length > 0) {
-        return parsed as CorrectiveActionRecord[];
+        // Defensive: drop null/malformed entries so consumers never crash on record.id
+        const clean = (parsed as unknown[]).filter(
+          (r): r is CorrectiveActionRecord => !!r && typeof r === 'object' && 'id' in (r as object)
+        );
+        if (clean.length > 0) return clean;
       }
     }
   } catch {

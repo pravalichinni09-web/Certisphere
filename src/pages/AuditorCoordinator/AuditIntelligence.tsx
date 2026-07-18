@@ -25,17 +25,17 @@ import { suggestActions, refineWithClaude, ActionSuggestion } from '../../ai/cor
 /* ─── Design tokens ──────────────────────────────────────────────── */
 const GOLD = '#c9922a', BLUE = '#1d4ed8', CYAN = '#0891b2';
 const card: React.CSSProperties = {
-  background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16,
-  padding: 24, marginBottom: 22, color: '#e2e8f0',
+  background: 'var(--cms-bg-surface, #ffffff)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 16,
+  padding: 24, marginBottom: 22, color: 'var(--cms-text-primary, #0f172a)',
 };
 const cardLight: React.CSSProperties = {
-  background: '#111d2e', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 12,
+  background: '#111d2e', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 12,
   padding: 16, marginBottom: 12,
 };
-const h3: React.CSSProperties = { margin: '0 0 4px', fontSize: 17, fontWeight: 800, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 10 };
-const sub: React.CSSProperties = { margin: '0 0 18px', color: '#64748b', fontSize: 13 };
-const label: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, color: '#94a3b8', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' };
-const inp: React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
+const h3: React.CSSProperties = { margin: '0 0 4px', fontSize: 17, fontWeight: 800, color: 'var(--cms-text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: 10 };
+const sub: React.CSSProperties = { margin: '0 0 18px', color: 'var(--cms-text-muted, #64748b)', fontSize: 13 };
+const label: React.CSSProperties = { display: 'block', fontSize: 12, fontWeight: 700, color: 'var(--cms-text-muted, #64748b)', marginBottom: 6, letterSpacing: '0.04em', textTransform: 'uppercase' };
+const inp: React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid var(--cms-border-input, #cbd5e1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: 'var(--cms-text-primary, #0f172a)', background: 'var(--cms-bg-elevated, #f8fafc)', outline: 'none' };
 const btn = (color = BLUE): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '9px 18px', borderRadius: 9, border: 'none', background: color, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', transition: 'opacity .15s' });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 const STANDARDS = ['ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'ISO 27001:2022', 'ISO 22000:2018', 'ISO 13485:2016'];
@@ -55,7 +55,7 @@ const Pill = ({ text, bg, fg }: { text: string; bg: string; fg?: string }) => (
 const NoKeyBanner: React.FC = () => (
   <div style={{ background: 'rgba(201,146,42,0.08)', border: '1px solid rgba(201,146,42,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
     <Info size={18} color={GOLD} style={{ flexShrink: 0 }} />
-    <p style={{ margin: 0, fontSize: 13, color: '#f1f5f9', lineHeight: 1.5 }}>
+    <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.5 }}>
       <strong style={{ color: GOLD }}>Claude AI key not configured.</strong> Heuristic results are shown.{' '}
       Configure your Anthropic API key in <strong>Email Configuration → AI Settings</strong> to unlock live Claude agent responses for all tools.
     </p>
@@ -199,8 +199,8 @@ const AuditIntelligence: React.FC = () => {
           <BrainCircuit size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: '#f1f5f9' }}>Audit Intelligence</h1>
-          <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>7 AI agents — heuristic by default, Claude-powered when configured</p>
+          <h1 style={{ margin: 0, fontSize: 24, fontWeight: 900, color: 'var(--cms-text-primary, #0f172a)' }}>Audit Intelligence</h1>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>7 AI agents — heuristic by default, Claude-powered when configured</p>
         </div>
       </div>
       {!claude && <NoKeyBanner />}
@@ -230,10 +230,10 @@ const AuditIntelligence: React.FC = () => {
           <div style={{ ...cardLight, borderLeft: `4px solid ${catColor[fcRes.category] || '#64748b'}` }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
               <Badge text={fcRes.category} color={catColor[fcRes.category] || '#64748b'} />
-              <span style={{ fontSize: 13, color: '#94a3b8' }}>Confidence: <strong style={{ color: '#f1f5f9' }}>{Math.round(fcRes.confidence * 100)}%</strong></span>
+              <span style={{ fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>Confidence: <strong style={{ color: 'var(--cms-text-primary, #0f172a)' }}>{Math.round(fcRes.confidence * 100)}%</strong></span>
               {claude && <span style={aiBadge}><Sparkles size={10} /> Claude</span>}
             </div>
-            <p style={{ margin: '0 0 8px', fontSize: 14, color: '#e2e8f0' }}>{fcRes.rationale}</p>
+            <p style={{ margin: '0 0 8px', fontSize: 14, color: 'var(--cms-text-primary, #0f172a)' }}>{fcRes.rationale}</p>
             {fcRes.signals.length > 0 && (
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                 {fcRes.signals.map((s, i) => <Pill key={i} text={`"${s}"`} bg="rgba(100,116,139,0.2)" fg="#94a3b8" />)}
@@ -265,7 +265,7 @@ const AuditIntelligence: React.FC = () => {
         {clRows && (
           <>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
-              <span style={{ fontSize: 13, color: '#64748b' }}>{clRows.length} checklist items</span>
+              <span style={{ fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>{clRows.length} checklist items</span>
               {clSource === 'ai' && <span style={aiBadge}><Sparkles size={10} /> Claude</span>}
             </div>
             <div style={{ overflowX: 'auto' }}>
@@ -273,16 +273,16 @@ const AuditIntelligence: React.FC = () => {
                 <thead>
                   <tr>
                     {['Clause', 'Audit Item', 'Evidence to Seek'].map(h => (
-                      <th key={h} style={{ textAlign: 'left', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                      <th key={h} style={{ textAlign: 'left', padding: '8px 10px', borderBottom: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.12))', color: 'var(--cms-text-muted, #64748b)', fontWeight: 700, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
                     ))}
                   </tr>
                 </thead>
                 <tbody>
                   {clRows.map((r, i) => (
-                    <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
+                    <tr key={i} style={{ background: i % 2 === 0 ? 'var(--cms-bg-hover, rgba(14,165,233,0.05))' : 'transparent' }}>
                       <td style={{ padding: '8px 10px', color: GOLD, fontWeight: 700, whiteSpace: 'nowrap', verticalAlign: 'top' }}>{r.clause}</td>
-                      <td style={{ padding: '8px 10px', color: '#e2e8f0', verticalAlign: 'top' }}>{r.item}</td>
-                      <td style={{ padding: '8px 10px', color: '#94a3b8', verticalAlign: 'top', fontSize: 12 }}>{r.focus}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-primary, #0f172a)', verticalAlign: 'top' }}>{r.item}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-muted, #64748b)', verticalAlign: 'top', fontSize: 12 }}>{r.focus}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -296,18 +296,18 @@ const AuditIntelligence: React.FC = () => {
       <div style={card}>
         <SectionHead icon={<AlertTriangle size={20} color="#f59e0b" />} title="Non-Conformance Predictor" desc="Live risk scores from your audit findings data. Claude adds strategic analysis." aiPowered={claude} />
         {predictions.length === 0 ? (
-          <p style={{ color: '#64748b', fontSize: 14 }}>No audit findings data found. Add findings to see predictions.</p>
+          <p style={{ color: 'var(--cms-text-muted, #64748b)', fontSize: 14 }}>No audit findings data found. Add findings to see predictions.</p>
         ) : (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 10, marginBottom: 16 }}>
               {predictions.slice(0, 6).map((p, i) => (
                 <div key={i} style={{ ...cardLight, borderLeft: `3px solid ${lvlColor[p.level]}` }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                    <span style={{ fontWeight: 700, fontSize: 13, color: '#f1f5f9' }}>{p.client}</span>
+                    <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)' }}>{p.client}</span>
                     <Badge text={p.level} color={lvlColor[p.level]} />
                   </div>
-                  <div style={{ fontSize: 22, fontWeight: 900, color: lvlColor[p.level], marginBottom: 4 }}>{p.riskScore}<span style={{ fontSize: 12, color: '#64748b' }}>/100</span></div>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>{p.drivers.slice(0, 2).join(' · ')}</div>
+                  <div style={{ fontSize: 22, fontWeight: 900, color: lvlColor[p.level], marginBottom: 4 }}>{p.riskScore}<span style={{ fontSize: 12, color: 'var(--cms-text-muted, #64748b)' }}>/100</span></div>
+                  <div style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{p.drivers.slice(0, 2).join(' · ')}</div>
                 </div>
               ))}
             </div>
@@ -322,15 +322,15 @@ const AuditIntelligence: React.FC = () => {
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
                   <span style={aiBadge}><Sparkles size={10} /> Claude Analysis</span>
                 </div>
-                <p style={{ margin: '0 0 12px', fontSize: 14, color: '#e2e8f0', lineHeight: 1.6 }}>{ncAnalysis.summary}</p>
+                <p style={{ margin: '0 0 12px', fontSize: 14, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.6 }}>{ncAnalysis.summary}</p>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                   <div>
                     <p style={{ ...label, marginBottom: 6 }}>Top Risks</p>
-                    {ncAnalysis.topRisks.map((r, i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13, color: '#e2e8f0' }}><span style={{ color: '#ef4444' }}>●</span>{r}</div>)}
+                    {ncAnalysis.topRisks.map((r, i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)' }}><span style={{ color: '#ef4444' }}>●</span>{r}</div>)}
                   </div>
                   <div>
                     <p style={{ ...label, marginBottom: 6 }}>Recommendations</p>
-                    {ncAnalysis.recommendations.map((r, i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13, color: '#e2e8f0' }}><CheckCircle2 size={13} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />{r}</div>)}
+                    {ncAnalysis.recommendations.map((r, i) => <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 4, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)' }}><CheckCircle2 size={13} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />{r}</div>)}
                   </div>
                 </div>
               </div>
@@ -343,24 +343,24 @@ const AuditIntelligence: React.FC = () => {
       <div style={card}>
         <SectionHead icon={<CalendarClock size={20} color="#a855f7" />} title="AI Audit Planner" desc="Suggests what to schedule next based on risk scores, last audit dates, and auditor availability." aiPowered={claude} />
         {plan.length === 0 ? (
-          <p style={{ color: '#64748b', fontSize: 14 }}>No client data found. Register clients and add audit data to generate a plan.</p>
+          <p style={{ color: 'var(--cms-text-muted, #64748b)', fontSize: 14 }}>No client data found. Register clients and add audit data to generate a plan.</p>
         ) : (
           <>
             <div style={{ overflowX: 'auto', marginBottom: 14 }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
                 <thead>
                   <tr>{['Client', 'Priority', 'Window', 'Reason', 'Suggested Auditor'].map(h => (
-                    <th key={h} style={{ textAlign: 'left', padding: '8px 10px', borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#94a3b8', fontWeight: 700, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
+                    <th key={h} style={{ textAlign: 'left', padding: '8px 10px', borderBottom: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.12))', color: 'var(--cms-text-muted, #64748b)', fontWeight: 700, fontSize: 11, textTransform: 'uppercase' }}>{h}</th>
                   ))}</tr>
                 </thead>
                 <tbody>
                   {plan.slice(0, 8).map((p, i) => (
-                    <tr key={i} style={{ background: i % 2 === 0 ? 'rgba(255,255,255,0.02)' : 'transparent' }}>
-                      <td style={{ padding: '8px 10px', color: '#f1f5f9', fontWeight: 600 }}>{p.client}</td>
+                    <tr key={i} style={{ background: i % 2 === 0 ? 'var(--cms-bg-hover, rgba(14,165,233,0.05))' : 'transparent' }}>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-primary, #0f172a)', fontWeight: 600 }}>{p.client}</td>
                       <td style={{ padding: '8px 10px' }}><Badge text={p.priority} color={priColor[p.priority]} /></td>
-                      <td style={{ padding: '8px 10px', color: '#94a3b8', whiteSpace: 'nowrap' }}>{p.suggestedWindow}</td>
-                      <td style={{ padding: '8px 10px', color: '#94a3b8', fontSize: 12 }}>{p.reason}</td>
-                      <td style={{ padding: '8px 10px', color: '#64748b', fontSize: 12 }}>{p.suggestedAuditor || '—'}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-muted, #64748b)', whiteSpace: 'nowrap' }}>{p.suggestedWindow}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-muted, #64748b)', fontSize: 12 }}>{p.reason}</td>
+                      <td style={{ padding: '8px 10px', color: 'var(--cms-text-muted, #64748b)', fontSize: 12 }}>{p.suggestedAuditor || '—'}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -375,7 +375,7 @@ const AuditIntelligence: React.FC = () => {
             {planAdvice && (
               <div style={{ ...cardLight, marginTop: 14, borderLeft: `3px solid #7c3aed` }}>
                 <span style={{ ...aiBadge, marginBottom: 8, display: 'inline-flex' }}><Sparkles size={10} /> Claude Advice</span>
-                <p style={{ margin: '8px 0 0', fontSize: 14, color: '#e2e8f0', lineHeight: 1.7 }}>{planAdvice}</p>
+                <p style={{ margin: '8px 0 0', fontSize: 14, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.7 }}>{planAdvice}</p>
               </div>
             )}
           </>
@@ -433,10 +433,10 @@ const AuditIntelligence: React.FC = () => {
           {rptOut && <button style={{ ...btn('#334155'), background: '#1e293b' }} onClick={copyReport}><Copy size={14} /> Copy</button>}
         </div>
         {rptOut && (
-          <div style={{ marginTop: 16, background: '#070f1a', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 10, padding: 16, position: 'relative' }}>
+          <div style={{ marginTop: 16, background: 'var(--cms-bg-subtle, #f1f5f9)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 10, padding: 16, position: 'relative' }}>
             {rptSource === 'ai' && <span style={{ ...aiBadge, position: 'absolute', top: 12, right: 12 }}><Sparkles size={10} /> Claude</span>}
             {rptBusy && <span style={{ ...aiBadge, position: 'absolute', top: 12, right: rptSource === 'ai' ? 110 : 12, background: 'rgba(34,197,94,0.15)', borderColor: 'rgba(34,197,94,0.4)', color: '#22c55e' }}><Loader2 size={10} /> Streaming…</span>}
-            <pre style={{ margin: 0, fontSize: 13, color: '#e2e8f0', whiteSpace: 'pre-wrap', lineHeight: 1.7, fontFamily: "'JetBrains Mono','Fira Code',monospace" }}>{rptOut}</pre>
+            <pre style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', whiteSpace: 'pre-wrap', lineHeight: 1.7, fontFamily: "'JetBrains Mono','Fira Code',monospace" }}>{rptOut}</pre>
           </div>
         )}
       </div>
@@ -471,8 +471,8 @@ const AuditIntelligence: React.FC = () => {
               <div key={item.id} style={{ ...cardLight, marginBottom: 10 }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                   <div>
-                    <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: '#f1f5f9' }}>{item.title}</p>
-                    <span style={{ fontSize: 11, color: '#64748b' }}>Due in {item.dueIn} · Score {Math.round(item.score * 100)}%</span>
+                    <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: 'var(--cms-text-primary, #0f172a)' }}>{item.title}</p>
+                    <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>Due in {item.dueIn} · Score {Math.round(item.score * 100)}%</span>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
                     {claude && (
@@ -480,7 +480,7 @@ const AuditIntelligence: React.FC = () => {
                         {caRefBusy === item.id ? <Loader2 size={11} /> : <Sparkles size={11} />} Refine with Claude
                       </button>
                     )}
-                    <button style={{ ...btn('#334155'), background: 'rgba(255,255,255,0.05)', padding: '5px 10px', fontSize: 12 }} onClick={() => setCaExpanded(caExpanded === item.id ? null : item.id)}>
+                    <button style={{ ...btn('#334155'), background: 'var(--cms-bg-subtle, #f1f5f9)', padding: '5px 10px', fontSize: 12 }} onClick={() => setCaExpanded(caExpanded === item.id ? null : item.id)}>
                       {caExpanded === item.id ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
                     </button>
                   </div>
@@ -489,11 +489,11 @@ const AuditIntelligence: React.FC = () => {
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 8 }}>
                     <div>
                       <p style={{ ...label, color: '#22c55e', marginBottom: 4 }}>Corrective Action</p>
-                      <p style={{ margin: 0, fontSize: 13, color: '#e2e8f0', lineHeight: 1.6 }}>{caRefined[item.id] ? caRefined[item.id].split('\n\n')[0] : item.correctiveAction}</p>
+                      <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.6 }}>{caRefined[item.id] ? caRefined[item.id].split('\n\n')[0] : item.correctiveAction}</p>
                     </div>
                     <div>
                       <p style={{ ...label, color: CYAN, marginBottom: 4 }}>Preventive Action</p>
-                      <p style={{ margin: 0, fontSize: 13, color: '#e2e8f0', lineHeight: 1.6 }}>{caRefined[item.id] ? caRefined[item.id].split('\n\n')[1] || item.preventiveAction : item.preventiveAction}</p>
+                      <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.6 }}>{caRefined[item.id] ? caRefined[item.id].split('\n\n')[1] || item.preventiveAction : item.preventiveAction}</p>
                     </div>
                   </div>
                 )}
@@ -508,16 +508,16 @@ const AuditIntelligence: React.FC = () => {
       <div style={card}>
         <SectionHead icon={<Award size={20} color={GOLD} />} title="Certificate Expiry Risk Scorer" desc="Scans all active certificates and flags those at risk of lapsing." />
         {certRisks.length === 0 ? (
-          <p style={{ color: '#64748b', fontSize: 14 }}>No certificates found. Issue certificates from Audit Certifications to see expiry risks.</p>
+          <p style={{ color: 'var(--cms-text-muted, #64748b)', fontSize: 14 }}>No certificates found. Issue certificates from Audit Certifications to see expiry risks.</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 10 }}>
             {certRisks.map((r, i) => (
               <div key={i} style={{ ...cardLight, borderLeft: `3px solid ${riskColor[r.risk]}` }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 6 }}>
-                  <span style={{ fontWeight: 700, fontSize: 13, color: '#f1f5f9' }}>{r.client}</span>
+                  <span style={{ fontWeight: 700, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)' }}>{r.client}</span>
                   <Badge text={r.risk} color={riskColor[r.risk]} />
                 </div>
-                <p style={{ margin: '0 0 4px', fontSize: 13, color: '#94a3b8' }}>Expires: <strong style={{ color: '#f1f5f9' }}>{r.expiryDate}</strong></p>
+                <p style={{ margin: '0 0 4px', fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>Expires: <strong style={{ color: 'var(--cms-text-primary, #0f172a)' }}>{r.expiryDate}</strong></p>
                 <p style={{ margin: '0 0 6px', fontSize: 12, color: r.daysLeft < 0 ? '#ef4444' : '#94a3b8' }}>
                   {r.daysLeft < 0 ? `${Math.abs(r.daysLeft)} days overdue` : `${r.daysLeft} days remaining`}
                 </p>
@@ -538,7 +538,7 @@ const AuditIntelligence: React.FC = () => {
             onChange={(e) => setSsQuery(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') runSemanticSearch(); }}
             placeholder="e.g. how were calibration issues handled?"
-            style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.06)', color: '#f1f5f9', fontSize: 13 }}
+            style={{ flex: 1, padding: '10px 14px', borderRadius: 10, border: '1px solid var(--cms-border-input, #cbd5e1)', background: 'var(--cms-bg-elevated, #f8fafc)', color: 'var(--cms-text-primary, #0f172a)', fontSize: 13 }}
           />
           <button onClick={runSemanticSearch}
             style={{ padding: '10px 18px', borderRadius: 10, border: 'none', background: GOLD, color: '#0d1929', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
@@ -546,19 +546,19 @@ const AuditIntelligence: React.FC = () => {
           </button>
         </div>
         {ssAnswer && (
-          <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(201,146,42,0.10)', border: '1px solid rgba(201,146,42,0.35)', fontSize: 13, color: '#f1f5f9', marginBottom: 10 }}>
+          <div style={{ padding: '10px 14px', borderRadius: 10, background: 'rgba(201,146,42,0.10)', border: '1px solid rgba(201,146,42,0.35)', fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', marginBottom: 10 }}>
             <strong style={{ color: GOLD }}>RAG answer:</strong> {ssAnswer}
           </div>
         )}
         {ssHits && (
           ssHits.length === 0
-            ? <p style={{ fontSize: 13, color: '#94a3b8' }}>No matches in the knowledge base yet.</p>
+            ? <p style={{ fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>No matches in the knowledge base yet.</p>
             : (
               <div style={{ display: 'grid', gap: 8 }}>
                 {ssHits.map((h, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, padding: '8px 12px', borderRadius: 8, background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', fontSize: 13 }}>
-                    <span style={{ color: '#f1f5f9' }}>{h.title}</span>
-                    <span style={{ color: '#94a3b8', whiteSpace: 'nowrap' }}>{h.kind} · sim {h.similarity}</span>
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', gap: 10, padding: '8px 12px', borderRadius: 8, background: 'var(--cms-bg-subtle, #f1f5f9)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', fontSize: 13 }}>
+                    <span style={{ color: 'var(--cms-text-primary, #0f172a)' }}>{h.title}</span>
+                    <span style={{ color: 'var(--cms-text-muted, #64748b)', whiteSpace: 'nowrap' }}>{h.kind} · sim {h.similarity}</span>
                   </div>
                 ))}
               </div>

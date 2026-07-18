@@ -260,9 +260,9 @@ async function streamSchedule(prompt: string, signal: AbortSignal): Promise<stri
 
 /* ─── Styles ─────────────────────────────────────────────────────── */
 const GOLD = '#c9922a', BLUE = '#1d4ed8';
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 20, marginBottom: 16 };
-const inp:   React.CSSProperties = { padding: '9px 11px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: '#94a3b8', marginBottom: 3, letterSpacing: '0.06em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: 'var(--cms-bg-surface, #ffffff)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 16, padding: 20, marginBottom: 16 };
+const inp:   React.CSSProperties = { padding: '9px 11px', border: '1.5px solid var(--cms-border-input, #cbd5e1)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', color: 'var(--cms-text-primary, #0f172a)', background: 'var(--cms-bg-elevated, #f8fafc)', outline: 'none' };
+const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: 'var(--cms-text-muted, #64748b)', marginBottom: 3, letterSpacing: '0.06em', textTransform: 'uppercase' };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 10, fontWeight: 700 };
 const UTIL_COLOR = (u: number) => u >= 90 ? '#ef4444' : u >= 70 ? '#f59e0b' : u >= 40 ? '#22c55e' : '#38bdf8';
@@ -270,11 +270,11 @@ const UTIL_COLOR = (u: number) => u >= 90 ? '#ef4444' : u >= 70 ? '#f59e0b' : u 
 /* ─── Util bar ───────────────────────────────────────────────────── */
 const UtilBar: React.FC<{ name: string; pct: number }> = ({ name, pct }) => (
   <div style={{ marginBottom: 8 }}>
-    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#94a3b8', marginBottom: 3 }}>
+    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: 'var(--cms-text-muted, #64748b)', marginBottom: 3 }}>
       <span>{name}</span>
       <span style={{ fontWeight: 700, color: UTIL_COLOR(pct) }}>{pct}%</span>
     </div>
-    <div style={{ height: 7, background: 'rgba(255,255,255,0.06)', borderRadius: 999, overflow: 'hidden' }}>
+    <div style={{ height: 7, background: 'var(--cms-bg-elevated, #f8fafc)', borderRadius: 999, overflow: 'hidden' }}>
       <div style={{ height: '100%', width: `${pct}%`, background: UTIL_COLOR(pct), borderRadius: 999, transition: 'width 0.5s ease' }} />
     </div>
   </div>
@@ -385,8 +385,8 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
           <CalendarDays size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Smart Scheduler</h1>
-          <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: 'var(--cms-text-primary, #0f172a)' }}>Smart Scheduler</h1>
+          <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-muted, #64748b)' }}>
             {claude ? 'AI-optimised schedule — assigns auditors, detects conflicts, flags bottlenecks' : 'Heuristic scheduler — instant optimised schedule from live jobs and team capacity'}
           </p>
         </div>
@@ -395,7 +395,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={14} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — skill-matching, capacity-based assignment, conflict detection and travel flagging. Configure Claude API key in <strong>AI Settings</strong> for full AI optimisation.
           </p>
         </div>
@@ -403,7 +403,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
 
       {/* Config panel */}
       <div style={cardS}>
-        <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 800, color: '#f1f5f9' }}>Planning Parameters</h3>
+        <h3 style={{ margin: '0 0 14px', fontSize: 14, fontWeight: 800, color: 'var(--cms-text-primary, #0f172a)' }}>Planning Parameters</h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 2fr', gap: 12, marginBottom: 12 }}>
           <div>
             <label style={lbl}>Schedule from</label>
@@ -429,7 +429,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
             { label: 'High complexity',  val: liveJobs.filter(j => j.complexity === 'High').length, color: '#ef4444' },
             { label: 'Total audit days', val: liveJobs.reduce((s, j) => s + j.estimatedDays, 0), color: GOLD },
           ].map(s => (
-            <div key={s.label} style={{ background: '#070f1a', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 90 }}>
+            <div key={s.label} style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 90 }}>
               <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.val}</div>
               <div style={{ fontSize: 10, color: '#475569', marginTop: 1 }}>{s.label}</div>
             </div>
@@ -443,7 +443,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
               : <><Wand2 size={14} />{claude ? ' Optimise with Claude' : ' Generate Schedule'}</>}
           </button>
           {output && !busy && (
-            <button style={btnS('transparent', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={generate}>
+            <button style={btnS('transparent', { border: '1px solid var(--cms-border-input, #cbd5e1)', color: 'var(--cms-text-muted, #64748b)' })} onClick={generate}>
               <RefreshCw size={13} /> Regenerate
             </button>
           )}
@@ -451,7 +451,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
         {streamMsg && (
           <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 7 }}>
             <Loader2 size={13} color={GOLD} style={{ animation: 'ss-spin 0.8s linear infinite' }} />
-            <span style={{ fontSize: 12, color: '#94a3b8' }}>{streamMsg}</span>
+            <span style={{ fontSize: 12, color: 'var(--cms-text-muted, #64748b)' }}>{streamMsg}</span>
           </div>
         )}
       </div>
@@ -461,13 +461,13 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
           {/* Summary row */}
           <div style={cardS}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14, flexWrap: 'wrap' }}>
-              <span style={{ fontWeight: 800, fontSize: 14, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span style={{ fontWeight: 800, fontSize: 14, color: 'var(--cms-text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <CheckCircle2 size={15} color="#22c55e" /> Schedule ready — {output.items.length} audits assigned
               </span>
               {source === 'claude' && <span style={aiBadge}><Sparkles size={9} /> Claude AI</span>}
-              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
+              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: 'var(--cms-text-muted, #64748b)' }}>Heuristic</span>}
               <div style={{ marginLeft: 'auto', display: 'flex', gap: 7 }}>
-                <button style={btnS('#1e293b', { padding: '6px 11px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' })} onClick={copyOutput}><Copy size={12} />{copied ? ' Copied!' : ' Copy'}</button>
+                <button style={btnS('#1e293b', { padding: '6px 11px', fontSize: 12, border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.12))' })} onClick={copyOutput}><Copy size={12} />{copied ? ' Copied!' : ' Copy'}</button>
                 <button style={btnS('#064e3b', { padding: '6px 11px', fontSize: 12 })} onClick={exportCSV}><Download size={12} /> CSV</button>
               </div>
             </div>
@@ -487,14 +487,14 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
             )}
             {output.unscheduled.length > 0 && (
               <div style={{ background: 'rgba(100,116,139,0.08)', border: '1px solid rgba(100,116,139,0.2)', borderRadius: 9, padding: '10px 14px', marginBottom: 10 }}>
-                <div style={{ fontSize: 11, fontWeight: 800, color: '#94a3b8', marginBottom: 4 }}>⭕ Unscheduled ({output.unscheduled.length})</div>
-                <p style={{ margin: 0, fontSize: 12, color: '#64748b' }}>{output.unscheduled.join(', ')}</p>
+                <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--cms-text-muted, #64748b)', marginBottom: 4 }}>⭕ Unscheduled ({output.unscheduled.length})</div>
+                <p style={{ margin: 0, fontSize: 12, color: 'var(--cms-text-muted, #64748b)' }}>{output.unscheduled.join(', ')}</p>
               </div>
             )}
 
             {/* Utilization bars */}
             <div style={{ marginTop: 4 }}>
-              <div style={{ fontSize: 11, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
+              <div style={{ fontSize: 11, fontWeight: 800, color: 'var(--cms-text-muted, #64748b)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 10 }}>
                 <Users size={12} style={{ verticalAlign: 'middle', marginRight: 4 }} /> Team Utilisation
               </div>
               {Object.entries(output.utilizationSummary).map(([name, pct]) => (
@@ -509,23 +509,23 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
             const isExp = expanded[item.jobId];
             const hasIssue = !!(item.conflict || item.riskNote);
             return (
-              <div key={item.jobId} style={{ ...cardS, borderColor: item.conflict ? 'rgba(239,68,68,0.35)' : item.riskNote ? 'rgba(245,158,11,0.3)' : 'rgba(255,255,255,0.08)', borderWidth: hasIssue ? 2 : 1 }}>
+              <div key={item.jobId} style={{ ...cardS, borderColor: item.conflict ? 'rgba(239,68,68,0.35)' : item.riskNote ? 'rgba(245,158,11,0.3)' : 'var(--cms-border-subtle, rgba(15,23,42,0.10))', borderWidth: hasIssue ? 2 : 1 }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
                   {/* Date badge */}
-                  <div style={{ background: '#070f1a', borderRadius: 10, padding: '8px 12px', textAlign: 'center', flexShrink: 0, minWidth: 68 }}>
-                    <div style={{ fontSize: 10, color: '#64748b', fontWeight: 700 }}>{new Date(item.startDate).toLocaleString('default', { month: 'short' }).toUpperCase()}</div>
-                    <div style={{ fontSize: 22, fontWeight: 900, color: '#f1f5f9', lineHeight: 1 }}>{new Date(item.startDate).getDate()}</div>
+                  <div style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', borderRadius: 10, padding: '8px 12px', textAlign: 'center', flexShrink: 0, minWidth: 68 }}>
+                    <div style={{ fontSize: 10, color: 'var(--cms-text-muted, #64748b)', fontWeight: 700 }}>{new Date(item.startDate).toLocaleString('default', { month: 'short' }).toUpperCase()}</div>
+                    <div style={{ fontSize: 22, fontWeight: 900, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1 }}>{new Date(item.startDate).getDate()}</div>
                     <div style={{ fontSize: 10, color: '#475569', marginTop: 2 }}>→ {new Date(item.endDate).getDate()}</div>
                   </div>
 
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, fontSize: 14, color: '#f1f5f9', marginBottom: 4 }}>
+                    <div style={{ fontWeight: 800, fontSize: 14, color: 'var(--cms-text-primary, #0f172a)', marginBottom: 4 }}>
                       {job?.clientName || item.jobId}
                     </div>
                     <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'center' }}>
-                      <span style={{ fontSize: 11, color: '#64748b' }}>{job?.standard}</span>
+                      <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{job?.standard}</span>
                       <span style={{ fontSize: 11, color: '#475569' }}>•</span>
-                      <span style={{ fontSize: 11, color: '#64748b' }}>{job?.auditType}</span>
+                      <span style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)' }}>{job?.auditType}</span>
                       {job?.location && job.location !== 'TBD' && (
                         <span style={{ display: 'flex', alignItems: 'center', gap: 3, fontSize: 11, color: '#475569' }}>
                           <MapPin size={10} /> {job.location}
@@ -544,8 +544,8 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
 
                   {/* Auditor + util */}
                   <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <div style={{ fontSize: 13, fontWeight: 800, color: '#f1f5f9' }}>{item.auditorName}</div>
-                    <div style={{ fontSize: 11, color: '#64748b', marginBottom: 4 }}>{item.auditorRole}</div>
+                    <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--cms-text-primary, #0f172a)' }}>{item.auditorName}</div>
+                    <div style={{ fontSize: 11, color: 'var(--cms-text-muted, #64748b)', marginBottom: 4 }}>{item.auditorRole}</div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 5, justifyContent: 'flex-end' }}>
                       <TrendingUp size={11} color={UTIL_COLOR(item.utilization)} />
                       <span style={{ fontSize: 11, fontWeight: 700, color: UTIL_COLOR(item.utilization) }}>{item.utilization}%</span>
@@ -559,7 +559,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
                 </div>
 
                 {isExp && (
-                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
+                  <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--cms-bg-elevated, #f8fafc)', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 10 }}>
                     {[
                       { label: 'Duration', icon: <Clock size={11} />, val: `${job?.estimatedDays || 1} day${(job?.estimatedDays || 1) > 1 ? 's' : ''} (${item.startDate} → ${item.endDate})` },
                       { label: 'Complexity', icon: <TrendingUp size={11} />, val: job?.complexity || 'Medium' },
@@ -567,7 +567,7 @@ Assign each job to the best-fit auditor. Avoid conflicts. Flag bottlenecks and t
                       item.conflict ? { label: '⚠ Conflict', icon: <AlertTriangle size={11} />, val: item.conflict } : null,
                       item.riskNote ? { label: '🔶 Risk Note', icon: <AlertTriangle size={11} />, val: item.riskNote } : null,
                     ].filter(Boolean).map((f: any) => (
-                      <div key={f.label} style={{ background: '#070f1a', borderRadius: 9, padding: '10px 12px', gridColumn: f.label.includes('Conflict') || f.label.includes('Risk') ? 'span 3' : undefined }}>
+                      <div key={f.label} style={{ background: 'var(--cms-bg-subtle, #f1f5f9)', borderRadius: 9, padding: '10px 12px', gridColumn: f.label.includes('Conflict') || f.label.includes('Risk') ? 'span 3' : undefined }}>
                         <div style={{ fontSize: 9, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 4 }}>
                           {f.icon} {f.label}
                         </div>

@@ -94,7 +94,7 @@ const safeArray = <T,>(key: string): T[] => {
 export const readMergedSchedules = (): MergedScheduleEntry[] => {
   const out: MergedScheduleEntry[] = [];
   SCHEDULE_KEYS.forEach((key) => {
-    safeArray<StoredSchedule>(key).forEach((record) => {
+    safeArray<StoredSchedule>(key).filter((r) => !!r && typeof r === 'object').forEach((record) => {
       if (record && typeof record === 'object' && record.id !== undefined) {
         out.push({ record, sourceKey: key });
       }
