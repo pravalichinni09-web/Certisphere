@@ -512,6 +512,7 @@ const AuditSchedules: React.FC = () => {
   
   const [availableClients, setAvailableClients] = useState<DispatchRecord[]>([]);
   const [activeTab, setActiveTab] = useState('Initial');
+  const [previewDoc, setPreviewDoc] = useState<{ title: string; html: string; fileName: string } | null>(null);
 
   // Form State
   const [formData, setFormData] = useState({
@@ -1079,16 +1080,13 @@ const AuditSchedules: React.FC = () => {
   };
 
   const handleView = (schedule: MergedSchedule) => {
+    // Show the audit schedule document inline (no download).
     const content = generateDocumentContent(schedule);
-    const blob = new Blob(['\ufeff', content], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `View_Audit_Schedule_${schedule.organization.replace(/\s+/g, '_')}.doc`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    handleToast(`Generated document view for ${schedule.organization}`);
+    setPreviewDoc({
+      title: `Audit Schedule — ${schedule.organization}`,
+      html: content,
+      fileName: `Audit_Schedule_${schedule.organization.replace(/\s+/g, '_')}.doc`,
+    });
   };
 
   const handleDownload = (schedule: MergedSchedule) => {
@@ -1122,7 +1120,7 @@ const AuditSchedules: React.FC = () => {
           <p style={{ color: '#64748b', margin: 0 }}>No {title.toLowerCase()}s found.</p>
         </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(420px, 1fr))', gap: 16 }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
           {data.map((schedule) => {
             const sc = schedule.status === 'Approved'  ? { bg: '#d1fae5', text: '#065f46', dot: '#10b981' }
                      : schedule.status === 'Submitted' ? { bg: '#dbeafe', text: '#1e40af', dot: '#3b82f6' }
@@ -1131,12 +1129,12 @@ const AuditSchedules: React.FC = () => {
             const btnBase: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 5, padding: '7px 11px', borderRadius: 8, border: 'none', fontWeight: 700, fontSize: 11, cursor: 'pointer', transition: 'background 0.15s' };
             return (
               <div key={schedule.id}
-                style={{ background: '#fff', borderRadius: 16, overflow: 'hidden', boxShadow: '0 2px 12px rgba(15,23,42,0.08)', border: '1px solid #e2e8f0', transition: 'transform 0.18s,box-shadow 0.18s', display: 'flex', flexDirection: 'column' }}
+                style={{ background: '#fff', borderRadius: 14, overflow: 'hidden', boxShadow: '0 2px 12px rgba(15,23,42,0.07)', border: '1px solid #e2e8f0', borderLeft: `4px solid ${sc.dot}`, transition: 'transform 0.18s,box-shadow 0.18s', display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'stretch' }}
                 onMouseEnter={e => { const d = e.currentTarget as HTMLDivElement; d.style.transform = 'translateY(-2px)'; d.style.boxShadow = '0 8px 28px rgba(15,23,42,0.14)'; }}
                 onMouseLeave={e => { const d = e.currentTarget as HTMLDivElement; d.style.transform = ''; d.style.boxShadow = '0 2px 12px rgba(15,23,42,0.08)'; }}
               >
                 {/* Header */}
-                <div style={{ background: 'linear-gradient(135deg,#f8faff,#eff6ff)', padding: '16px 20px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10 }}>
+                <div style={{ background: 'linear-gradient(135deg,#f8faff,#eff6ff)', padding: '16px 18px', borderRight: '1px solid #eef2f7', display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 10, flex: '0 0 252px', boxSizing: 'border-box' }}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontWeight: 800, fontSize: 15, color: '#0f172a', marginBottom: 2 }}>{schedule.clientId}</div>
                     <div style={{ fontSize: 12, color: '#475569', fontWeight: 600, marginBottom: 4 }}>{schedule.organization}</div>
@@ -1150,8 +1148,8 @@ const AuditSchedules: React.FC = () => {
                 </div>
 
                 {/* Body */}
-                <div style={{ padding: '14px 20px', flex: 1 }}>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 16px', marginBottom: 12 }}>
+                <div style={{ padding: '14px 18px', flex: '1 1 340px', minWidth: 0, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px 30px', marginBottom: 12 }}>
                     {[
                       { label: 'Certification', value: schedule.certificationStandard },
                       { label: 'Department',    value: schedule.department },
@@ -1187,7 +1185,7 @@ const AuditSchedules: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div style={{ padding: '12px 20px', borderTop: '1px solid #f1f5f9', background: '#fafbff', display: 'flex', gap: 7, flexWrap: 'wrap', alignItems: 'center' }}>
+                <div style={{ padding: '14px 16px', borderLeft: '1px solid #eef2f7', background: '#fafbff', display: 'flex', gap: 7, flexWrap: 'wrap', alignContent: 'center', alignItems: 'center', flex: '0 0 202px', boxSizing: 'border-box' }}>
                   {([
                     { icon: <Eye size={13}/>,      label: 'View',     bg: '#dbeafe', color: '#1e40af', hov: '#bfdbfe', fn: () => handleView(schedule) },
                     { icon: <Edit2 size={13}/>,    label: 'Edit',     bg: '#fce7f3', color: '#9d174d', hov: '#fbcfe8', fn: () => handleRowCreateSchedule(schedule) },
@@ -1221,6 +1219,42 @@ const AuditSchedules: React.FC = () => {
   return (
     <div className="audit-scope-container">
       {/* Custom Full Screen Toast */}
+      {previewDoc && (
+        <div
+          onClick={() => setPreviewDoc(null)}
+          style={{ position: 'fixed', inset: 0, zIndex: 5000, background: 'rgba(2,6,23,.6)', backdropFilter: 'blur(3px)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}
+          role="dialog" aria-modal="true" aria-label="Schedule preview"
+        >
+          <div onClick={(e) => e.stopPropagation()} style={{ width: '100%', maxWidth: 900, height: '88vh', background: '#fff', borderRadius: 14, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 30px 80px rgba(2,6,23,.45)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '13px 16px', background: 'linear-gradient(135deg,#0a2a5f,#1f6bbf)', color: '#fff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 0 }}>
+                <Eye size={18} />
+                <span style={{ fontSize: 14, fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{previewDoc.title}</span>
+              </div>
+              <div style={{ display: 'flex', gap: 8, flexShrink: 0 }}>
+                <button type="button" title="Download"
+                  onClick={() => {
+                    const blob = new Blob(['\ufeff', previewDoc.html], { type: 'application/msword' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url; a.download = previewDoc.fileName;
+                    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}
+                  style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,.16)', border: 'none', color: '#fff', borderRadius: 8, padding: '7px 12px', fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>
+                  <Download size={15} /> Download
+                </button>
+                <button type="button" title="Close" onClick={() => setPreviewDoc(null)}
+                  style={{ background: 'rgba(255,255,255,.16)', border: 'none', color: '#fff', width: 32, height: 32, borderRadius: 8, cursor: 'pointer', display: 'grid', placeItems: 'center' }}>
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            <iframe title="Schedule preview" srcDoc={previewDoc.html} style={{ flex: 1, width: '100%', border: 'none', background: '#fff' }} />
+          </div>
+        </div>
+      )}
+
       {showToast && (
         <div style={{
             position: 'fixed', top: 20, left: '50%', transform: 'translateX(-50%)',

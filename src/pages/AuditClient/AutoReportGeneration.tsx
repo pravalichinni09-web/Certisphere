@@ -229,9 +229,9 @@ async function streamReport(
 const GOLD = '#c9922a', BLUE = '#1d4ed8';
 const STANDARDS = ['ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'ISO 27001:2022', 'ISO 22000:2018', 'ISO 13485:2016', 'SOC 2', 'GDPR', 'HIPAA'];
 const AUDIT_TYPES = ['Initial', 'Surveillance', 'Recertification', 'Special'];
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24, marginBottom: 20 };
-const inp: React.CSSProperties   = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl: React.CSSProperties   = { display: 'block', fontSize: 11, fontWeight: 700, color: '#94a3b8', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 24, marginBottom: 20 };
+const inp: React.CSSProperties   = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl: React.CSSProperties   = { display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 
@@ -327,7 +327,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
           <FileText size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Auto Report Generation</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Auto Report Generation</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
             {claude ? 'AI-generated formal 8-section audit report — streaming live' : 'Structured report from your live audit data — configure Claude API key for full AI draft'}
           </p>
@@ -338,7 +338,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Template mode</strong> — fully structured report auto-filled from your live findings data.
             Configure your Claude API key in <strong>AI Settings</strong> for a fully written AI draft.
           </p>
@@ -347,7 +347,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
 
       {/* Context form */}
       <div style={cardS}>
-        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 8 }}>
           <FileText size={17} color={GOLD} /> Report Details
           <span style={{ marginLeft: 'auto', fontSize: 12, color: '#64748b', fontWeight: 400 }}>Pre-filled from your audit data</span>
         </h3>
@@ -401,7 +401,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
             { label: 'OFIs',        val: ctx.ofis.length,     color: '#38bdf8' },
             { label: 'Compliance',  val: `${ctx.compliance}%`,color: ctx.compliance >= 75 ? '#22c55e' : '#f59e0b' },
           ].map(s => (
-            <div key={s.label} style={{ background: '#070f1a', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 72 }}>
+            <div key={s.label} style={{ background: '#eef4fb', border: '1px solid rgba(15,23,42,0.08)', borderRadius: 9, padding: '8px 16px', textAlign: 'center', minWidth: 72 }}>
               <div style={{ fontSize: 20, fontWeight: 900, color: s.color }}>{s.val}</div>
               <div style={{ fontSize: 10, color: '#64748b', marginTop: 2 }}>{s.label}</div>
             </div>
@@ -415,7 +415,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
               : <><Wand2 size={15} /> {claude ? 'Generate with Claude (streaming)' : 'Generate Report'}</>}
           </button>
           {report && !busy && (
-            <button style={{ ...btnS('transparent', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' }) }} onClick={generate}>
+            <button style={{ ...btnS('transparent', { border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' }) }} onClick={generate}>
               <RefreshCw size={14} /> Regenerate
             </button>
           )}
@@ -427,14 +427,14 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
         <div style={cardS}>
           {/* Toolbar */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: 800, fontSize: 14, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 7 }}>
+            <span style={{ fontWeight: 800, fontSize: 14, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 7 }}>
               <CheckCircle2 size={16} color="#22c55e" /> Audit Report
             </span>
             {source === 'claude' && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Auto Template</span>}
+            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Auto Template</span>}
             {busy && <span style={{ ...aiBadge, background: 'rgba(34,197,94,0.12)', borderColor: 'rgba(34,197,94,0.35)', color: '#22c55e' }}><Loader2 size={10} style={{ animation: 'rg-spin 0.8s linear infinite' }} /> Streaming…</span>}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-              <button style={{ ...btnS('#1e293b', { padding: '7px 13px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' }) }} onClick={copy}>
+              <button style={{ ...btnS('#eef2f7', { padding: '7px 13px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' }) }} onClick={copy}>
                 <Copy size={13} /> {copied ? 'Copied!' : 'Copy'}
               </button>
               <button style={{ ...btnS('#064e3b', { padding: '7px 13px', fontSize: 12 }) }} onClick={download}>
@@ -445,10 +445,10 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
 
           {/* Report body */}
           <pre style={{
-            margin: 0, fontSize: 12.5, color: '#e2e8f0', whiteSpace: 'pre-wrap',
+            margin: 0, fontSize: 12.5, color: '#334155', whiteSpace: 'pre-wrap',
             lineHeight: 1.75, fontFamily: "'JetBrains Mono','Fira Code','Courier New',monospace",
-            background: '#070f1a', borderRadius: 10, padding: 20,
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: '#eef4fb', borderRadius: 10, padding: 20,
+            border: '1px solid rgba(15,23,42,0.07)',
             maxHeight: 680, overflowY: 'auto',
           }}>
             {report}

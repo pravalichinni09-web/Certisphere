@@ -257,7 +257,7 @@ const AIChatSupport: React.FC = () => {
       const parts = line.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g);
       const nodes = parts.map((p, pi) => {
         if (p.startsWith('**') && p.endsWith('**'))
-          return <strong key={pi} style={{ color: '#f1f5f9' }}>{p.slice(2, -2)}</strong>;
+          return <strong key={pi} style={{ color: '#0f2547' }}>{p.slice(2, -2)}</strong>;
         if (p.startsWith('*') && p.endsWith('*'))
           return <em key={pi}>{p.slice(1, -1)}</em>;
         return <span key={pi}>{p}</span>;
@@ -274,7 +274,7 @@ const AIChatSupport: React.FC = () => {
           <MessageCircle size={22} color="#fff" />
         </div>
         <div style={{ flex: 1 }}>
-          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: '#f1f5f9' }}>AI Audit Support</h1>
+          <h1 style={{ margin: 0, fontSize: 20, fontWeight: 900, color: '#0f2547' }}>AI Audit Support</h1>
           <p style={{ margin: 0, fontSize: 12, color: '#64748b' }}>
             {claude ? 'Powered by Claude AI · Conversational audit advisor' : 'Smart FAQ mode · Configure Claude API key for full AI responses'}
           </p>
@@ -286,7 +286,7 @@ const AIChatSupport: React.FC = () => {
             </span>
           )}
           <button onClick={reset} title="New conversation"
-            style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, padding: '6px 10px', color: '#94a3b8', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12 }}>
+            style={{ background: 'rgba(15,23,42,0.07)', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 8, padding: '6px 10px', color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12 }}>
             <RefreshCw size={13} /> New chat
           </button>
         </div>
@@ -296,7 +296,7 @@ const AIChatSupport: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '9px 14px', marginBottom: 12, display: 'flex', gap: 10, alignItems: 'center', flexShrink: 0 }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>FAQ mode</strong> — instant answers from a built-in knowledge base. Configure your Claude API key in <strong>AI Settings</strong> for live conversational AI.
           </p>
         </div>
@@ -306,7 +306,7 @@ const AIChatSupport: React.FC = () => {
       <div style={{
         flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: 12,
         padding: '4px 2px 16px',
-        scrollbarWidth: 'thin', scrollbarColor: 'rgba(255,255,255,0.08) transparent',
+        scrollbarWidth: 'thin', scrollbarColor: 'rgba(15,23,42,0.09) transparent',
       }}>
         {msgs.map((m, i) => (
           <div key={i} style={{ display: 'flex', gap: 10, flexDirection: m.role === 'user' ? 'row-reverse' : 'row', alignItems: 'flex-end' }}>
@@ -322,11 +322,11 @@ const AIChatSupport: React.FC = () => {
             {/* Bubble */}
             <div style={{
               maxWidth: '74%',
-              background: m.role === 'assistant' ? '#0d1929' : '#1d4ed8',
-              border: m.role === 'assistant' ? '1px solid rgba(255,255,255,0.08)' : 'none',
+              background: m.role === 'assistant' ? '#ffffff' : '#1d4ed8',
+              border: m.role === 'assistant' ? '1px solid rgba(15,23,42,0.09)' : 'none',
               borderRadius: m.role === 'assistant' ? '16px 16px 16px 4px' : '16px 16px 4px 16px',
               padding: '12px 16px',
-              color: '#e2e8f0',
+              color: '#334155',
               fontSize: 13.5,
               lineHeight: 1.65,
               position: 'relative',
@@ -334,7 +334,7 @@ const AIChatSupport: React.FC = () => {
               {renderMd(m.content)}
               {/* Source badge */}
               {m.role === 'assistant' && m.source && (
-                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 8, paddingTop: 7, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 8, paddingTop: 7, borderTop: '1px solid rgba(15,23,42,0.08)' }}>
                   {m.source === 'claude'
                     ? <><Sparkles size={10} color={GOLD} /><span style={{ fontSize: 10, color: GOLD, fontWeight: 600 }}>Claude AI</span></>
                     : <><Bot size={10} color="#64748b" /><span style={{ fontSize: 10, color: '#64748b' }}>Smart FAQ</span></>
@@ -354,7 +354,7 @@ const AIChatSupport: React.FC = () => {
             <div style={{ width: 32, height: 32, borderRadius: '50%', background: 'linear-gradient(135deg,#7c3aed,#1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Bot size={16} color="#fff" />
             </div>
-            <div style={{ background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '16px 16px 16px 4px', padding: '14px 18px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: '16px 16px 16px 4px', padding: '14px 18px' }}>
               <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                 {[0, 1, 2].map(d => (
                   <div key={d} style={{
@@ -386,7 +386,7 @@ const AIChatSupport: React.FC = () => {
       </div>
 
       {/* Input area */}
-      <div style={{ flexShrink: 0, paddingBottom: 20, paddingTop: 8, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+      <div style={{ flexShrink: 0, paddingBottom: 20, paddingTop: 8, borderTop: '1px solid rgba(15,23,42,0.08)' }}>
         <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end' }}>
           <textarea
             ref={inputRef}
@@ -396,13 +396,13 @@ const AIChatSupport: React.FC = () => {
             placeholder="Ask about audit process, documentation, compliance..."
             rows={2}
             style={{
-              flex: 1, padding: '11px 14px', background: '#0a1525',
-              border: '1.5px solid rgba(255,255,255,0.12)', borderRadius: 12,
-              color: '#f1f5f9', fontSize: 14, fontFamily: 'inherit', resize: 'none', outline: 'none',
+              flex: 1, padding: '11px 14px', background: '#f8fafc',
+              border: '1.5px solid rgba(15,23,42,0.14)', borderRadius: 12,
+              color: '#0f2547', fontSize: 14, fontFamily: 'inherit', resize: 'none', outline: 'none',
               transition: 'border-color .15s', lineHeight: 1.5,
             }}
             onFocus={e => (e.target.style.borderColor = 'rgba(29,78,216,0.6)')}
-            onBlur={e => (e.target.style.borderColor = 'rgba(255,255,255,0.12)')}
+            onBlur={e => (e.target.style.borderColor = 'rgba(15,23,42,0.14)')}
           />
           <button
             onClick={() => busy ? (abortRef.current?.abort(), setBusy(false)) : send(input)}
@@ -415,7 +415,7 @@ const AIChatSupport: React.FC = () => {
               transition: 'background .15s',
             }}
           >
-            {busy ? <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', animation: 'chat-spin 0.7s linear infinite' }} />
+            {busy ? <div style={{ width: 16, height: 16, borderRadius: '50%', border: '2px solid rgba(15,23,42,0.28)', borderTopColor: '#fff', animation: 'chat-spin 0.7s linear infinite' }} />
                   : <Send size={17} />}
           </button>
         </div>

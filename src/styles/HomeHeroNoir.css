@@ -597,15 +597,17 @@
 .cs-cert-body-code,
 [data-theme="light"] .cs-cert-body-code,
 [data-theme="dark"] .cs-cert-body-code {
-  background: rgba(212, 175, 55, 0.10) !important;
+  background: transparent !important;
   color: #f6d878 !important;
-  border: 1px solid rgba(212, 175, 55, 0.30) !important;
+  border: none !important;
+  padding: 0 !important;
 }
 .cs-cert-body-icon,
 [data-theme="light"] .cs-cert-body-icon,
 [data-theme="dark"] .cs-cert-body-icon {
-  background: rgba(212, 175, 55, 0.10) !important;
-  border: 1px solid rgba(212, 175, 55, 0.35) !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #d4af37 !important;
 }
 .cs-cert-body-cta,

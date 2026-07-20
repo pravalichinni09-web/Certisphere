@@ -517,9 +517,9 @@ function parseSections(raw: string): Section[] | null {
 const GOLD = '#c9922a', BLUE = '#1d4ed8';
 const PCOLOR: Record<string, string> = { High: '#ef4444', Medium: '#f59e0b', Low: '#22c55e' };
 const PBG: Record<string, string>    = { High: 'rgba(239,68,68,0.1)', Medium: 'rgba(245,158,11,0.1)', Low: 'rgba(34,197,94,0.1)' };
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 22, marginBottom: 18 };
-const inp:   React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl:   React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 700, color: '#94a3b8', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 22, marginBottom: 18 };
+const inp:   React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl:   React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
 const btnS = (c = BLUE): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 const STANDARDS = ['ISO 9001:2015', 'ISO 14001:2015', 'ISO 45001:2018', 'ISO 27001:2022', 'ISO 22000:2018', 'ISO 13485:2016', 'ISO 50001:2018', 'IATF 16949', 'AS9100D', 'SOC 2'];
@@ -603,7 +603,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
           <ClipboardCheck size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Smart Checklist Generator</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Smart Checklist Generator</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
             {claude ? 'AI-tailored audit checklists — generated live for any standard and industry' : 'Standard-specific heuristic checklists — add Claude API key for fully AI-tailored output'}
           </p>
@@ -613,7 +613,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — high-quality built-in checklists for all major standards. Configure your Claude API key in <strong>AI Settings</strong> for fully tailored, industry-specific AI output.
           </p>
         </div>
@@ -621,7 +621,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
 
       {/* Config form */}
       <div style={cardS}>
-        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 8 }}>
           <BookOpen size={16} color={GOLD} /> Audit Parameters
         </h3>
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
@@ -663,7 +663,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
               : <><Wand2 size={15} />{claude ? ' Generate with Claude' : ' Generate Checklist'}</>}
           </button>
           {sections.length > 0 && !busy && (
-            <button style={{ ...btnS('transparent'), border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' }} onClick={generate}>
+            <button style={{ ...btnS('transparent'), border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' }} onClick={generate}>
               <RefreshCw size={14} /> Regenerate
             </button>
           )}
@@ -674,7 +674,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
       {busy && claude && rawBuf && (
         <div style={{ ...cardS, padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 10 }}>
           <Loader2 size={14} color={GOLD} style={{ animation: 'sc-spin 0.8s linear infinite', flexShrink: 0 }} />
-          <span style={{ fontSize: 12, color: '#94a3b8' }}>Claude is building your checklist… ({rawBuf.length} chars)</span>
+          <span style={{ fontSize: 12, color: '#64748b' }}>Claude is building your checklist… ({rawBuf.length} chars)</span>
         </div>
       )}
 
@@ -682,14 +682,14 @@ Include all 8 content types specified. Make it practical for field use. Return J
       {sections.length > 0 && (
         <div style={cardS}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 10, flexWrap: 'wrap' }}>
-            <span style={{ fontWeight: 800, fontSize: 14, color: '#f1f5f9' }}>
+            <span style={{ fontWeight: 800, fontSize: 14, color: '#0f2547' }}>
               <CheckCircle2 size={15} color="#22c55e" style={{ verticalAlign: 'middle', marginRight: 5 }} />
               {standard} — {auditType} Audit
             </span>
             {source === 'claude'    && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Built-in Template</span>}
+            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Built-in Template</span>}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-              <button style={{ ...btnS('#1e293b'), padding: '6px 12px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' }} onClick={copy}>
+              <button style={{ ...btnS('#eef2f7'), padding: '6px 12px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' }} onClick={copy}>
                 <Copy size={12} />{copied ? ' Copied!' : ' Copy'}
               </button>
               <button style={{ ...btnS('#064e3b'), padding: '6px 12px', fontSize: 12 }} onClick={download}>
@@ -698,10 +698,10 @@ Include all 8 content types specified. Make it practical for field use. Return J
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ flex: 1, height: 8, background: 'rgba(255,255,255,0.07)', borderRadius: 999, overflow: 'hidden' }}>
+            <div style={{ flex: 1, height: 8, background: 'rgba(15,23,42,0.08)', borderRadius: 999, overflow: 'hidden' }}>
               <div style={{ height: '100%', width: `${pct}%`, background: pct === 100 ? '#22c55e' : BLUE, borderRadius: 999, transition: 'width 0.3s ease' }} />
             </div>
-            <span style={{ fontSize: 13, fontWeight: 700, color: pct === 100 ? '#22c55e' : '#94a3b8', minWidth: 70, textAlign: 'right' }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: pct === 100 ? '#22c55e' : '#64748b', minWidth: 70, textAlign: 'right' }}>
               {done}/{total} ({pct}%)
             </span>
           </div>
@@ -720,7 +720,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
               onClick={() => setCollapsed(p => ({ ...p, [section.title]: !isCollapsed }))}
             >
               <span style={{ fontSize: 20 }}>{section.emoji}</span>
-              <span style={{ flex: 1, textAlign: 'left', fontWeight: 800, fontSize: 15, color: '#f1f5f9' }}>{section.title}</span>
+              <span style={{ flex: 1, textAlign: 'left', fontWeight: 800, fontSize: 15, color: '#0f2547' }}>{section.title}</span>
               {highCount > 0 && (
                 <span style={{ display: 'flex', alignItems: 'center', gap: 4, fontSize: 11, color: '#ef4444', background: 'rgba(239,68,68,0.1)', padding: '2px 8px', borderRadius: 999 }}>
                   <AlertTriangle size={10} /> {highCount} high
@@ -734,7 +734,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
               <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 10 }}>
                 {section.items.map(item => (
                   <div key={item.id}
-                    style={{ background: checked[item.id] ? 'rgba(34,197,94,0.05)' : '#070f1a', border: `1px solid ${checked[item.id] ? 'rgba(34,197,94,0.2)' : 'rgba(255,255,255,0.06)'}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer', transition: 'all 0.15s' }}
+                    style={{ background: checked[item.id] ? 'rgba(34,197,94,0.05)' : '#eef4fb', border: `1px solid ${checked[item.id] ? 'rgba(34,197,94,0.2)' : 'rgba(15,23,42,0.07)'}`, borderRadius: 10, padding: '12px 14px', cursor: 'pointer', transition: 'all 0.15s' }}
                     onClick={() => setChecked(p => ({ ...p, [item.id]: !p[item.id] }))}
                   >
                     <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -744,7 +744,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
                           : <Square size={17} color="#475569" />}
                       </div>
                       <div style={{ flex: 1 }}>
-                        <p style={{ margin: '0 0 6px', fontSize: 13.5, color: checked[item.id] ? '#64748b' : '#e2e8f0', textDecoration: checked[item.id] ? 'line-through' : 'none', lineHeight: 1.5 }}>{item.text}</p>
+                        <p style={{ margin: '0 0 6px', fontSize: 13.5, color: checked[item.id] ? '#64748b' : '#334155', textDecoration: checked[item.id] ? 'line-through' : 'none', lineHeight: 1.5 }}>{item.text}</p>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 999, color: PCOLOR[item.priority], background: PBG[item.priority] }}>
                             {item.priority}

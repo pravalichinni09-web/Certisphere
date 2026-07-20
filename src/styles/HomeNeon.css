@@ -1,0 +1,239 @@
+/* =============================================================
+   HomeNeon.css — Futuristic DARK + NEON skin for the public Home page.
+   Loaded LAST so it wins over the light/noir themes.
+   Palette: deep space navy + neon blue / cyan / violet glows.
+   ============================================================= */
+:root{
+  --nb:#38bdf8; --nc:#22d3ee; --nv:#a78bfa; --np:#f472b6; --ne:#34d399;
+  --n-bg:#05070f; --n-panel:#0b1122; --n-panel2:#0e1730;
+  --n-line:rgba(56,189,248,0.22); --n-line2:rgba(167,139,250,0.22);
+  --n-text:#e9eefc; --n-muted:#93a4c4;
+  --n-glow: 0 0 0 1px rgba(56,189,248,0.14), 0 10px 40px rgba(56,189,248,0.10), 0 0 60px rgba(167,139,250,0.06);
+}
+
+/* ---- Page base: deep dark + tech grid + gradient blooms ---- */
+[data-theme="light"] .cs-home, .cs-home{
+  background:
+    linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 46px 46px,
+    linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 46px 46px,
+    radial-gradient(60% 55% at 10% -5%, rgba(56,189,248,0.16), transparent 60%),
+    radial-gradient(55% 50% at 95% 6%, rgba(167,139,250,0.16), transparent 60%),
+    radial-gradient(60% 45% at 50% 108%, rgba(34,211,238,0.12), transparent 60%),
+    var(--n-bg) !important;
+  color: var(--n-text) !important;
+}
+
+/* ---- Header ---- */
+[data-theme="light"] .cs-home .cs-home-header{
+  background: rgba(9,13,26,0.72) !important;
+  backdrop-filter: saturate(160%) blur(12px);
+  border-bottom: 1px solid var(--n-line) !important;
+  box-shadow: 0 1px 0 rgba(56,189,248,0.12) !important;
+}
+[data-theme="light"] .cs-home .cs-home-nav a{ color:#c7d3ee !important; }
+[data-theme="light"] .cs-home .cs-home-nav a:hover{ color:var(--nc) !important; text-shadow:0 0 10px rgba(34,211,238,.6); }
+[data-theme="light"] .cs-home .cs-home-signin{
+  background: linear-gradient(135deg,var(--nb),var(--nv)) !important; color:#05070f !important;
+  border:none !important; box-shadow:0 0 24px rgba(56,189,248,.45) !important; font-weight:800 !important;
+}
+
+/* ---- Marquee ---- */
+[data-theme="light"] .cs-home .bento-marquee{
+  background: linear-gradient(90deg, transparent, rgba(56,189,248,.08) 30%, rgba(167,139,250,.08) 70%, transparent) !important;
+  border-top:1px solid var(--n-line) !important; border-bottom:1px solid var(--n-line) !important;
+}
+[data-theme="light"] .cs-home .bento-marquee-name{ color:var(--nc) !important; text-shadow:0 0 8px rgba(34,211,238,.4); }
+
+/* ---- Glass panels: hero cards, module cards, standard cards, benefit cards, about ---- */
+[data-theme="light"] .cs-home .bento-hero-text,
+[data-theme="light"] .cs-home .bento-orbital,
+[data-theme="light"] .cs-home .bento-card,
+[data-theme="light"] .cs-home .bento-mod,
+[data-theme="light"] .cs-home .cs-cert-body-card,
+[data-theme="light"] .cs-home .bento-benefit,
+[data-theme="light"] .cs-home .cs-aboutus-card,
+[data-theme="light"] .cs-home .cs-founder-bio{
+  background: linear-gradient(160deg, rgba(14,23,48,0.92), rgba(8,12,26,0.92)) !important;
+  border: 1px solid var(--n-line) !important;
+  box-shadow: var(--n-glow) !important;
+  color: var(--n-text) !important;
+}
+[data-theme="light"] .cs-home .bento-card:hover,
+[data-theme="light"] .cs-home .bento-mod:hover,
+[data-theme="light"] .cs-home .cs-cert-body-card:hover,
+[data-theme="light"] .cs-home .bento-benefit:hover{
+  border-color: var(--nv) !important;
+  box-shadow: 0 0 0 1px rgba(167,139,250,.4), 0 16px 50px rgba(56,189,248,.18), 0 0 40px rgba(167,139,250,.14) !important;
+  transform: translateY(-4px) !important;
+}
+
+/* ---- Hero text ---- */
+[data-theme="light"] .cs-home .cs-home-tag{
+  background: rgba(56,189,248,.10) !important; border:1px solid var(--n-line) !important; color:var(--nc) !important;
+}
+[data-theme="light"] .cs-home .cs-home-tag-dot{ background:var(--ne) !important; box-shadow:0 0 0 4px rgba(52,211,153,.22),0 0 12px var(--ne) !important; }
+[data-theme="light"] .cs-home .cs-home-title{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-home-title em{
+  background: linear-gradient(100deg,var(--nb),var(--nc) 45%,var(--nv)) !important;
+  -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; color:transparent !important;
+  font-style:normal !important; filter: drop-shadow(0 0 18px rgba(56,189,248,.5));
+}
+[data-theme="light"] .cs-home .cs-home-sub{ color:#b7c5e6 !important; }
+[data-theme="light"] .cs-home .cs-home-sub strong{ color:var(--nc) !important; }
+[data-theme="light"] .cs-home .cs-home-trust li{ color:#dbe6ff !important; }
+[data-theme="light"] .cs-home .cs-home-trust li svg{ color:var(--nc) !important; }
+
+/* ---- CTAs ---- */
+[data-theme="light"] .cs-home .cs-home-cta-primary{
+  background: linear-gradient(135deg,var(--nb),var(--nv)) !important; color:#05070f !important; border:none !important;
+  box-shadow:0 0 28px rgba(56,189,248,.5) !important; font-weight:800 !important;
+}
+[data-theme="light"] .cs-home .cs-home-cta-primary:hover{ box-shadow:0 0 40px rgba(167,139,250,.6) !important; }
+[data-theme="light"] .cs-home .cs-home-cta-secondary{
+  background: rgba(56,189,248,.06) !important; color:var(--nc) !important; border:1.5px solid var(--nc) !important;
+}
+[data-theme="light"] .cs-home .cs-home-cta-secondary:hover{ background:var(--nc) !important; color:#05070f !important; box-shadow:0 0 24px rgba(34,211,238,.5) !important; }
+
+/* ---- Stats band ---- */
+[data-theme="light"] .cs-home .cs-stat-tile{
+  background: linear-gradient(160deg, rgba(14,23,48,0.9), rgba(8,12,26,0.9)) !important;
+  border:1px solid var(--n-line) !important; box-shadow: var(--n-glow) !important;
+}
+[data-theme="light"] .cs-home .cs-stat-tile strong{
+  background: linear-gradient(100deg,var(--nb),var(--nc),var(--nv)) !important;
+  -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; color:transparent !important;
+  filter: drop-shadow(0 0 14px rgba(56,189,248,.5));
+}
+[data-theme="light"] .cs-home .cs-stat-tile span{ color:var(--n-muted) !important; }
+
+/* ---- Section heads + tags ---- */
+[data-theme="light"] .cs-home .cs-home-section-title{
+  background: linear-gradient(100deg,var(--nb),var(--nc) 50%,var(--nv)) !important;
+  -webkit-background-clip:text !important; background-clip:text !important; -webkit-text-fill-color:transparent !important; color:transparent !important;
+  filter: drop-shadow(0 0 16px rgba(56,189,248,.4));
+}
+[data-theme="light"] .cs-home .cs-home-section-title::after{ background: linear-gradient(90deg,transparent,var(--nc),transparent) !important; }
+[data-theme="light"] .cs-home .cs-home-section-sub{ color:var(--n-muted) !important; }
+
+/* ---- Modules section panel + inner ---- */
+[data-theme="light"] #modules.cs-bento-section{
+  background:
+    linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 40px 40px,
+    linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 40px 40px,
+    radial-gradient(90% 70% at 50% 0%, rgba(56,189,248,0.1), transparent 60%),
+    rgba(6,9,20,0.6) !important;
+  border:1px solid var(--n-line) !important;
+}
+[data-theme="light"] #modules .bento-mod h3{ color:#eaf1ff !important; }
+[data-theme="light"] #modules .bento-mod p{ color:var(--n-muted) !important; }
+[data-theme="light"] #modules .bento-mod-icon{
+  background: rgba(56,189,248,.10) !important; border:1px solid var(--n-line) !important; color:var(--nc) !important;
+  box-shadow:0 0 18px rgba(56,189,248,.3) inset;
+}
+[data-theme="light"] #modules .bento-mod-demo{ background: rgba(167,139,250,.14) !important; color:var(--nv) !important; border:1px solid var(--n-line2) !important; }
+[data-theme="light"] #modules .bento-mod-arrow{ background: linear-gradient(135deg,var(--nb),var(--nv)) !important; color:#05070f !important; box-shadow:0 0 16px rgba(56,189,248,.5) !important; }
+
+/* ---- Standards cards ---- */
+[data-theme="light"] .cs-home .cs-cert-body-name{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-cert-body-desc{ color:var(--n-muted) !important; }
+[data-theme="light"] .cs-home .cs-cert-body-code{ color:var(--nc) !important; }
+[data-theme="light"] .cs-home .cs-cert-body-cta{ color:var(--nv) !important; }
+[data-theme="light"] .cs-home .cs-cert-body-icon svg{
+  color: var(--nc) !important;
+  filter: drop-shadow(0 0 10px rgba(34,211,238,.7)) drop-shadow(0 0 3px rgba(56,189,248,.9)) !important;
+}
+[data-theme="light"] .cs-home .cs-cert-body-card:hover .cs-cert-body-icon svg{
+  color: var(--nv) !important; filter: drop-shadow(0 0 16px rgba(167,139,250,.85)) !important;
+}
+
+/* ---- Orbital octagon (nodes/hub) ---- */
+[data-theme="light"] .cs-home .cs-orbital-circle{
+  background: rgba(14,23,48,0.9) !important; border:1.5px solid var(--nc) !important; color:var(--nc) !important;
+  box-shadow: 0 0 16px rgba(34,211,238,.4), 0 0 0 1px rgba(56,189,248,.2) !important;
+}
+[data-theme="light"] .cs-home .cs-orbital-label{
+  background: rgba(11,17,34,0.92) !important; color:#dbe6ff !important; border:1px solid var(--n-line) !important;
+}
+[data-theme="light"] .cs-home .cs-orbital-triangle{
+  background: rgba(8,12,26,0.9) !important;
+  filter: drop-shadow(0 0 22px rgba(56,189,248,.4)) !important;
+}
+[data-theme="light"] .cs-home .cs-orbital-triangle::before{ background: conic-gradient(from 135deg, var(--nb), var(--nc) 120deg, var(--nv) 240deg, var(--nb)) !important; }
+[data-theme="light"] .cs-home .cs-orbital-triangle::after{ background: rgba(8,12,26,0.95) !important; }
+
+/* ---- Benefits ---- */
+[data-theme="light"] .cs-home .bento-benefit h3{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .bento-benefit p{ color:var(--n-muted) !important; }
+[data-theme="light"] .cs-home .bento-benefit-icon{ background: linear-gradient(135deg,var(--nb),var(--nv)) !important; color:#05070f !important; box-shadow:0 0 18px rgba(56,189,248,.5) !important; }
+
+/* ---- About / founder ---- */
+[data-theme="light"] .cs-home .cs-founder-side{ background: radial-gradient(70% 60% at 50% 30%, rgba(56,189,248,.14), transparent 70%), rgba(8,12,26,0.95) !important; border-right:1px solid var(--n-line) !important; }
+[data-theme="light"] .cs-home .cs-founder-name{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-founder-role, [data-theme="light"] .cs-home .cs-bio-label{ color:var(--nc) !important; }
+[data-theme="light"] .cs-home .cs-founder-bio p{ color:#c2cfea !important; }
+[data-theme="light"] .cs-home .cs-founder-bio p strong{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-expertise-pill{ background: rgba(56,189,248,.07) !important; border:1px solid var(--n-line) !important; border-left:3px solid var(--nc) !important; color:#dbe6ff !important; }
+[data-theme="light"] .cs-home .cs-expertise-pill svg{ color:var(--nc) !important; }
+
+/* ---- Pre-footer (Contact) ---- */
+[data-theme="light"] .cs-home .cs-prefooter{
+  background: radial-gradient(80% 100% at 50% 0%, rgba(56,189,248,.12), transparent 60%), rgba(6,9,20,0.85) !important;
+  border-top:1px solid var(--n-line) !important;
+}
+[data-theme="light"] .cs-home .cs-prefooter-title{ color:#eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-prefooter-sub{ color:var(--n-muted) !important; }
+[data-theme="light"] .cs-home .cs-prefooter a{ color:var(--nc) !important; }
+
+/* ---- Footer ---- */
+[data-theme="light"] .cs-home .cs-home-footer{ background: linear-gradient(180deg, rgba(8,12,26,0.95), #05070f) !important; color:#c2cfea !important; border-top:1px solid var(--n-line) !important; }
+[data-theme="light"] .cs-home .cs-footer-col h4{ color:var(--nc) !important; text-shadow:0 0 10px rgba(34,211,238,.35); }
+[data-theme="light"] .cs-home .cs-footer-col a, [data-theme="light"] .cs-home .cs-footer-col button{ color:#a9b8d8 !important; }
+[data-theme="light"] .cs-home .cs-footer-col a:hover, [data-theme="light"] .cs-home .cs-footer-col button:hover{ color:var(--nc) !important; }
+[data-theme="light"] .cs-home .cs-footer-tagline, [data-theme="light"] .cs-home .cs-footer-slogan{ color:var(--n-muted) !important; }
+
+/* =============================================================
+   Readability safety net — every text element stays visible
+   on the neon-dark base (non-!important so accents still win)
+   ============================================================= */
+[data-theme="light"] .cs-home p,
+[data-theme="light"] .cs-home li,
+[data-theme="light"] .cs-home h1,
+[data-theme="light"] .cs-home h2,
+[data-theme="light"] .cs-home h3,
+[data-theme="light"] .cs-home h4,
+[data-theme="light"] .cs-home h5,
+[data-theme="light"] .cs-home h6,
+[data-theme="light"] .cs-home label,
+[data-theme="light"] .cs-home blockquote { color: #dbe6ff; }
+[data-theme="light"] .cs-home a { color: #c7d3ee; }
+
+/* Hero quote */
+[data-theme="light"] .cs-home .cs-hero-quote{
+  color: var(--nc) !important;
+  text-shadow: 0 0 14px rgba(34,211,238,0.35);
+}
+
+/* Process steps — neon on-theme + readable */
+[data-theme="light"] .cs-home .cs-process-num{
+  color: var(--nc) !important;
+  background: rgba(11,17,34,0.95) !important;
+  border: 1px solid var(--n-line) !important;
+  box-shadow: 0 0 0 5px rgba(56,189,248,0.10), 0 0 22px rgba(56,189,248,0.35) !important;
+  font-family: 'Outfit', system-ui, sans-serif !important;
+}
+[data-theme="light"] .cs-home .cs-process-step:hover .cs-process-num{
+  background: linear-gradient(135deg, var(--nb), var(--nv)) !important;
+  color: #05070f !important;
+  box-shadow: 0 0 0 6px rgba(167,139,250,0.16), 0 0 26px rgba(56,189,248,0.5) !important;
+}
+[data-theme="light"] .cs-home .cs-process-step h3{ color: #eaf1ff !important; }
+[data-theme="light"] .cs-home .cs-process-step p{ color: var(--n-muted) !important; }
+[data-theme="light"] .cs-home .cs-process-track::before{ background: linear-gradient(90deg, transparent, var(--n-line), transparent) !important; }
+
+/* Footer bottom columns / links stay readable */
+[data-theme="light"] .cs-home .cs-footer-col a,
+[data-theme="light"] .cs-home .cs-footer-col button,
+[data-theme="light"] .cs-home .cs-footer-tagline,
+[data-theme="light"] .cs-home .cs-footer-bottom,
+[data-theme="light"] .cs-home .cs-footer-static,
+[data-theme="light"] .cs-home .cs-footer-slogan { color: #a9b8d8 !important; }

@@ -246,6 +246,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
     { path: '/management/auditor-approvals', icon: <ShieldCheck size={18} />, label: 'Auditor Approvals' },
     { path: '/management/client-onboarding', icon: <Users size={18} />, label: 'Client Onboarding' },
         { path: '/management/client-credentials', icon: <KeyRound size={18} />, label: 'Client Credentials' },
+    { path: '/management/growth-analytics', icon: <TrendingUp size={18} />, label: 'Growth Analytics' },
     { path: '/management/global-settings', icon: <Globe size={18} />, label: 'Global Settings' },
   ];
 

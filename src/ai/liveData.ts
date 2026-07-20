@@ -56,6 +56,7 @@ export const getScopes = (): any[] => getArr('cms_audit_scopes');
 /* ---------- Change subscription (live refresh) ---------- */
 const CHANGE_EVENTS = [
   'storage',
+  'cms-data-changed',
   'cms-schedules-updated',
   'cms-corrective-actions-updated',
   'cms-audit-reports-updated',

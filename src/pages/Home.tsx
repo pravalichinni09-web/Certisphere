@@ -20,7 +20,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, FileText, Send, Users, ClipboardCheck, Workflow, AlertOctagon, Award, RefreshCw, Check, Star, ClipboardList, FolderOpen, Smartphone, Command, Phone, Globe, MapPin } from 'lucide-react';
+import { ArrowRight, ShieldCheck, FileText, Send, Users, ClipboardCheck, Workflow, AlertOctagon, Award, RefreshCw, Check, Star, ClipboardList, FolderOpen, Smartphone, Command, Phone, Globe, MapPin, Medal, Leaf, HardHat, Lock, KeyRound, HeartPulse, TrendingUp, Factory, FlaskConical } from 'lucide-react';
 import { readGlobalConfig } from '../utils/globalConfig';
 import FlagImg from '../components/FlagImg';
 import { useScrollReveal } from '../hooks/useScrollReveal';
@@ -29,6 +29,7 @@ import '../styles/HomePolish.css';
 import '../styles/HomeColors.css';
 import '../styles/HomeLight.css';
 import '../styles/HomeHeroNoir.css';
+import '../styles/HomeNeon.css';
 import CertiSphereLogo from '../components/CertiSphereLogo';
 import ContactForm from '../components/ContactForm';
 import CertBgParticles from '../components/CertBgParticles';
@@ -159,26 +160,6 @@ const Home: React.FC = () => {
         </div>
       </header>
 
-      {/* ===== Country flag marquee strip ===== */}
-      <div className="bento-marquee" aria-hidden="true">
-        <div className="bento-marquee-track">
-          {(() => {
-            const ISO: Record<string, string> = {
-              India: 'IN', USA: 'US', UK: 'GB', Germany: 'DE',
-              France: 'FR', UAE: 'AE', Singapore: 'SG', Australia: 'AU',
-              Brazil: 'BR', Japan: 'JP', China: 'CN', Canada: 'CA',
-              Mexico: 'MX', 'South Africa': 'ZA',
-            };
-            return [...cfg.supportedCountries, ...cfg.supportedCountries, ...cfg.supportedCountries].map((c, i) => (
-              <span key={i} className="bento-marquee-item">
-                <FlagImg code={ISO[c] || cfg.defaultCountryCode} w={26} rounded title={c} />
-                <span className="bento-marquee-name">{c}</span>
-              </span>
-            ));
-          })()}
-        </div>
-      </div>
-
       {/* ===== HERO BENTO GRID ===== */}
       <main className="cs-bento-wrap">
         <section id="about" className="cs-bento-hero">
@@ -243,8 +224,16 @@ const Home: React.FC = () => {
                     { x:  48, y: 200 }, { x:  92, y:  92 },
                   ].map((pt, i) => (
                     <line key={i} x1="200" y1="200" x2={pt.x} y2={pt.y}
-                      stroke="rgba(212,175,55,0.32)" strokeWidth="1.5" strokeDasharray="4 4" />
+                      stroke="rgba(56,189,248,0.35)" strokeWidth="1.5" strokeDasharray="4 4" />
                   ))}
+                  {/* Octagon figure connecting the 8 branch endpoints */}
+                  <polygon
+                    points="200,48 308,92 352,200 308,308 200,352 92,308 48,200 92,92"
+                    fill="none"
+                    stroke="rgba(34,211,238,0.7)"
+                    strokeWidth="2"
+                    strokeLinejoin="round"
+                  />
                 </svg>
 
                 {[
@@ -308,6 +297,27 @@ const Home: React.FC = () => {
           ))}
         </section>
 
+        {/* ===== Country flag marquee strip (moved in-between sections) ===== */}
+        <div className="bento-marquee" aria-hidden="true">
+          <div className="bento-marquee-track">
+            {(() => {
+              const ISO: Record<string, string> = {
+                India: 'IN', USA: 'US', UK: 'GB', Germany: 'DE',
+                France: 'FR', UAE: 'AE', Singapore: 'SG', Australia: 'AU',
+                Brazil: 'BR', Japan: 'JP', China: 'CN', Canada: 'CA',
+                Mexico: 'MX', 'South Africa': 'ZA',
+              };
+              return [...cfg.supportedCountries, ...cfg.supportedCountries, ...cfg.supportedCountries].map((c, i) => (
+                <span key={i} className="bento-marquee-item">
+                  <FlagImg code={ISO[c] || cfg.defaultCountryCode} w={26} rounded title={c} />
+                  <span className="bento-marquee-name">{c}</span>
+                </span>
+              ));
+            })()}
+          </div>
+        </div>
+
+
         
                 {/* ===== MODULES — Bento Grid ===== */}
         <section id="modules" className="cs-bento-section">
@@ -353,16 +363,16 @@ const Home: React.FC = () => {
           </header>
           <div className="cs-cert-bodies-grid">
             {[
-              { code: 'ISO 9001:2015', name: 'Quality Management',       icon: '🏅', desc: 'Internationally recognised quality management system standard for consistent product & service delivery.' },
-              { code: 'ISO 14001:2015', name: 'Environmental Management', icon: '🌿', desc: 'Framework for organisations to improve environmental performance and manage regulatory compliance.' },
-              { code: 'ISO 45001:2018', name: 'OH&S Management',          icon: '⛑️', desc: 'Occupational health & safety management system to reduce workplace incidents and hazards.' },
-              { code: 'ISO 27001:2022', name: 'Information Security',     icon: '🔒', desc: 'Systematic approach to managing sensitive company information and information security risks.' },
-              { code: 'SOC 2',          name: 'Service Organization Control', icon: '🛡️', desc: 'Trust-services audit for data security, availability, processing integrity and confidentiality.' },
-              { code: 'GDPR',           name: 'Data Protection',          icon: '🔐', desc: 'General Data Protection Regulation compliance for privacy and data protection rights.' },
-              { code: 'HIPAA',          name: 'Healthcare Compliance',    icon: '🏥', desc: 'Health Insurance Portability & Accountability Act for healthcare data protection.' },
-              { code: 'CMMI',           name: 'Process Maturity',         icon: '📈', desc: 'Capability Maturity Model Integration for process improvement and performance excellence.' },
-              { code: 'GMP',            name: 'Good Manufacturing Practice', icon: '🏭', desc: 'Quality standards for pharmaceutical, food and cosmetics manufacturing.' },
-              { code: 'GDP · GLP',      name: 'Distribution & Laboratory Practice', icon: '🔬', desc: 'Good Distribution and Laboratory Practice for supply-chain and non-clinical study integrity.' },
+              { code: 'ISO 9001:2015', name: 'Quality Management',       icon: <Medal size={30} />, desc: 'Internationally recognised quality management system standard for consistent product & service delivery.' },
+              { code: 'ISO 14001:2015', name: 'Environmental Management', icon: <Leaf size={30} />, desc: 'Framework for organisations to improve environmental performance and manage regulatory compliance.' },
+              { code: 'ISO 45001:2018', name: 'OH&S Management',          icon: <HardHat size={30} />, desc: 'Occupational health & safety management system to reduce workplace incidents and hazards.' },
+              { code: 'ISO 27001:2022', name: 'Information Security',     icon: <Lock size={30} />, desc: 'Systematic approach to managing sensitive company information and information security risks.' },
+              { code: 'SOC 2',          name: 'Service Organization Control', icon: <ShieldCheck size={30} />, desc: 'Trust-services audit for data security, availability, processing integrity and confidentiality.' },
+              { code: 'GDPR',           name: 'Data Protection',          icon: <KeyRound size={30} />, desc: 'General Data Protection Regulation compliance for privacy and data protection rights.' },
+              { code: 'HIPAA',          name: 'Healthcare Compliance',    icon: <HeartPulse size={30} />, desc: 'Health Insurance Portability & Accountability Act for healthcare data protection.' },
+              { code: 'CMMI',           name: 'Process Maturity',         icon: <TrendingUp size={30} />, desc: 'Capability Maturity Model Integration for process improvement and performance excellence.' },
+              { code: 'GMP',            name: 'Good Manufacturing Practice', icon: <Factory size={30} />, desc: 'Quality standards for pharmaceutical, food and cosmetics manufacturing.' },
+              { code: 'GDP · GLP',      name: 'Distribution & Laboratory Practice', icon: <FlaskConical size={30} />, desc: 'Good Distribution and Laboratory Practice for supply-chain and non-clinical study integrity.' },
             ].map((cb, i) => (
               <article
                 key={i}

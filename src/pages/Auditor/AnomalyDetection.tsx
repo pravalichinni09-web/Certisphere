@@ -320,7 +320,7 @@ const CATEGORY_ICON: Record<string, React.ReactNode> = {
   'Clean Report':                <Eye size={15} />,
 };
 
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 22, marginBottom: 18 };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 22, marginBottom: 18 };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 
@@ -421,7 +421,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
           <AlertTriangle size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Anomaly Detection</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Anomaly Detection</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
             {claude ? 'AI-powered pattern analysis — scans all audit data for suspicious irregularities' : 'Heuristic anomaly scanner — configure Claude API key for deep AI pattern analysis'}
           </p>
@@ -431,7 +431,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — scans for 9 anomaly types across corrective actions, schedules, and certificates. Configure your Claude API key in <strong>AI Settings</strong> for deep AI pattern recognition.
           </p>
         </div>
@@ -441,7 +441,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
       <div style={cardS}>
         <div style={{ display: 'flex', alignItems: 'flex-start', gap: 16, flexWrap: 'wrap' }}>
           <div style={{ flex: 1, minWidth: 220 }}>
-            <h3 style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 800, color: '#f1f5f9' }}>Data Sources</h3>
+            <h3 style={{ margin: '0 0 6px', fontSize: 15, fontWeight: 800, color: '#0f2547' }}>Data Sources</h3>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
               {[
                 { label: 'CARs', val: data.actions.length },
@@ -449,7 +449,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
                 { label: 'Certificates', val: data.certs.length },
                 { label: 'Clients', val: data.clients.length },
               ].map(d => (
-                <div key={d.label} style={{ background: '#070f1a', border: '1px solid rgba(255,255,255,0.07)', borderRadius: 8, padding: '6px 14px', textAlign: 'center' }}>
+                <div key={d.label} style={{ background: '#eef4fb', border: '1px solid rgba(15,23,42,0.08)', borderRadius: 8, padding: '6px 14px', textAlign: 'center' }}>
                   <div style={{ fontSize: 18, fontWeight: 900, color: BLUE }}>{d.val}</div>
                   <div style={{ fontSize: 10, color: '#64748b', marginTop: 1 }}>{d.label}</div>
                 </div>
@@ -463,7 +463,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
                 : <><Wand2 size={15} />{claude ? ' Deep Scan with Claude' : ' Run Anomaly Scan'}</>}
             </button>
             {anomalies.length > 0 && !busy && (
-              <button style={{ ...btnS('transparent'), border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8', padding: '7px 14px', fontSize: 12 }} onClick={scan}>
+              <button style={{ ...btnS('transparent'), border: '1px solid rgba(15,23,42,0.14)', color: '#64748b', padding: '7px 14px', fontSize: 12 }} onClick={scan}>
                 <RefreshCw size={13} /> Re-scan
               </button>
             )}
@@ -472,7 +472,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
         {streamMsg && (
           <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Loader2 size={13} color={GOLD} style={{ animation: 'ad-spin 0.8s linear infinite' }} />
-            <span style={{ fontSize: 12, color: '#94a3b8' }}>{streamMsg}</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>{streamMsg}</span>
           </div>
         )}
       </div>
@@ -488,7 +488,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
                 const col = r === 'All' ? BLUE : RISK[r as RiskLevel]?.color || BLUE;
                 return (
                   <button key={r} onClick={() => setFilterRisk(r)}
-                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', borderRadius: 999, border: `1px solid ${active ? col : 'rgba(255,255,255,0.1)'}`, background: active ? `${col}22` : 'transparent', color: active ? col : '#64748b', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
+                    style={{ display: 'flex', alignItems: 'center', gap: 5, padding: '5px 12px', borderRadius: 999, border: `1px solid ${active ? col : 'rgba(15,23,42,0.12)'}`, background: active ? `${col}22` : 'transparent', color: active ? col : '#64748b', fontWeight: 700, fontSize: 12, cursor: 'pointer' }}>
                     {r !== 'All' && RISK_ICON[r as RiskLevel]} {r} {count > 0 && <span style={{ background: col, color: '#fff', borderRadius: 999, padding: '0 5px', fontSize: 10 }}>{count}</span>}
                   </button>
                 );
@@ -496,8 +496,8 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {source === 'claude'    && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
-              <button style={{ ...btnS('#1e293b'), padding: '6px 12px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' }} onClick={copyReport}>
+              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Heuristic</span>}
+              <button style={{ ...btnS('#eef2f7'), padding: '6px 12px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' }} onClick={copyReport}>
                 <Copy size={12} />{copied ? ' Copied!' : ' Copy Report'}
               </button>
             </div>
@@ -532,25 +532,25 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
                   </span>
                   <span style={{ fontSize: 12, color: '#64748b' }}>{anomaly.category}</span>
                 </div>
-                <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#e2e8f0', lineHeight: 1.5 }}>{anomaly.description}</p>
+                <p style={{ margin: 0, fontSize: 14, fontWeight: 600, color: '#334155', lineHeight: 1.5 }}>{anomaly.description}</p>
               </div>
               {isExp ? <ChevronUp size={16} color="#64748b" style={{ flexShrink: 0, marginTop: 4 }} /> : <ChevronDown size={16} color="#64748b" style={{ flexShrink: 0, marginTop: 4 }} />}
             </button>
 
             {isExp && (
-              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+              <div style={{ marginTop: 16, paddingTop: 16, borderTop: '1px solid rgba(15,23,42,0.07)', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                 {[
                   { label: 'Possible Cause',          icon: '🔍', text: anomaly.possibleCause },
                   { label: 'Investigation Required',  icon: '📋', text: anomaly.investigationRequired },
                   { label: 'Impact if Unresolved',    icon: '⚠️', text: anomaly.impact },
                 ].map(field => (
-                  <div key={field.label} style={{ background: '#070f1a', borderRadius: 9, padding: '12px 14px', gridColumn: field.label === 'Investigation Required' ? 'span 2' : undefined }}>
+                  <div key={field.label} style={{ background: '#eef4fb', borderRadius: 9, padding: '12px 14px', gridColumn: field.label === 'Investigation Required' ? 'span 2' : undefined }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 5 }}>{field.icon} {field.label}</div>
-                    <p style={{ margin: 0, fontSize: 13, color: '#cbd5e1', lineHeight: 1.55 }}>{field.text}</p>
+                    <p style={{ margin: 0, fontSize: 13, color: '#475569', lineHeight: 1.55 }}>{field.text}</p>
                   </div>
                 ))}
                 {anomaly.affectedRecords && anomaly.affectedRecords.length > 0 && (
-                  <div style={{ gridColumn: 'span 2', background: '#070f1a', borderRadius: 9, padding: '10px 14px' }}>
+                  <div style={{ gridColumn: 'span 2', background: '#eef4fb', borderRadius: 9, padding: '10px 14px' }}>
                     <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>📎 Affected Records</div>
                     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                       {anomaly.affectedRecords.map(r => (

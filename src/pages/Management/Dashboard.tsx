@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { forecastFindings } from '../../ai/models';
+import { buildKpiDashboard } from '../../ai/managementInsights';
+import { Gauge } from 'lucide-react';
 import { TrendingUp } from 'lucide-react';
 import RoleAIGuide from '../../components/RoleAIGuide';
 import 'chart.js/auto';
@@ -243,6 +245,38 @@ const ManagementDashboard: React.FC = () => {
   return (
     <div className="management-dashboard">
       <RoleAIGuide />
+      <AIPanel title="Executive Dashboard AI" subtitle="7 KPI groups — value, target, trend and RAG status from live data" icon={<Gauge size={15} />}>
+        {(() => {
+          const kpi = buildKpiDashboard();
+          const dot = (st: string) => st === 'Green' ? '#16a34a' : st === 'Yellow' ? '#d97706' : '#dc2626';
+          const arrow = (t: string) => t === 'up' ? '▲' : t === 'down' ? '▼' : '→';
+          return (
+            <div>
+              {kpi.sections.map((sec) => (
+                <div key={sec.title} style={{ marginBottom: 10 }}>
+                  <div style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: 1.2, textTransform: 'uppercase', color: '#b8860b', margin: '4px 0' }}>{sec.title}</div>
+                  {sec.metrics.map((m) => (
+                    <div key={m.name} style={{ display: 'flex', alignItems: 'baseline', gap: 8, padding: '4px 0', borderBottom: '1px dashed var(--cms-border-subtle, rgba(15,23,42,0.06))', fontSize: 12.5 }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: dot(m.status), flexShrink: 0, alignSelf: 'center' }} />
+                      <span style={{ flex: 1 }}>{m.name}</span>
+                      <strong>{m.current}</strong>
+                      <span style={{ opacity: 0.6, fontSize: 11 }}>tgt {m.target}</span>
+                      <span title={m.trend} style={{ color: m.trend === 'up' ? '#16a34a' : m.trend === 'down' ? '#dc2626' : '#64748b' }}>{arrow(m.trend)}</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div style={{ marginTop: 8 }}>
+                <div style={{ fontSize: 10.5, fontWeight: 800, letterSpacing: 1.2, textTransform: 'uppercase', color: '#b8860b', marginBottom: 4 }}>Actionable insights</div>
+                <ul style={{ margin: 0, paddingLeft: 16, fontSize: 12.5 }}>
+                  {kpi.actions.map((a, i) => <li key={i} style={{ marginBottom: 3 }}>{a}</li>)}
+                </ul>
+              </div>
+              <p className="ai-panel-note">{kpi.assumption}</p>
+            </div>
+          );
+        })()}
+      </AIPanel>
       <AIPanel title="Compliance Forecast" subtitle="Holt time-series model — findings volume projected 3 months ahead" icon={<TrendingUp size={15} />}>
         {(() => {
           const fc = forecastFindings(3);

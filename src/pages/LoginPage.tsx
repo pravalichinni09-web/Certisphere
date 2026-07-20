@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, type FormEvent } from 'react';
-import { User, ShieldCheck, Globe, Award, Sparkles } from 'lucide-react';
+import { User, ShieldCheck, Globe, Award, Sparkles, Home } from 'lucide-react';
 import '../styles/LoginPage.css';
 import '../styles/LoginColors.css';
 import '../styles/LoginBlack.css';
@@ -281,6 +281,10 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       {/* ===== RIGHT — CertiSphere branding + trust + register links ===== */}
       <div className="credentials-section">
         <div className="logo-section">
+          {/* Back to Home */}
+          <button type="button" className="cs-home-link" onClick={() => { window.location.href = '/home'; }} title="Go to the CertiSphere home page">
+            <Home size={14} /> Home
+          </button>
           {/* Logo plate */}
           <div className="cs-logo-plate">
             <a

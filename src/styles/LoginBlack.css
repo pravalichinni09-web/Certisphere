@@ -50,3 +50,47 @@
   border: none !important;
   box-shadow: none !important;
 }
+
+/* =============================================================
+   Login branding — Home link + refined typography
+   ============================================================= */
+[data-theme="light"] .cs-login-shell .cs-home-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  align-self: center;
+  margin: 0 auto 18px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(212,175,55,0.08);
+  border: 1px solid rgba(212,175,55,0.45);
+  color: #f6d878;
+  font-family: 'Outfit', system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  cursor: pointer;
+  transition: background .18s ease, box-shadow .18s ease, transform .18s ease;
+}
+[data-theme="light"] .cs-login-shell .cs-home-link:hover {
+  background: linear-gradient(135deg,#f6d878,#d4af37);
+  color: #0c0b09;
+  box-shadow: 0 0 22px rgba(212,175,55,0.4);
+  transform: translateY(-1px);
+}
+
+/* Crisper trust pills */
+[data-theme="light"] .cs-login-shell .cs-trust-pill {
+  font-family: 'Outfit', system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.7px !important;
+  text-transform: uppercase;
+  font-size: 11px !important;
+}
+
+/* Cleaner action buttons */
+[data-theme="light"] .cs-login-shell .cs-link-btn {
+  font-family: 'Outfit', system-ui, sans-serif !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+}

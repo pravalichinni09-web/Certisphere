@@ -231,9 +231,9 @@ const REC_STYLE: Record<Recommendation, { color: string; bg: string; border: str
 const AUTH_COLOR: Record<Authenticity, string> = { Authentic: '#22c55e', Questionable: '#f59e0b', Fabricated: '#ef4444' };
 const COMP_COLOR: Record<Completeness, string> = { Complete: '#22c55e', Partial: '#f59e0b', Incomplete: '#ef4444' };
 const CLAR_COLOR: Record<Clarity, string>       = { Clear: '#22c55e', Unclear: '#f59e0b', Insufficient: '#ef4444' };
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 22, marginBottom: 18 };
-const inp:   React.CSSProperties = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: '#94a3b8', marginBottom: 4, letterSpacing: '0.06em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 22, marginBottom: 18 };
+const inp:   React.CSSProperties = { width: '100%', padding: '9px 11px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 9, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: '#64748b', marginBottom: 4, letterSpacing: '0.06em', textTransform: 'uppercase' };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '9px 18px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '2px 8px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 10, fontWeight: 700 };
 const FILE_TYPES = ['pdf', 'docx', 'xlsx', 'photo', 'email', 'log', 'other'];
@@ -249,7 +249,7 @@ const ScoreGauge: React.FC<{ score: number; size?: number }> = ({ score, size = 
     <div style={{ position: 'relative', width: size, height: size / 2 + 14, flexShrink: 0 }}>
       <svg width={size} height={size / 2 + 8} style={{ transform: 'rotate(180deg)' }}>
         <path d={`M 8,${size/2} A ${r},${r} 0 0,1 ${size-8},${size/2}`}
-          fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="8" strokeLinecap="round" />
+          fill="none" stroke="rgba(15,23,42,0.09)" strokeWidth="8" strokeLinecap="round" />
         <path d={`M 8,${size/2} A ${r},${r} 0 0,1 ${size-8},${size/2}`}
           fill="none" stroke={color} strokeWidth="8" strokeLinecap="round"
           strokeDasharray={`${dash} ${circ}`} style={{ transition: 'stroke-dasharray 0.6s ease' }} />
@@ -272,10 +272,10 @@ const Bar: React.FC<{ val: number; label: string }> = ({ val, label }) => {
   const color = val >= 75 ? '#22c55e' : val >= 50 ? '#f59e0b' : '#ef4444';
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#94a3b8', marginBottom: 3 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, color: '#64748b', marginBottom: 3 }}>
         <span>{label}</span><span style={{ fontWeight: 700, color }}>{val}%</span>
       </div>
-      <div style={{ height: 6, background: 'rgba(255,255,255,0.07)', borderRadius: 999, overflow: 'hidden' }}>
+      <div style={{ height: 6, background: 'rgba(15,23,42,0.08)', borderRadius: 999, overflow: 'hidden' }}>
         <div style={{ height: '100%', width: `${val}%`, background: color, borderRadius: 999, transition: 'width 0.5s ease' }} />
       </div>
     </div>
@@ -362,7 +362,7 @@ const EvidenceValidation: React.FC = () => {
           <FileCheck size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Evidence Validation</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Evidence Validation</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
             {claude ? 'AI quality assessor — rates every piece of evidence across 5 professional criteria' : 'Heuristic evidence quality scorer — add Claude API key for deep AI assessment'}
           </p>
@@ -372,7 +372,7 @@ const EvidenceValidation: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — scores against 5 quality dimensions using filename analysis, metadata, and description completeness. Configure Claude API key in <strong>AI Settings</strong> for professional-grade AI assessment.
           </p>
         </div>
@@ -381,12 +381,12 @@ const EvidenceValidation: React.FC = () => {
       {/* Controls row */}
       <div style={{ ...cardS, padding: '16px 20px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#0f2547' }}>
             {items.length} evidence item{items.length !== 1 ? 's' : ''}
             {liveEvidence.length > 0 && <span style={{ fontSize: 11, color: '#64748b', fontWeight: 400, marginLeft: 6 }}>({liveEvidence.length} from live CARs)</span>}
           </span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button style={btnS('#1e293b', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={addItem}>
+            <button style={btnS('#eef2f7', { border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' })} onClick={addItem}>
               <Plus size={14} /> Add Evidence
             </button>
             <button style={btnS(busy ? '#374151' : '#166534')} onClick={assess} disabled={items.length === 0}>
@@ -395,7 +395,7 @@ const EvidenceValidation: React.FC = () => {
                 : <><Wand2 size={14} />{claude ? ' Assess with Claude' : ' Run Assessment'}</>}
             </button>
             {assessed.length > 0 && !busy && (
-              <button style={btnS('transparent', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={assess}>
+              <button style={btnS('transparent', { border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' })} onClick={assess}>
                 <RefreshCw size={13} /> Re-assess
               </button>
             )}
@@ -404,7 +404,7 @@ const EvidenceValidation: React.FC = () => {
         {streamMsg && (
           <div style={{ marginTop: 10, display: 'flex', alignItems: 'center', gap: 8 }}>
             <Loader2 size={13} color={GOLD} style={{ animation: 'ev-spin 0.8s linear infinite' }} />
-            <span style={{ fontSize: 12, color: '#94a3b8' }}>{streamMsg}</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>{streamMsg}</span>
           </div>
         )}
       </div>
@@ -421,20 +421,20 @@ const EvidenceValidation: React.FC = () => {
                   const s = REC_STYLE[r];
                   return (
                     <button key={r} onClick={() => setFilterRec(filterRec === r ? 'All' : r)}
-                      style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${filterRec === r ? s.color : 'rgba(255,255,255,0.1)'}`, color: filterRec === r ? s.color : '#94a3b8', background: filterRec === r ? s.bg : 'transparent' })}}>
+                      style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${filterRec === r ? s.color : 'rgba(15,23,42,0.12)'}`, color: filterRec === r ? s.color : '#64748b', background: filterRec === r ? s.bg : 'transparent' })}}>
                       {s.icon} {r} <span style={{ background: s.color, color: '#fff', borderRadius: 999, padding: '0 5px', fontSize: 10, marginLeft: 2 }}>{recCounts[r]}</span>
                     </button>
                   );
                 })}
                 {filterRec !== 'All' && (
-                  <button onClick={() => setFilterRec('All')} style={btnS('transparent', { padding: '4px 10px', fontSize: 11, border: '1px solid rgba(255,255,255,0.1)', color: '#64748b' })}>All</button>
+                  <button onClick={() => setFilterRec('All')} style={btnS('transparent', { padding: '4px 10px', fontSize: 11, border: '1px solid rgba(15,23,42,0.12)', color: '#64748b' })}>All</button>
                 )}
               </div>
             </div>
             <div style={{ display: 'flex', gap: 8 }}>
               {source === 'claude'    && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
-              <button style={btnS('#1e293b', { padding: '6px 12px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' })} onClick={copyReport}>
+              {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Heuristic</span>}
+              <button style={btnS('#eef2f7', { padding: '6px 12px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' })} onClick={copyReport}>
                 <Copy size={12} /> {copied ? 'Copied!' : 'Copy Report'}
               </button>
             </div>
@@ -448,13 +448,13 @@ const EvidenceValidation: React.FC = () => {
         const isExp = expanded[item.id] ?? !a;
         const rec  = a ? REC_STYLE[a.recommendation] : null;
         return (
-          <div key={item.id} style={{ ...cardS, borderColor: rec ? rec.border : 'rgba(255,255,255,0.08)', borderWidth: a?.recommendation === 'Reject' ? 2 : 1 }}>
+          <div key={item.id} style={{ ...cardS, borderColor: rec ? rec.border : 'rgba(15,23,42,0.09)', borderWidth: a?.recommendation === 'Reject' ? 2 : 1 }}>
 
             {/* Card header */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: isExp ? 16 : 0 }}>
               <span style={{ fontSize: 20, flexShrink: 0 }}>{FILE_EMOJI[item.type] || '📎'}</span>
               <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 700, fontSize: 14, color: '#f1f5f9', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <div style={{ fontWeight: 700, fontSize: 14, color: '#0f2547', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                   {item.name || <span style={{ color: '#475569', fontStyle: 'italic' }}>Untitled evidence</span>}
                 </div>
                 <div style={{ fontSize: 11, color: '#64748b', display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 2 }}>
@@ -515,11 +515,11 @@ const EvidenceValidation: React.FC = () => {
 
                 {/* Assessment result */}
                 {a && (
-                  <div style={{ marginTop: 4, paddingTop: 16, borderTop: '1px solid rgba(255,255,255,0.07)' }}>
+                  <div style={{ marginTop: 4, paddingTop: 16, borderTop: '1px solid rgba(15,23,42,0.08)' }}>
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
 
                       {/* Scores */}
-                      <div style={{ background: '#070f1a', borderRadius: 10, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                      <div style={{ background: '#eef4fb', borderRadius: 10, padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
                         <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 2 }}>Criteria Scores</div>
                         <Bar val={a.relevance} label="Relevance to Finding" />
                         <Bar val={a.docQuality} label="Documentation Quality" />
@@ -537,11 +537,11 @@ const EvidenceValidation: React.FC = () => {
 
                       {/* Rationale + improvements */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                        <div style={{ background: '#070f1a', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
+                        <div style={{ background: '#eef4fb', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
                           <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>📋 Assessor Rationale</div>
-                          <p style={{ margin: 0, fontSize: 12.5, color: '#cbd5e1', lineHeight: 1.55 }}>{a.rationale}</p>
+                          <p style={{ margin: 0, fontSize: 12.5, color: '#475569', lineHeight: 1.55 }}>{a.rationale}</p>
                         </div>
-                        <div style={{ background: '#070f1a', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
+                        <div style={{ background: '#eef4fb', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
                           <div style={{ fontSize: 10, fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 6 }}>🔧 Required Improvements</div>
                           <ul style={{ margin: 0, padding: '0 0 0 14px', display: 'flex', flexDirection: 'column', gap: 4 }}>
                             {a.improvements.map((imp, i) => (

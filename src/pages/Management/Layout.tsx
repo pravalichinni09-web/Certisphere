@@ -9,6 +9,7 @@ import AuditAssignments from './AuditAssignments';
 import AuditorApprovals from './AuditorApprovals';
 import GlobalSettings from './GlobalSettings';
 import ClientOnboarding from './ClientOnboarding';
+import GrowthAnalytics from './GrowthAnalytics';
 import '../../styles/Auditor/Layout.css';
 
 interface LayoutProps {
@@ -28,6 +29,7 @@ const ManagementLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/audit-assignments" element={<AuditAssignments />} />
           <Route path="/auditor-approvals" element={<AuditorApprovals />} />
           <Route path="/global-settings" element={<GlobalSettings />} />
+          <Route path="/growth-analytics" element={<GrowthAnalytics />} />
           <Route path="/client-onboarding" element={<ClientOnboarding />} />
           <Route index element={<Navigate to="/management/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/management/dashboard" replace />} />

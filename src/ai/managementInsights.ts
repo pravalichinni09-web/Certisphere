@@ -377,3 +377,122 @@ export const anomaliesClaudePrompt = (anomalies: AssignmentAnomaly[]): string =>
   'anomalies into a short paragraph (max 100 words) that groups them by theme and states the ' +
   'single most urgent follow-up. Keep facts accurate. Return only the paragraph.\n\n' +
   anomalies.slice(0, 12).map((a) => `- [${a.type}] ${a.text}`).join('\n');
+
+/* ═════════════════════════════════════════════════════════════════
+   Executive Dashboard AI — KPI dashboard for management review.
+   7 metric groups, each metric with current value, target, trend,
+   RAG status and an insight, plus actionable recommendations.
+   All values derive from live stores; financial figures use a stated
+   revenue-proxy assumption (average certification fee per audit).
+   ═════════════════════════════════════════════════════════════════ */
+export interface KpiMetric {
+  name: string;
+  current: string;
+  target: string;
+  trend: 'up' | 'down' | 'stable';
+  status: 'Green' | 'Yellow' | 'Red';
+  insight: string;
+}
+export interface KpiSection { title: string; metrics: KpiMetric[]; }
+export interface KpiDashboard { sections: KpiSection[]; actions: string[]; assumption: string; }
+
+const AVG_FEE = 4500;   // USD revenue proxy per completed audit (stated assumption)
+const AVG_COST = 2600;  // USD delivery-cost proxy per audit
+
+export const buildKpiDashboard = (): KpiDashboard => {
+  const arr = (k: string): any[] => {
+    try { const r = localStorage.getItem(k); const v = r ? JSON.parse(r) : []; return Array.isArray(v) ? v.filter((x) => x != null) : []; } catch { return []; }
+  };
+  const schedules = [...arr('cms_audit_schedules'), ...arr('cms_audit_schedules_v3')];
+  const certs = [...arr('cms_certificates'), ...arr('cms_audit_certifications')];
+  const actions = arr('cms_corrective_actions_v1');
+  const auditors = arr('cms_auditors');
+  const enquiries = arr('cms_client_enquiries_v1');
+  const clients = arr('cms_client_registrations');
+  const today = new Date().toISOString().slice(0, 10);
+
+  /* 1 ─ Audit pipeline */
+  const inProgress = schedules.filter((s) => !/completed|cancelled/i.test(s.status || '')).length;
+  const onTrack = schedules.filter((s) => !s.date || s.date >= today || /completed|approved/i.test(s.status || '')).length;
+  const onTrackPct = schedules.length ? Math.round((onTrack / schedules.length) * 100) : 100;
+
+  /* 2 ─ Financial (revenue proxy) */
+  const completed = certs.length;
+  const revenue = completed * AVG_FEE;
+  const cost = completed * AVG_COST;
+  const margin = revenue ? Math.round(((revenue - cost) / revenue) * 100) : 0;
+
+  /* 3 ─ Quality */
+  const closed = actions.filter((a) => a.status === 'Approved').length;
+  const closureRate = actions.length ? Math.round((closed / actions.length) * 100) : 100;
+  const repeatClients = clients.filter((c) =>
+    certs.filter((x) => (x.client || x.clientName || '').toLowerCase() === (c.organizationName || '').toLowerCase()).length > 1).length;
+  const repeatRate = clients.length ? Math.round((repeatClients / clients.length) * 100) : 0;
+
+  /* 4 ─ Team */
+  const activeAud = auditors.filter((a) => a.status === 'Active').length || auditors.length;
+  const assigned = new Set(schedules.flatMap((s) => [s.auditor, s.leadAuditor]).filter(Boolean)).size;
+  const utilization = activeAud ? Math.round((Math.min(assigned, activeAud) / activeAud) * 100) : 0;
+  const avgRating = auditors.length
+    ? (auditors.reduce((sum, a) => sum + (Array.isArray(a.ratings) && a.ratings.length ? a.ratings.reduce((x: number, y: number) => x + y, 0) / a.ratings.length : 3.8), 0) / auditors.length)
+    : 0;
+
+  /* 5 ─ Growth */
+  const yearNow = new Date().getFullYear();
+  const certsThisYear = certs.filter((c) => String(c.certificateDate || c.issuedDate || '').startsWith(String(yearNow))).length;
+  const certsLastYear = certs.filter((c) => String(c.certificateDate || c.issuedDate || '').startsWith(String(yearNow - 1))).length;
+  const yoy = certsLastYear ? Math.round(((certsThisYear - certsLastYear) / certsLastYear) * 100) : (certsThisYear ? 100 : 0);
+  const pipeline = enquiries.filter((e) => ['New', 'Contacted', 'Qualified'].includes(e.status)).length;
+
+  /* 6 ─ Risk */
+  const overdue = actions.filter((a) => a.status !== 'Approved' && a.dueDate && a.dueDate < today).length;
+  const delayed = schedules.filter((s) => s.date && s.date < today && !/completed|approved/i.test(s.status || '')).length;
+
+  /* 7 ─ Forecast */
+  const nextQ = Math.max(1, Math.round(certsThisYear / 4 + pipeline * 0.4));
+
+  const M = (name: string, current: string, target: string, good: boolean, warn: boolean, trend: KpiMetric['trend'], insight: string): KpiMetric =>
+    ({ name, current, target, trend, status: good ? 'Green' : warn ? 'Yellow' : 'Red', insight });
+
+  const sections: KpiSection[] = [
+    { title: '1 · Audit Pipeline', metrics: [
+      M('Audits in progress', String(inProgress), '—', inProgress > 0, true, 'stable', `${schedules.length} total scheduled engagements.`),
+      M('On-track %', `${onTrackPct}%`, '≥ 85%', onTrackPct >= 85, onTrackPct >= 70, onTrackPct >= 85 ? 'up' : 'down', onTrackPct >= 85 ? 'Pipeline healthy.' : 'Slippage detected — review delayed engagements.'),
+    ]},
+    { title: '2 · Financial (proxy)', metrics: [
+      M('Revenue YTD', `$${revenue.toLocaleString()}`, `$${(Math.max(completed, 10) * AVG_FEE).toLocaleString()}`, revenue > 0, true, revenue > 0 ? 'up' : 'stable', `${completed} certified audits × $${AVG_FEE} average fee.`),
+      M('Margin', `${margin}%`, '≥ 35%', margin >= 35, margin >= 25, 'stable', `Cost proxy $${AVG_COST}/audit.`),
+      M('Cost per audit', `$${AVG_COST.toLocaleString()}`, `$${AVG_COST.toLocaleString()}`, true, true, 'stable', 'Benchmark assumption — refine with actuals.'),
+    ]},
+    { title: '3 · Quality', metrics: [
+      M('CAP closure rate', `${closureRate}%`, '≥ 80%', closureRate >= 80, closureRate >= 60, closureRate >= 80 ? 'up' : 'down', `${closed}/${actions.length} corrective actions closed.`),
+      M('Repeat business', `${repeatRate}%`, '≥ 40%', repeatRate >= 40, repeatRate >= 20, 'stable', `${repeatClients} client(s) hold multiple certificates.`),
+    ]},
+    { title: '4 · Team', metrics: [
+      M('Auditor utilisation', `${utilization}%`, '70–90%', utilization >= 70 && utilization <= 90, utilization >= 50, utilization > 90 ? 'up' : 'stable', utilization > 90 ? 'Over-utilised — burnout risk.' : `${assigned}/${activeAud} auditors carrying assignments.`),
+      M('Avg performance rating', avgRating.toFixed(1), '≥ 4.0', avgRating >= 4, avgRating >= 3.5, 'stable', 'From auditor rating history.'),
+    ]},
+    { title: '5 · Growth', metrics: [
+      M('YoY certifications', `${yoy >= 0 ? '+' : ''}${yoy}%`, '≥ +10%', yoy >= 10, yoy >= 0, yoy > 0 ? 'up' : yoy < 0 ? 'down' : 'stable', `${certsThisYear} this year vs ${certsLastYear} last year.`),
+      M('Active pipeline', String(pipeline), '≥ 5', pipeline >= 5, pipeline >= 2, pipeline >= 5 ? 'up' : 'stable', `${enquiries.length} total enquiries captured.`),
+    ]},
+    { title: '6 · Risk Indicators', metrics: [
+      M('Delayed audits', String(delayed), '0', delayed === 0, delayed <= 2, delayed ? 'down' : 'stable', delayed ? 'Reschedule or escalate delayed engagements.' : 'No schedule slippage.'),
+      M('Overdue actions', String(overdue), '0', overdue === 0, overdue <= 2, overdue ? 'down' : 'stable', overdue ? 'Client follow-up required this week.' : 'CAP discipline holding.'),
+    ]},
+    { title: '7 · Forecast', metrics: [
+      M('Next-quarter certifications', `~${nextQ}`, '—', true, true, pipeline > 2 ? 'up' : 'stable', `Run-rate + ${pipeline} pipeline enquiries at 40% conversion.`),
+    ]},
+  ];
+
+  const actionsOut: string[] = [];
+  if (onTrackPct < 85) actionsOut.push('Review delayed engagements in Audit Schedules and re-sequence the calendar.');
+  if (overdue > 0) actionsOut.push(`Chase ${overdue} overdue corrective action(s) — churn risk grows with every overdue week.`);
+  if (utilization > 90) actionsOut.push('Utilisation above 90% — approve pending auditor requests to add capacity.');
+  if (utilization < 50) actionsOut.push('Utilisation under 50% — accelerate pipeline conversion or rebalance the bench.');
+  if (yoy < 0) actionsOut.push('Certifications trending below last year — prioritise enquiry follow-ups this month.');
+  if (repeatRate < 40) actionsOut.push('Repeat-business below benchmark — launch surveillance-audit outreach to certified clients.');
+  if (actionsOut.length === 0) actionsOut.push('All KPI groups within target — maintain cadence and review again next week.');
+
+  return { sections, actions: actionsOut, assumption: `Financial figures are proxies: $${AVG_FEE} avg fee and $${AVG_COST} avg delivery cost per audit. Replace with actuals when finance data is connected.` };
+};

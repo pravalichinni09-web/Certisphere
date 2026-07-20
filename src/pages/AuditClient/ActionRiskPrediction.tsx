@@ -163,9 +163,9 @@ const GOLD = '#c9922a', BLUE = '#1d4ed8';
 const RISK_COLOR: Record<string, string>  = { High: '#ef4444', Medium: '#f59e0b', Low: '#22c55e' };
 const FEAS_COLOR: Record<string, string>  = { Easy: '#22c55e', Medium: '#f59e0b', Difficult: '#ef4444' };
 const PROB_COLOR = (p: number) => p >= 75 ? '#22c55e' : p >= 50 ? '#f59e0b' : '#ef4444';
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24, marginBottom: 20, color: '#e2e8f0' };
-const inp: React.CSSProperties   = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl: React.CSSProperties   = { display: 'block', fontSize: 11, fontWeight: 700, color: '#94a3b8', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 24, marginBottom: 20, color: '#334155' };
+const inp: React.CSSProperties   = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl: React.CSSProperties   = { display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
 const btnS = (c = BLUE): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 
@@ -173,7 +173,7 @@ const Badge = ({ text, color }: { text: string; color: string }) => (
   <span style={{ background: `${color}20`, color, border: `1px solid ${color}44`, padding: '3px 11px', borderRadius: 999, fontSize: 12, fontWeight: 800 }}>{text}</span>
 );
 
-const SectionHead = ({ icon, title, color = '#94a3b8' }: { icon: React.ReactNode; title: string; color?: string }) => (
+const SectionHead = ({ icon, title, color = '#64748b' }: { icon: React.ReactNode; title: string; color?: string }) => (
   <p style={{ margin: '0 0 10px', fontSize: 12, fontWeight: 700, color, textTransform: 'uppercase', letterSpacing: '0.06em', display: 'flex', alignItems: 'center', gap: 6 }}>{icon}{title}</p>
 );
 
@@ -186,7 +186,7 @@ const ProbGauge: React.FC<{ value: number }> = ({ value }) => {
   return (
     <svg viewBox="0 0 140 80" style={{ width: 160, flexShrink: 0 }}>
       {/* track */}
-      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="rgba(255,255,255,0.08)" strokeWidth="10" strokeLinecap="round" />
+      <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke="rgba(15,23,42,0.09)" strokeWidth="10" strokeLinecap="round" />
       {/* fill */}
       <path d={`M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round"
         strokeDasharray={`${dash} ${circ}`} style={{ transition: 'stroke-dasharray 0.8s ease-out' }} />
@@ -269,7 +269,7 @@ const ActionRiskPrediction: React.FC = () => {
           <TrendingUp size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Action Risk Prediction</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Action Risk Prediction</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>AI risk analyst — predict corrective action success rate and identify failure points</p>
         </div>
       </div>
@@ -278,7 +278,7 @@ const ActionRiskPrediction: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — risk scored from your action data and keyword analysis.
             Configure your Claude API key in <strong>AI Settings</strong> for a full AI risk assessment.
           </p>
@@ -287,15 +287,15 @@ const ActionRiskPrediction: React.FC = () => {
 
       {/* Input card */}
       <div style={cardS}>
-        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ margin: '0 0 16px', fontSize: 15, fontWeight: 800, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Target size={17} color={GOLD} /> Select Action to Analyse
         </h3>
 
         {/* Mode toggle */}
-        <div style={{ display: 'flex', gap: 0, marginBottom: 16, borderRadius: 9, overflow: 'hidden', border: '1.5px solid rgba(255,255,255,0.1)', width: 'fit-content' }}>
+        <div style={{ display: 'flex', gap: 0, marginBottom: 16, borderRadius: 9, overflow: 'hidden', border: '1.5px solid rgba(15,23,42,0.12)', width: 'fit-content' }}>
           {(['select', 'custom'] as const).map(m => (
             <button key={m} onClick={() => setMode(m)}
-              style={{ padding: '8px 20px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, fontFamily: 'inherit', background: mode === m ? BLUE : 'transparent', color: mode === m ? '#fff' : '#94a3b8', transition: 'all .15s' }}>
+              style={{ padding: '8px 20px', border: 'none', cursor: 'pointer', fontWeight: 700, fontSize: 13, fontFamily: 'inherit', background: mode === m ? BLUE : 'transparent', color: mode === m ? '#fff' : '#64748b', transition: 'all .15s' }}>
               {m === 'select' ? `From Open Actions (${open.length})` : 'Custom Action Text'}
             </button>
           ))}
@@ -313,7 +313,7 @@ const ActionRiskPrediction: React.FC = () => {
                 ))}
               </select>
               {selectedRecord && (
-                <div style={{ marginTop: 12, background: '#070f1a', borderRadius: 9, padding: 14, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+                <div style={{ marginTop: 12, background: '#eef4fb', borderRadius: 9, padding: 14, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
                   {[
                     ['Standard', selectedRecord.standard],
                     ['Severity', selectedRecord.severity],
@@ -322,13 +322,13 @@ const ActionRiskPrediction: React.FC = () => {
                   ].map(([k, v]) => (
                     <div key={k}>
                       <span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{k}</span>
-                      <p style={{ margin: '2px 0 0', fontSize: 13, color: '#f1f5f9', fontWeight: 600 }}>{v}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: 13, color: '#0f2547', fontWeight: 600 }}>{v}</p>
                     </div>
                   ))}
                   {selectedRecord.rootCause && (
                     <div style={{ gridColumn: '1 / -1' }}>
                       <span style={{ fontSize: 10, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Root Cause</span>
-                      <p style={{ margin: '2px 0 0', fontSize: 13, color: '#cbd5e1' }}>{selectedRecord.rootCause}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: 13, color: '#475569' }}>{selectedRecord.rootCause}</p>
                     </div>
                   )}
                 </div>
@@ -353,7 +353,7 @@ const ActionRiskPrediction: React.FC = () => {
           </button>
           {result && (
             <button onClick={run} disabled={busy}
-              style={{ ...btnS('transparent'), border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8', padding: '10px 14px' }}>
+              style={{ ...btnS('transparent'), border: '1px solid rgba(15,23,42,0.14)', color: '#64748b', padding: '10px 14px' }}>
               <RefreshCw size={14} /> Re-run
             </button>
           )}
@@ -371,13 +371,13 @@ const ActionRiskPrediction: React.FC = () => {
                 <Badge text={`${result.riskLevel} Risk`} color={RISK_COLOR[result.riskLevel]} />
                 <Badge text={result.feasibility} color={FEAS_COLOR[result.feasibility]} />
                 {source === 'claude' && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-                {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
-                <button style={{ marginLeft: 'auto', ...btnS('#1e293b'), padding: '5px 12px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' }} onClick={copyResult}>
+                {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Heuristic</span>}
+                <button style={{ marginLeft: 'auto', ...btnS('#eef2f7'), padding: '5px 12px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' }} onClick={copyResult}>
                   <Copy size={12} /> {copied ? 'Copied!' : 'Copy'}
                 </button>
               </div>
-              <p style={{ margin: 0, fontSize: 13, color: '#94a3b8', lineHeight: 1.5 }}>
-                <strong style={{ color: '#f1f5f9' }}>Action: </strong>{result.actionSummary}
+              <p style={{ margin: 0, fontSize: 13, color: '#64748b', lineHeight: 1.5 }}>
+                <strong style={{ color: '#0f2547' }}>Action: </strong>{result.actionSummary}
               </p>
             </div>
           </div>
@@ -391,7 +391,7 @@ const ActionRiskPrediction: React.FC = () => {
             {expandedSec === 'csf' && result.criticalSuccessFactors.map((f, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
                 <CheckCircle2 size={14} color="#22c55e" style={{ flexShrink: 0, marginTop: 2 }} />
-                <span style={{ fontSize: 13, color: '#e2e8f0', lineHeight: 1.6 }}>{f}</span>
+                <span style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{f}</span>
               </div>
             ))}
           </div>
@@ -405,7 +405,7 @@ const ActionRiskPrediction: React.FC = () => {
             {expandedSec === 'failure' && result.failurePoints.map((f, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
                 <AlertTriangle size={14} color={RISK_COLOR[result.riskLevel]} style={{ flexShrink: 0, marginTop: 2 }} />
-                <span style={{ fontSize: 13, color: '#e2e8f0', lineHeight: 1.6 }}>{f}</span>
+                <span style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{f}</span>
               </div>
             ))}
           </div>
@@ -419,7 +419,7 @@ const ActionRiskPrediction: React.FC = () => {
             {expandedSec === 'mitigation' && result.mitigations.map((m, i) => (
               <div key={i} style={{ display: 'flex', gap: 10, marginBottom: 8, alignItems: 'flex-start' }}>
                 <Lightbulb size={14} color="#0891b2" style={{ flexShrink: 0, marginTop: 2 }} />
-                <span style={{ fontSize: 13, color: '#e2e8f0', lineHeight: 1.6 }}>{m}</span>
+                <span style={{ fontSize: 13, color: '#334155', lineHeight: 1.6 }}>{m}</span>
               </div>
             ))}
           </div>
@@ -427,7 +427,7 @@ const ActionRiskPrediction: React.FC = () => {
           {/* Monitoring */}
           <div style={{ ...cardS, borderLeft: `4px solid #7c3aed` }}>
             <SectionHead icon={<Eye size={14} color="#7c3aed" />} title="Recommended Monitoring Approach" color="#7c3aed" />
-            <p style={{ margin: 0, fontSize: 13, color: '#e2e8f0', lineHeight: 1.7 }}>{result.monitoring}</p>
+            <p style={{ margin: 0, fontSize: 13, color: '#334155', lineHeight: 1.7 }}>{result.monitoring}</p>
           </div>
         </div>
       )}

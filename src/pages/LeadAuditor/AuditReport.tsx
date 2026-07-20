@@ -67,23 +67,34 @@ const safeJSON = <T,>(k: string, fb: T): T => {
   try { const r = localStorage.getItem(k); return r ? JSON.parse(r) as T : fb; } catch { return fb; }
 };
 
-const mapSeverity = (sev: string): Finding['severity'] =>
-  sev === 'Major NC' ? 'critical' : sev === 'Minor NC' ? 'high' : sev === 'Observation' ? 'medium' : 'low';
+const mapSeverity = (sev: string): Finding['severity'] => {
+  const s = (sev || '').toLowerCase();
+  if (s.includes('major')) return 'critical';
+  if (s.includes('minor')) return 'high';
+  if (s.includes('observation') || s.includes('ofi')) return 'medium';
+  return 'low';
+};
 
 /** Findings recorded by auditors in `cms_audit_findings_v1`, keyed by clientId. */
 const loadSharedFindings = (): Finding[] => {
-  const map = safeJSON<Record<string, any[]>>('cms_audit_findings_v1', {});
-  return Object.entries(map).flatMap(([clientId, list]) =>
-    (list || []).map((f: any) => ({
-      auditId: clientId,
-      title: f.clause ? `Clause ${f.clause}` : String(f.severity || 'Finding'),
-      severity: mapSeverity(String(f.severity || '')),
-      description: String(f.description || ''),
+  const raw = safeJSON<any>('cms_audit_findings_v1', []);
+  // The store may hold a flat array of findings OR a map keyed by clientId.
+  let items: any[] = [];
+  if (Array.isArray(raw)) items = raw;
+  else if (raw && typeof raw === 'object') {
+    items = Object.values(raw).flat();
+  }
+  return items
+    .filter((f) => f && typeof f === 'object')
+    .map((f: any) => ({
+      auditId: String(f.auditId || f.clientId || f.client || ''),
+      title: f.clause ? `Clause ${f.clause}` : String(f.severity || f.category || 'Finding'),
+      severity: mapSeverity(String(f.severity || f.category || '')),
+      description: String(f.description || f.title || ''),
       recommendation: f.evidence
         ? `Evidence: ${f.evidence}. Address and provide corrective action.`
-        : 'Address and provide corrective action.',
-    }))
-  );
+        : String(f.recommendation || 'Address and provide corrective action.'),
+    }));
 };
 
 const reportSections: ReportSection[] = [
@@ -101,7 +112,7 @@ const AuditReport: React.FC = () => {
   const [sharedReports, setSharedReports] = useState<AuditReportsMap>(() => loadAuditReports());
   useEffect(() => subscribeAuditReports(() => setSharedReports(loadAuditReports())), []);
 
-  const audits: Audit[] = useMemo(() => Object.entries(sharedReports).map(([key, r]) => {
+  const audits: Audit[] = useMemo(() => Object.entries(sharedReports).filter(([, r]) => r && typeof r === 'object').map(([key, r]) => {
     const status = deriveReportStatus(r);
     return {
       id: key,

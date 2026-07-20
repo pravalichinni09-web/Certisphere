@@ -148,9 +148,9 @@ function parseClaude(raw: string): Suggestion[] | null {
 
 /* ─── Design tokens ──────────────────────────────────────────────── */
 const GOLD = '#c9922a', BLUE = '#1d4ed8';
-const card: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 24, marginBottom: 20, color: '#e2e8f0' };
-const inp: React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 700, color: '#94a3b8', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
+const card: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 24, marginBottom: 20, color: '#334155' };
+const inp: React.CSSProperties = { width: '100%', padding: '10px 12px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 9, fontSize: 14, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl: React.CSSProperties = { display: 'block', fontSize: 11, fontWeight: 700, color: '#64748b', marginBottom: 5, letterSpacing: '0.05em', textTransform: 'uppercase' };
 const btn = (c = BLUE): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '10px 20px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 14, cursor: 'pointer' });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 5, padding: '3px 9px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 11, fontWeight: 700 };
 const RISK_COLOR: Record<string, string> = { High: '#ef4444', Medium: '#f59e0b', Low: '#22c55e' };
@@ -281,7 +281,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
           <BrainCircuit size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Smart Compliance Suggestions</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Smart Compliance Suggestions</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>AI compliance advisor — top 5 priority actions tailored to your audit status</p>
         </div>
       </div>
@@ -290,7 +290,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.08)', border: '1px solid rgba(201,146,42,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 20, display: 'flex', gap: 12, alignItems: 'center' }}>
           <Info size={17} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 13, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 13, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — structured recommendations from your live audit data.
             Configure your Claude API key in <strong>AI Settings</strong> for a fully personalised AI response.
           </p>
@@ -299,7 +299,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
 
       {/* Context form */}
       <div style={card}>
-        <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 800, color: '#f1f5f9', display: 'flex', alignItems: 'center', gap: 8 }}>
+        <h3 style={{ margin: '0 0 14px', fontSize: 15, fontWeight: 800, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 8 }}>
           <Layers size={17} color={GOLD} /> Audit Context
           <span style={{ marginLeft: 'auto', fontSize: 12, color: '#64748b', fontWeight: 400 }}>Pre-filled from your live data</span>
         </h3>
@@ -341,19 +341,19 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
         {(ctx.openActions.length > 0 || ctx.majors.length > 0 || ctx.compliance !== null) && (
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 16 }}>
             {ctx.compliance !== null && (
-              <div style={{ background: '#0a1525', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: ctx.compliance >= 75 ? '#22c55e' : '#f59e0b' }}>{ctx.compliance}%</div>
                 <div style={{ fontSize: 11, color: '#64748b' }}>Compliance Score</div>
               </div>
             )}
             {ctx.openActions.length > 0 && (
-              <div style={{ background: '#0a1525', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: '#f59e0b' }}>{ctx.openActions.length}</div>
                 <div style={{ fontSize: 11, color: '#64748b' }}>Open Actions</div>
               </div>
             )}
             {ctx.majors.length > 0 && (
-              <div style={{ background: '#0a1525', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
+              <div style={{ background: '#f8fafc', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 8, padding: '8px 14px', textAlign: 'center' }}>
                 <div style={{ fontSize: 22, fontWeight: 900, color: '#ef4444' }}>{ctx.majors.length}</div>
                 <div style={{ fontSize: 11, color: '#64748b' }}>Major NCs</div>
               </div>
@@ -374,16 +374,16 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14 }}>
             <ShieldCheck size={18} color={GOLD} />
-            <span style={{ fontWeight: 800, fontSize: 15, color: '#f1f5f9' }}>Top 5 Priority Actions</span>
+            <span style={{ fontWeight: 800, fontSize: 15, color: '#0f2547' }}>Top 5 Priority Actions</span>
             {source === 'claude' && <span style={aiBadge}><Sparkles size={10} /> Claude AI</span>}
-            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.15)', borderColor: 'rgba(100,116,139,0.4)', color: '#94a3b8' }}>Smart Heuristic</span>}
-            <button style={{ marginLeft: 'auto', ...btn('#1e293b'), padding: '6px 12px', fontSize: 12 }} onClick={copyAll}>
+            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.15)', borderColor: 'rgba(100,116,139,0.4)', color: '#64748b' }}>Smart Heuristic</span>}
+            <button style={{ marginLeft: 'auto', ...btn('#eef2f7'), padding: '6px 12px', fontSize: 12 }} onClick={copyAll}>
               <Copy size={13} /> {copied ? 'Copied!' : 'Copy All'}
             </button>
           </div>
 
           {suggestions.map((s, i) => (
-            <div key={i} style={{ background: '#0d1929', border: `1px solid rgba(255,255,255,0.08)`, borderLeft: `4px solid ${RISK_COLOR[s.riskLevel]}`, borderRadius: 12, marginBottom: 12, overflow: 'hidden' }}>
+            <div key={i} style={{ background: '#ffffff', border: `1px solid rgba(15,23,42,0.09)`, borderLeft: `4px solid ${RISK_COLOR[s.riskLevel]}`, borderRadius: 12, marginBottom: 12, overflow: 'hidden' }}>
               {/* Header row */}
               <div
                 style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 18px', cursor: 'pointer' }}
@@ -393,7 +393,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
                   <span style={{ fontWeight: 900, fontSize: 13, color: RISK_COLOR[s.riskLevel] }}>{i + 1}</span>
                 </div>
                 <div style={{ flex: 1 }}>
-                  <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: '#f1f5f9' }}>{s.title}</p>
+                  <p style={{ margin: 0, fontWeight: 700, fontSize: 14, color: '#0f2547' }}>{s.title}</p>
                   <div style={{ display: 'flex', gap: 10, marginTop: 4, flexWrap: 'wrap' }}>
                     <span style={{ fontSize: 11, color: '#64748b', display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={11} />{s.effort}</span>
                     <span style={{ fontSize: 11, color: '#64748b' }}>Due: {s.completionDate}</span>
@@ -405,14 +405,14 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
 
               {/* Expanded detail */}
               {expanded === i && (
-                <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', padding: '14px 18px', background: '#0a1525' }}>
-                  <p style={{ margin: '0 0 12px', fontSize: 13, color: '#e2e8f0', lineHeight: 1.7 }}>{s.detail}</p>
+                <div style={{ borderTop: '1px solid rgba(15,23,42,0.07)', padding: '14px 18px', background: '#f8fafc' }}>
+                  <p style={{ margin: '0 0 12px', fontSize: 13, color: '#334155', lineHeight: 1.7 }}>{s.detail}</p>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                    <div style={{ background: '#0d1929', borderRadius: 8, padding: '10px 12px' }}>
+                    <div style={{ background: '#ffffff', borderRadius: 8, padding: '10px 12px' }}>
                       <p style={{ margin: '0 0 4px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Resources Required</p>
-                      <p style={{ margin: 0, fontSize: 13, color: '#cbd5e1' }}>{s.resources}</p>
+                      <p style={{ margin: 0, fontSize: 13, color: '#475569' }}>{s.resources}</p>
                     </div>
-                    <div style={{ background: '#0d1929', borderRadius: 8, padding: '10px 12px', borderLeft: `3px solid ${RISK_COLOR[s.riskLevel]}` }}>
+                    <div style={{ background: '#ffffff', borderRadius: 8, padding: '10px 12px', borderLeft: `3px solid ${RISK_COLOR[s.riskLevel]}` }}>
                       <p style={{ margin: '0 0 4px', fontSize: 10, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Risk if Not Addressed</p>
                       <p style={{ margin: 0, fontSize: 13, color: RISK_COLOR[s.riskLevel] }}>{s.risk}</p>
                     </div>
@@ -428,7 +428,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
           ))}
 
           {/* Regenerate */}
-          <button style={{ ...btn('#0f172a'), border: '1px solid rgba(255,255,255,0.1)', marginTop: 4 }} onClick={run} disabled={busy}>
+          <button style={{ ...btn('#0f172a'), border: '1px solid rgba(15,23,42,0.12)', marginTop: 4 }} onClick={run} disabled={busy}>
             <RefreshCw size={14} /> Regenerate
           </button>
         </div>

@@ -1561,8 +1561,10 @@ html { scroll-behavior: smooth; scroll-padding-top: 84px; }
 .cs-orbital-outer {
   position: absolute;
   inset: 4%;
-  border: 1.5px dashed rgba(255, 215, 0, 0.32);
-  border-radius: 50%;
+  border: none;
+  border-radius: 0;
+  /* Octagon figure instead of a circle */
+  clip-path: polygon(50% 0%, 85.36% 14.64%, 100% 50%, 85.36% 85.36%, 50% 100%, 14.64% 85.36%, 0% 50%, 14.64% 14.64%);
   box-shadow: inset 0 0 60px rgba(31, 107, 191, 0.18), 0 0 30px rgba(0,0,0,0.30);
   background:
     radial-gradient(ellipse at center,

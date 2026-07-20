@@ -169,10 +169,22 @@ export function installStorageProxy(): void {
   if (installed || typeof window === 'undefined') return;
   installed = true;
   const _set = localStorage.setItem.bind(localStorage);
+  let dispatching = false;
   localStorage.setItem = function (key: string, value: string): void {
     _set(key, value);
     const table = KEY_TABLE[key];
     if (table && isSupabaseEnabled()) scheduleSync(key, table, value);
+    // Same-tab live sync: the native 'storage' event only fires in OTHER tabs.
+    // Re-dispatch it here for CMS keys so every open role view refreshes the
+    // moment data changes — keeping the end-to-end workflow in sync in one tab.
+    if (!dispatching && typeof key === 'string' && key.indexOf('cms_') === 0) {
+      dispatching = true;
+      try {
+        window.dispatchEvent(new StorageEvent('storage', { key, newValue: value }));
+        window.dispatchEvent(new CustomEvent('cms-data-changed', { detail: key }));
+      } catch { /* ignore */ }
+      dispatching = false;
+    }
   };
   console.info('[CertiSphere] StorageProxy active — writes mirror to Supabase');
 }

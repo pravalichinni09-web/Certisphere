@@ -545,3 +545,56 @@
   [data-theme="light"] #about-us .cs-home-section-title,
   [data-theme="light"] #about-us .cs-founder-exp strong { animation: none !important; }
 }
+
+/* =============================================================
+   Animated standard emojis — gentle, classy float + hover pop
+   (emoji & text unchanged; motion only)
+   ============================================================= */
+.cs-cert-body-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center;
+  will-change: transform;
+  animation: cs-emoji-float 3.4s ease-in-out infinite;
+  font-size: 1.9rem;
+  line-height: 1;
+}
+/* glowing gold line-icon look (matches the animated background marks) */
+.cs-cert-body-icon svg {
+  color: #f5c130 !important;
+  stroke-width: 2.2;
+  filter: drop-shadow(0 0 8px rgba(245,193,48,.55)) drop-shadow(0 0 2px rgba(245,193,48,.8));
+}
+.cs-cert-body-card:hover .cs-cert-body-icon svg {
+  color: #ffd700 !important;
+  filter: drop-shadow(0 0 14px rgba(255,215,0,.75)) drop-shadow(0 0 4px rgba(255,215,0,.9));
+}
+/* stagger so the row bobs like a gentle wave, not in unison */
+.cs-cert-body-card:nth-child(1) .cs-cert-body-icon { animation-delay: 0s; }
+.cs-cert-body-card:nth-child(2) .cs-cert-body-icon { animation-delay: .25s; }
+.cs-cert-body-card:nth-child(3) .cs-cert-body-icon { animation-delay: .5s; }
+.cs-cert-body-card:nth-child(4) .cs-cert-body-icon { animation-delay: .75s; }
+.cs-cert-body-card:nth-child(5) .cs-cert-body-icon { animation-delay: .35s; }
+.cs-cert-body-card:nth-child(6) .cs-cert-body-icon { animation-delay: .6s; }
+.cs-cert-body-card:nth-child(7) .cs-cert-body-icon { animation-delay: .85s; }
+.cs-cert-body-card:nth-child(8) .cs-cert-body-icon { animation-delay: .45s; }
+.cs-cert-body-card:nth-child(9) .cs-cert-body-icon { animation-delay: .7s; }
+.cs-cert-body-card:nth-child(10) .cs-cert-body-icon { animation-delay: .95s; }
+/* playful pop on hover */
+.cs-cert-body-card:hover .cs-cert-body-icon {
+  animation: cs-emoji-pop .55s cubic-bezier(.34,1.56,.64,1);
+}
+@keyframes cs-emoji-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-5px) rotate(-4deg); }
+}
+@keyframes cs-emoji-pop {
+  0%   { transform: scale(1) rotate(0deg); }
+  40%  { transform: scale(1.32) rotate(8deg); }
+  70%  { transform: scale(0.96) rotate(-4deg); }
+  100% { transform: scale(1) rotate(0deg); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cs-cert-body-icon { animation: none !important; }
+}

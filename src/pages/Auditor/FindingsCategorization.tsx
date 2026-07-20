@@ -215,9 +215,9 @@ const ROOT_EMOJI: Record<RootCauseCategory, string> = {
   'Technology & Systems': '💻', 'Management & Leadership': '👔', 'Resource & Capacity': '🏗️',
   'Communication': '📢', 'External / Supplier': '🔗', 'Unknown': '❓',
 };
-const cardS: React.CSSProperties = { background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: 16, padding: 20, marginBottom: 16 };
-const inp:   React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box', color: '#f1f5f9', background: '#0a1525', outline: 'none' };
-const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: '#94a3b8', marginBottom: 3, letterSpacing: '0.06em', textTransform: 'uppercase' };
+const cardS: React.CSSProperties = { background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: 16, padding: 20, marginBottom: 16 };
+const inp:   React.CSSProperties = { width: '100%', padding: '8px 10px', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 8, fontSize: 13, fontFamily: 'inherit', boxSizing: 'border-box', color: '#0f2547', background: '#f8fafc', outline: 'none' };
+const lbl:   React.CSSProperties = { display: 'block', fontSize: 10, fontWeight: 800, color: '#64748b', marginBottom: 3, letterSpacing: '0.06em', textTransform: 'uppercase' };
 const btnS = (c = BLUE, extra: React.CSSProperties = {}): React.CSSProperties => ({ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 16px', borderRadius: 9, border: 'none', background: c, color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer', ...extra });
 const aiBadge: React.CSSProperties = { display: 'inline-flex', alignItems: 'center', gap: 4, padding: '2px 8px', borderRadius: 999, background: 'rgba(201,146,42,0.15)', border: '1px solid rgba(201,146,42,0.4)', color: GOLD, fontSize: 10, fontWeight: 700 };
 
@@ -335,7 +335,7 @@ const FindingsCategorization: React.FC = () => {
           <LayoutList size={24} color="#fff" />
         </div>
         <div>
-          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#f1f5f9' }}>Findings Categorization</h1>
+          <h1 style={{ margin: 0, fontSize: 22, fontWeight: 900, color: '#0f2547' }}>Findings Categorization</h1>
           <p style={{ margin: 0, fontSize: 13, color: '#64748b' }}>
             {claude ? 'AI classifier — auto-categorizes findings across 7 dimensions with Claude precision' : 'Heuristic classifier — instant multi-dimension finding categorization'}
           </p>
@@ -345,7 +345,7 @@ const FindingsCategorization: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={14} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 12, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — keyword-based classification across all 7 dimensions. Configure Claude API key in <strong>AI Settings</strong> for precise, context-aware AI classification.
           </p>
         </div>
@@ -354,12 +354,12 @@ const FindingsCategorization: React.FC = () => {
       {/* Controls */}
       <div style={{ ...cardS, padding: '14px 18px' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: '#f1f5f9' }}>
+          <span style={{ fontSize: 14, fontWeight: 700, color: '#0f2547' }}>
             {findings.length} finding{findings.length !== 1 ? 's' : ''}
             {seedFindings.length > 0 && <span style={{ fontSize: 11, color: '#64748b', fontWeight: 400, marginLeft: 6 }}>({seedFindings.length} from live CARs)</span>}
           </span>
           <div style={{ marginLeft: 'auto', display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            <button style={btnS('#1e293b', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={addFinding}>
+            <button style={btnS('#eef2f7', { border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' })} onClick={addFinding}>
               <Plus size={13} /> Add Finding
             </button>
             <button style={btnS(busy ? '#374151' : '#4f46e5')} onClick={classify} disabled={findings.length === 0}>
@@ -368,7 +368,7 @@ const FindingsCategorization: React.FC = () => {
                 : <><Wand2 size={14} />{claude ? ' Classify with Claude' : ' Run Classification'}</>}
             </button>
             {classified.length > 0 && !busy && (
-              <button style={btnS('transparent', { border: '1px solid rgba(255,255,255,0.12)', color: '#94a3b8' })} onClick={classify}>
+              <button style={btnS('transparent', { border: '1px solid rgba(15,23,42,0.14)', color: '#64748b' })} onClick={classify}>
                 <RefreshCw size={13} /> Re-run
               </button>
             )}
@@ -380,14 +380,14 @@ const FindingsCategorization: React.FC = () => {
       {classified.length > 0 && (
         <div style={cardS}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-            <span style={{ fontSize: 13, fontWeight: 800, color: '#f1f5f9' }}>
+            <span style={{ fontSize: 13, fontWeight: 800, color: '#0f2547' }}>
               <CheckCircle2 size={14} color="#22c55e" style={{ verticalAlign: 'middle', marginRight: 5 }} />
               {classified.length} classified
             </span>
             {source === 'claude'    && <span style={aiBadge}><Sparkles size={9} /> Claude AI</span>}
-            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#94a3b8' }}>Heuristic</span>}
+            {source === 'heuristic' && <span style={{ ...aiBadge, background: 'rgba(100,116,139,0.12)', borderColor: 'rgba(100,116,139,0.3)', color: '#64748b' }}>Heuristic</span>}
             <div style={{ marginLeft: 'auto', display: 'flex', gap: 7 }}>
-              <button style={btnS('#1e293b', { padding: '5px 11px', fontSize: 12, border: '1px solid rgba(255,255,255,0.1)' })} onClick={copyAll}>
+              <button style={btnS('#eef2f7', { padding: '5px 11px', fontSize: 12, border: '1px solid rgba(15,23,42,0.12)' })} onClick={copyAll}>
                 <Copy size={12} />{copied ? ' Copied!' : ' Copy'}
               </button>
               <button style={btnS('#064e3b', { padding: '5px 11px', fontSize: 12 })} onClick={exportCSV}>
@@ -399,7 +399,7 @@ const FindingsCategorization: React.FC = () => {
           {/* Summary stat chips */}
           <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
             <button onClick={() => setFilterCls('All')}
-              style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${filterCls === 'All' ? BLUE : 'rgba(255,255,255,0.1)'}`, color: filterCls === 'All' ? '#93c5fd' : '#64748b' }) }}>
+              style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${filterCls === 'All' ? BLUE : 'rgba(15,23,42,0.12)'}`, color: filterCls === 'All' ? '#93c5fd' : '#64748b' }) }}>
               All ({findings.length})
             </button>
             {(Object.entries(CLASS_STYLE) as [ClassificationType, typeof CLASS_STYLE[ClassificationType]][]).map(([cls, s]) => {
@@ -408,7 +408,7 @@ const FindingsCategorization: React.FC = () => {
               const active = filterCls === cls;
               return (
                 <button key={cls} onClick={() => setFilterCls(active ? 'All' : cls)}
-                  style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${active ? s.color : 'rgba(255,255,255,0.1)'}`, color: active ? s.color : '#64748b', background: active ? s.bg : 'transparent' }) }}>
+                  style={{ ...btnS('transparent', { padding: '4px 12px', fontSize: 11, border: `1px solid ${active ? s.color : 'rgba(15,23,42,0.12)'}`, color: active ? s.color : '#64748b', background: active ? s.bg : 'transparent' }) }}>
                   {s.short} <span style={{ background: s.color, color: '#fff', borderRadius: 999, padding: '0 5px', fontSize: 10, marginLeft: 4 }}>{count}</span>
                 </button>
               );
@@ -420,9 +420,9 @@ const FindingsCategorization: React.FC = () => {
             {[1,2,3,4,5].map(p => {
               const count = classified.filter(f => f.classification!.priority === p).length;
               return (
-                <div key={p} style={{ flex: 1, background: '#070f1a', borderRadius: 8, padding: '8px 0', textAlign: 'center' }}>
+                <div key={p} style={{ flex: 1, background: '#eef4fb', borderRadius: 8, padding: '8px 0', textAlign: 'center' }}>
                   <div style={{ fontSize: 16, fontWeight: 900, color: PRIORITY_COLOR(p) }}>P{p}</div>
-                  <div style={{ fontSize: 18, fontWeight: 900, color: '#f1f5f9', marginTop: 1 }}>{count}</div>
+                  <div style={{ fontSize: 18, fontWeight: 900, color: '#0f2547', marginTop: 1 }}>{count}</div>
                   <div style={{ fontSize: 9, color: '#475569', marginTop: 1 }}>
                     {p === 1 ? 'Critical' : p === 2 ? 'Urgent' : p === 3 ? 'High' : p === 4 ? 'Normal' : 'Low'}
                   </div>
@@ -440,7 +440,7 @@ const FindingsCategorization: React.FC = () => {
         const isExp = expanded[finding.id] ?? !c;
 
         return (
-          <div key={finding.id} style={{ ...cardS, borderColor: cs ? `${cs.color}40` : 'rgba(255,255,255,0.08)', borderWidth: c?.priority === 1 ? 2 : 1 }}>
+          <div key={finding.id} style={{ ...cardS, borderColor: cs ? `${cs.color}40` : 'rgba(15,23,42,0.09)', borderWidth: c?.priority === 1 ? 2 : 1 }}>
 
             {/* Header row */}
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
@@ -452,7 +452,7 @@ const FindingsCategorization: React.FC = () => {
                   {c && <Pill label={`${c.impact} Impact`} color={IMPACT_COLOR[c.impact]} />}
                   {finding.clause && <span style={{ fontSize: 11, color: '#475569' }}>{finding.clause}</span>}
                 </div>
-                <p style={{ margin: 0, fontSize: 13.5, color: '#e2e8f0', lineHeight: 1.5 }}>
+                <p style={{ margin: 0, fontSize: 13.5, color: '#334155', lineHeight: 1.5 }}>
                   {finding.description || <span style={{ color: '#334155', fontStyle: 'italic' }}>No description — expand to edit</span>}
                 </p>
               </div>
@@ -467,7 +467,7 @@ const FindingsCategorization: React.FC = () => {
             </div>
 
             {isExp && (
-              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(255,255,255,0.06)' }}>
+              <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid rgba(15,23,42,0.07)' }}>
                 {/* Edit fields */}
                 <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 10, marginBottom: 10 }}>
                   <div>
@@ -495,18 +495,18 @@ const FindingsCategorization: React.FC = () => {
                       { label: 'Classification', value: c.classification, color: cs!.color },
                       { label: 'Impact Level',   value: c.impact,         color: IMPACT_COLOR[c.impact] },
                       { label: 'Priority',       value: `P${c.priority} — ${c.priority === 1 ? 'Critical' : c.priority === 2 ? 'Urgent' : c.priority === 3 ? 'High' : c.priority === 4 ? 'Normal' : 'Low'}`, color: PRIORITY_COLOR(c.priority) },
-                      { label: 'Root Cause Category', value: `${ROOT_EMOJI[c.rootCauseCategory]} ${c.rootCauseCategory}`, color: '#94a3b8' },
+                      { label: 'Root Cause Category', value: `${ROOT_EMOJI[c.rootCauseCategory]} ${c.rootCauseCategory}`, color: '#64748b' },
                       { label: 'Effort Estimate', value: c.effort,       color: c.effort.startsWith('High') ? '#ef4444' : c.effort.startsWith('Medium') ? '#f59e0b' : '#22c55e' },
                       { label: 'Target Resolution Date', value: c.targetDate, color: '#38bdf8' },
                     ].map(field => (
-                      <div key={field.label} style={{ background: '#070f1a', borderRadius: 9, padding: '10px 12px' }}>
+                      <div key={field.label} style={{ background: '#eef4fb', borderRadius: 9, padding: '10px 12px' }}>
                         <div style={{ fontSize: 9, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>{field.label}</div>
                         <div style={{ fontSize: 12.5, fontWeight: 700, color: field.color, lineHeight: 1.4 }}>{field.value}</div>
                       </div>
                     ))}
-                    <div style={{ gridColumn: 'span 3', background: '#070f1a', borderRadius: 9, padding: '10px 12px' }}>
+                    <div style={{ gridColumn: 'span 3', background: '#eef4fb', borderRadius: 9, padding: '10px 12px' }}>
                       <div style={{ fontSize: 9, fontWeight: 800, color: '#475569', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 4 }}>📋 Classification Rationale</div>
-                      <p style={{ margin: 0, fontSize: 12.5, color: '#94a3b8', lineHeight: 1.55 }}>{c.rationale}</p>
+                      <p style={{ margin: 0, fontSize: 12.5, color: '#64748b', lineHeight: 1.55 }}>{c.rationale}</p>
                     </div>
                   </div>
                 )}

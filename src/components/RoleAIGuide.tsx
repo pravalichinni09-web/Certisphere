@@ -7,7 +7,7 @@ import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Play, ExternalLink, ChevronDown } from 'lucide-react';
 import AIPanel from './AIPanel';
-import { buildExecutiveBriefing, buildRiskRadar, detectAssignmentAnomalies } from '../ai/managementInsights';
+import { buildExecutiveBriefing, buildRiskRadar, detectAssignmentAnomalies, buildKpiDashboard } from '../ai/managementInsights';
 import { triageEnquiry, validateRegistrations, suggestAuditorsFor, calcAuditDays, buildEmailDraft, EMAIL_PURPOSES } from '../ai/coordinatorInsights';
 import { reviewReportQuality, classifyFinding as classifyFindingLA, assessAuditorCompetence } from '../ai/leadAuditorInsights';
 import { explainQuestion, structureFinding, summarizeEvidence } from '../ai/auditorInsights';
@@ -37,6 +37,7 @@ const SAMPLE_ACTION = { capId: 'CAP-X', clientName: 'Sample Co', standard: 'ISO 
 const RUNNERS: Record<string, () => unknown> = {
   'QCSAI Assistant': () => ({ reply: (ask('what is certms', { role: 'Management' } as any) as any)?.text?.slice?.(0, 220), suggestions: suggestionsForRole('Management') }),
   'Executive AI Briefing': () => buildExecutiveBriefing(),
+  'Executive Dashboard AI': () => buildKpiDashboard(),
   'Risk Radar': () => buildRiskRadar(),
   'Anomaly Detection': () => detectAssignmentAnomalies(),
   'Enquiry Auto-Triage': () => triageEnquiry(safeGet('cms_client_enquiries_v1')[0] || SAMPLE_ENQ),
@@ -84,6 +85,7 @@ const RUNNERS: Record<string, () => unknown> = {
 const CATALOG: Record<string, FeatureRow[]> = {
   'Management': [
     { name: 'Executive AI Briefing', where: 'Dashboard', path: '/management/dashboard', what: 'Plain-language summary of certificates, actions, utilisation and pipeline.' },
+    { name: 'Executive Dashboard AI', where: 'Dashboard', path: '/management/dashboard', what: 'KPI dashboard: pipeline, financial, quality, team, growth, risk and forecast — with targets, trends and RAG status.' },
     { name: 'Client Churn Prediction', where: 'AI Hub · ML', path: '/management/client-credentials', what: 'ML model ranks clients by churn risk with drivers.' },
     { name: 'Auditor Performance Scoring', where: 'AI Hub · ML', path: '/management/audit-assignments', what: 'Multi-factor performance score per auditor (rating, load, skills).' },
     { name: 'Findings Trend Analysis', where: 'AI Hub · Time series', path: '/management/dashboard', what: 'Monthly findings trajectory with direction analysis.' },

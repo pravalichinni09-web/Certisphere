@@ -338,7 +338,7 @@ function renderMd(text: string): string {
   return text
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/\*(.+?)\*/g, '<em>$1</em>')
-    .replace(/^#{1,3} (.+)$/gm, '<div style="font-weight:800;margin:10px 0 4px;color:#f1f5f9">$1</div>')
+    .replace(/^#{1,3} (.+)$/gm, '<div style="font-weight:800;margin:10px 0 4px;color:#0f2547">$1</div>')
     .replace(/^• (.+)$/gm, '<div style="padding-left:14px;margin:2px 0">• $1</div>')
     .replace(/^- (.+)$/gm, '<div style="padding-left:14px;margin:2px 0">• $1</div>')
     .replace(/\n\n/g, '<br/><br/>')
@@ -446,13 +446,13 @@ const AuditAssistant: React.FC = () => {
           <MessageSquare size={22} color="#fff" />
         </div>
         <div style={{ flex: 1 }}>
-          <h1 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: '#f1f5f9' }}>Real-time Audit Assistant</h1>
+          <h1 style={{ margin: 0, fontSize: 19, fontWeight: 900, color: '#0f2547' }}>Real-time Audit Assistant</h1>
           <p style={{ margin: 0, fontSize: 12, color: '#64748b' }}>
             {claude ? 'Claude AI — standards-based, context-aware audit guidance' : 'Audit FAQ engine — configure Claude API key for full AI guidance'}
           </p>
         </div>
         <button title="Clear conversation" onClick={reset}
-          style={{ background: 'none', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 9, padding: '7px 10px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12 }}>
+          style={{ background: 'none', border: '1px solid rgba(15,23,42,0.12)', borderRadius: 9, padding: '7px 10px', cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', gap: 5, fontSize: 12 }}>
           <RefreshCw size={13} /> Clear
         </button>
       </div>
@@ -460,7 +460,7 @@ const AuditAssistant: React.FC = () => {
       {!claude && (
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '9px 13px', marginBottom: 10, display: 'flex', gap: 9, alignItems: 'center', flexShrink: 0 }}>
           <Info size={14} color={GOLD} style={{ flexShrink: 0 }} />
-          <p style={{ margin: 0, fontSize: 11.5, color: '#f1f5f9', lineHeight: 1.5 }}>
+          <p style={{ margin: 0, fontSize: 11.5, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>FAQ mode</strong> — 15 auditor topics covered. Configure Claude API key in <strong>AI Settings</strong> for intelligent, clause-level guidance on any audit scenario.
           </p>
         </div>
@@ -474,9 +474,9 @@ const AuditAssistant: React.FC = () => {
             <div key={i} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', flexDirection: isUser ? 'row-reverse' : 'row' }}>
               {/* Avatar */}
               <div style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                background: isUser ? BLUE : m.source === 'claude' ? 'linear-gradient(135deg,#7c3aed,#1d4ed8)' : '#1e293b',
-                border: isUser ? 'none' : '1px solid rgba(255,255,255,0.08)' }}>
-                {isUser ? <User size={16} color="#fff" /> : m.source === 'claude' ? <Sparkles size={16} color="#fbbf24" /> : <Bot size={16} color="#94a3b8" />}
+                background: isUser ? BLUE : m.source === 'claude' ? 'linear-gradient(135deg,#7c3aed,#1d4ed8)' : '#eef2f7',
+                border: isUser ? 'none' : '1px solid rgba(15,23,42,0.09)' }}>
+                {isUser ? <User size={16} color="#fff" /> : m.source === 'claude' ? <Sparkles size={16} color="#fbbf24" /> : <Bot size={16} color="#64748b" />}
               </div>
               {/* Bubble */}
               <div style={{ maxWidth: '80%', display: 'flex', flexDirection: 'column', gap: 4, alignItems: isUser ? 'flex-end' : 'flex-start' }}>
@@ -488,9 +488,9 @@ const AuditAssistant: React.FC = () => {
                 )}
                 <div style={{
                   padding: '12px 15px', borderRadius: isUser ? '14px 14px 4px 14px' : '4px 14px 14px 14px',
-                  background: isUser ? BLUE : '#0d1929',
-                  border: isUser ? 'none' : '1px solid rgba(255,255,255,0.08)',
-                  fontSize: 13.5, color: '#e2e8f0', lineHeight: 1.65,
+                  background: isUser ? BLUE : '#ffffff',
+                  border: isUser ? 'none' : '1px solid rgba(15,23,42,0.09)',
+                  fontSize: 13.5, color: '#334155', lineHeight: 1.65,
                 }}>
                   {isUser
                     ? m.content
@@ -510,7 +510,7 @@ const AuditAssistant: React.FC = () => {
             <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#7c3aed,#1d4ed8)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
               <Sparkles size={16} color="#fbbf24" />
             </div>
-            <div style={{ background: '#0d1929', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '4px 14px 14px 14px', padding: '14px 18px' }}>
+            <div style={{ background: '#ffffff', border: '1px solid rgba(15,23,42,0.09)', borderRadius: '4px 14px 14px 14px', padding: '14px 18px' }}>
               <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                 {[0, 1, 2].map(i => (
                   <div key={i} style={{ width: 7, height: 7, borderRadius: '50%', background: GOLD, animation: `aa-dot 1.2s ease-in-out ${i * 0.2}s infinite` }} />
@@ -530,9 +530,9 @@ const AuditAssistant: React.FC = () => {
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
             {SUGGESTED.map(q => (
               <button key={q} onClick={() => send(q)}
-                style={{ padding: '6px 12px', borderRadius: 999, border: '1px solid rgba(255,255,255,0.1)', background: '#0d1929', color: '#94a3b8', fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' }}
-                onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = GOLD; (e.currentTarget as HTMLElement).style.color = '#f1f5f9'; }}
-                onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLElement).style.color = '#94a3b8'; }}>
+                style={{ padding: '6px 12px', borderRadius: 999, border: '1px solid rgba(15,23,42,0.12)', background: '#ffffff', color: '#64748b', fontSize: 12, cursor: 'pointer', transition: 'all 0.15s' }}
+                onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = GOLD; (e.currentTarget as HTMLElement).style.color = '#0f2547'; }}
+                onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = 'rgba(15,23,42,0.12)'; (e.currentTarget as HTMLElement).style.color = '#64748b'; }}>
                 {q}
               </button>
             ))}
@@ -542,22 +542,22 @@ const AuditAssistant: React.FC = () => {
 
       {/* Input bar */}
       <div style={{ display: 'flex', gap: 10, alignItems: 'flex-end', paddingTop: 10, flexShrink: 0 }}>
-        <div style={{ flex: 1, background: '#0d1929', border: '1.5px solid rgba(255,255,255,0.1)', borderRadius: 14, padding: '10px 14px', display: 'flex', alignItems: 'flex-end', gap: 8, transition: 'border-color 0.15s' }}
+        <div style={{ flex: 1, background: '#ffffff', border: '1.5px solid rgba(15,23,42,0.12)', borderRadius: 14, padding: '10px 14px', display: 'flex', alignItems: 'flex-end', gap: 8, transition: 'border-color 0.15s' }}
           onFocus={() => {}} onClick={() => inputRef.current?.focus()}>
           <textarea ref={inputRef} value={input} onChange={e => setInput(e.target.value)} onKeyDown={onKey}
             placeholder="Ask about NC classification, evidence, standards, procedures…"
-            rows={1} style={{ flex: 1, background: 'none', border: 'none', outline: 'none', resize: 'none', color: '#f1f5f9', fontSize: 14, fontFamily: 'inherit', lineHeight: 1.5, maxHeight: 120, overflowY: 'auto' }} />
+            rows={1} style={{ flex: 1, background: 'none', border: 'none', outline: 'none', resize: 'none', color: '#0f2547', fontSize: 14, fontFamily: 'inherit', lineHeight: 1.5, maxHeight: 120, overflowY: 'auto' }} />
           <Mic size={16} color="#334155" style={{ flexShrink: 0, marginBottom: 2 }} />
         </div>
         <button onClick={() => send()}
           disabled={!input.trim() || typing}
-          style={{ width: 44, height: 44, borderRadius: 12, border: 'none', background: input.trim() && !typing ? BLUE : '#1e293b', cursor: input.trim() && !typing ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s' }}>
+          style={{ width: 44, height: 44, borderRadius: 12, border: 'none', background: input.trim() && !typing ? BLUE : '#eef2f7', cursor: input.trim() && !typing ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, transition: 'background 0.2s' }}>
           {typing
             ? <Loader2 size={18} color="#475569" style={{ animation: 'aa-spin 1s linear infinite' }} />
             : <Send size={18} color={input.trim() ? '#fff' : '#475569'} />}
         </button>
       </div>
-      <div style={{ textAlign: 'center', fontSize: 10, color: '#1e293b', marginTop: 5, flexShrink: 0 }}>
+      <div style={{ textAlign: 'center', fontSize: 10, color: '#eef2f7', marginTop: 5, flexShrink: 0 }}>
         Enter to send · Shift+Enter for new line
       </div>
 
