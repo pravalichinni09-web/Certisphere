@@ -29,8 +29,8 @@ const card: React.CSSProperties = {
   padding: 24, marginBottom: 22, color: 'var(--cms-text-primary, #0f172a)',
 };
 const cardLight: React.CSSProperties = {
-  background: '#111d2e', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 12,
-  padding: 16, marginBottom: 12,
+  background: 'var(--cms-bg-elevated, #f8fafc)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 12,
+  padding: 16, marginBottom: 12, color: 'var(--cms-text-primary, #0f172a)',
 };
 const h3: React.CSSProperties = { margin: '0 0 4px', fontSize: 17, fontWeight: 800, color: 'var(--cms-text-primary, #0f172a)', display: 'flex', alignItems: 'center', gap: 10 };
 const sub: React.CSSProperties = { margin: '0 0 18px', color: 'var(--cms-text-muted, #64748b)', fontSize: 13 };
@@ -430,7 +430,7 @@ const AuditIntelligence: React.FC = () => {
           <button style={btn('#22c55e')} onClick={runReport}>
             {rptBusy ? <><Loader2 size={14} /> Stop</> : <><FileText size={14} /> {claude ? 'Generate with Claude (streaming)' : 'Generate Template'}</>}
           </button>
-          {rptOut && <button style={{ ...btn('#334155'), background: '#1e293b' }} onClick={copyReport}><Copy size={14} /> Copy</button>}
+          {rptOut && <button style={{ ...btn('#334155'), background: 'var(--cms-bg-subtle, #eef2f7)', color: 'var(--cms-text-primary, #0f172a)' }} onClick={copyReport}><Copy size={14} /> Copy</button>}
         </div>
         {rptOut && (
           <div style={{ marginTop: 16, background: 'var(--cms-bg-subtle, #f1f5f9)', border: '1px solid var(--cms-border-subtle, rgba(15,23,42,0.10))', borderRadius: 10, padding: 16, position: 'relative' }}>

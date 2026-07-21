@@ -103,6 +103,12 @@ const Home: React.FC = () => {
   const [founderImageIndex, setFounderImageIndex] = useState(0);
   const [founderImageLoaded, setFounderImageLoaded] = useState(false);
   const [showContact, setShowContact] = useState(false);
+  // Rotating spotlight across the 8 orbit modules
+  const [activeModule, setActiveModule] = useState(0);
+  React.useEffect(() => {
+    const t = window.setInterval(() => setActiveModule((n) => (n + 1) % 8), 1500);
+    return () => window.clearInterval(t);
+  }, []);
   const founderImageSrc = founderImageSources[founderImageIndex];
 
   const modules: Mod[] = [
@@ -250,7 +256,7 @@ const Home: React.FC = () => {
                   const x = 50 + Math.cos(rad) * 38;
                   const y = 50 + Math.sin(rad) * 38;
                   return (
-                    <div key={i} className="cs-orbital-node" style={{ left: x + '%', top: y + '%' }}>
+                    <div key={i} className={'cs-orbital-node' + (activeModule === i ? ' is-active' : '')} style={{ left: x + '%', top: y + '%' }}>
                       <div className="cs-orbital-node-inner">
                         <div className="cs-orbital-circle">{s.icon}</div>
                         <span className="cs-orbital-label">{s.label}</span>

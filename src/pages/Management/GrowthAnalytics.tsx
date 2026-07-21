@@ -4,9 +4,9 @@
  * with market size, effort, ROI, timeline and risk. Heuristic + optional Claude.
  */
 import React, { useState } from 'react';
-import { TrendingUp, Sparkles, Wand2, Loader2, Target, Gauge, Clock, AlertTriangle } from 'lucide-react';
+import { TrendingUp, Sparkles, Wand2, Loader2, Target, Gauge, Clock, AlertTriangle, Users, CalendarRange } from 'lucide-react';
 import { isClaudeConfigured } from '../../ai/claudeClient';
-import { analyzeGrowthHeuristic, analyzeGrowthWithClaude, GrowthAnalysis } from '../../ai/growthAnalytics';
+import { analyzeGrowthHeuristic, analyzeGrowthWithClaude, GrowthAnalysis, GrowthPeriod, PERIOD_LABEL, getClientBreakdown, ClientGrowthRow } from '../../ai/growthAnalytics';
 
 const sizeColor: Record<string, string> = { Large: '#16a34a', Medium: '#2563eb', Small: '#64748b' };
 const effortColor: Record<string, string> = { Low: '#16a34a', Medium: '#f59e0b', High: '#dc2626' };
@@ -24,13 +24,17 @@ const meta: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: 
 const GrowthAnalytics: React.FC = () => {
   const claude = isClaudeConfigured();
   const [busy, setBusy] = useState(false);
+  const [period, setPeriod] = useState<GrowthPeriod>('all');
   const [result, setResult] = useState<GrowthAnalysis | null>(null);
+  const [clients, setClients] = useState<ClientGrowthRow[]>([]);
 
-  const run = async () => {
+  const run = async (pd: GrowthPeriod = period) => {
     setBusy(true);
-    setResult(analyzeGrowthHeuristic());
+    setPeriod(pd);
+    setResult(analyzeGrowthHeuristic(pd));
+    setClients(getClientBreakdown(pd));
     if (claude) {
-      const r = await analyzeGrowthWithClaude();
+      const r = await analyzeGrowthWithClaude(pd);
       if (r && r.opportunities.length) setResult(r);
     }
     setBusy(false);
@@ -53,11 +57,24 @@ const GrowthAnalytics: React.FC = () => {
         </span>
       </div>
 
-      <div style={{ ...card, display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap' }}>
-        <div style={{ color: '#475569', fontSize: 13.5 }}>Analyse the current book of business for market gaps, underserved standards, geographic and segment expansion, service lines, and partnerships.</div>
-        <button type="button" style={btn} onClick={run} disabled={busy}>
-          {busy ? <Loader2 size={16} className="cs-spin" /> : <Wand2 size={16} />} Analyze Growth
-        </button>
+      <div style={{ ...card }}>
+        <div style={{ color: '#475569', fontSize: 13.5, marginBottom: 14 }}>Analyse the current book of business for market gaps, underserved standards, geographic and segment expansion, service lines, and partnerships.</div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#64748b' }}><CalendarRange size={14} /> Period:</span>
+            {(['week', 'month', 'year', 'all'] as GrowthPeriod[]).map((pd) => (
+              <button key={pd} type="button" onClick={() => run(pd)} disabled={busy}
+                style={{ padding: '6px 14px', borderRadius: 999, cursor: 'pointer', fontSize: 12.5, fontWeight: 700,
+                  border: '1px solid ' + (period === pd ? '#2563eb' : '#cbd5e1'),
+                  background: period === pd ? '#2563eb' : '#fff', color: period === pd ? '#fff' : '#475569' }}>
+                {PERIOD_LABEL[pd]}
+              </button>
+            ))}
+          </div>
+          <button type="button" style={btn} onClick={() => run(period)} disabled={busy}>
+            {busy ? <Loader2 size={16} className="cs-spin" /> : <Wand2 size={16} />} Analyze Growth
+          </button>
+        </div>
       </div>
 
       {result && (
@@ -67,8 +84,46 @@ const GrowthAnalytics: React.FC = () => {
               <Sparkles size={18} color="#2563eb" /> Summary
             </h3>
             <p style={{ margin: 0, color: '#334155', fontSize: 14, lineHeight: 1.6 }}>{result.summary}</p>
-            <div style={{ marginTop: 10, fontSize: 11.5, color: '#94a3b8' }}>{result.source === 'claude' ? 'AI strategist (Claude)' : 'Heuristic analysis'}</div>
+            <div style={{ marginTop: 10, fontSize: 11.5, color: '#94a3b8' }}>{result.source === 'claude' ? 'AI strategist (Claude)' : 'Heuristic analysis'} · {PERIOD_LABEL[period]}</div>
           </div>
+
+          {clients.length > 0 && (
+            <div style={card}>
+              <h3 style={{ margin: '0 0 12px', fontSize: 16, fontWeight: 800, color: '#0f2547', display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Users size={18} color="#2563eb" /> Clients in scope <span style={{ fontSize: 12, fontWeight: 700, color: '#64748b' }}>· {clients.length}</span>
+              </h3>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ textAlign: 'left', color: '#64748b' }}>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0' }}>Client</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0' }}>Industry</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0' }}>Standard</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0' }}>Country</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0', textAlign: 'center' }}>Audits</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0', textAlign: 'center' }}>Certs</th>
+                      <th style={{ padding: '8px 10px', borderBottom: '1px solid #e2e8f0' }}>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {clients.slice(0, 20).map((c, i) => (
+                      <tr key={i}>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', fontWeight: 700, color: '#0f2547' }}>{c.client}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', color: '#475569' }}>{c.industry}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', color: '#1d4ed8', fontWeight: 600 }}>{c.standard}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', color: '#475569' }}>{c.country}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', textAlign: 'center', color: '#0f2547', fontWeight: 700 }}>{c.audits}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9', textAlign: 'center', color: '#0f2547', fontWeight: 700 }}>{c.certs}</td>
+                        <td style={{ padding: '9px 10px', borderBottom: '1px solid #f1f5f9' }}>
+                          <span style={{ fontSize: 11, fontWeight: 800, padding: '2px 8px', borderRadius: 999, background: c.status === 'Active' ? '#dcfce7' : '#fee2e2', color: c.status === 'Active' ? '#166534' : '#b91c1c' }}>{c.status}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
 
           {result.opportunities.map((o) => (
             <div key={o.rank} style={{ ...card, marginBottom: 14, borderLeft: `4px solid ${sizeColor[o.marketSize]}` }}>

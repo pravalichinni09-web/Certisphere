@@ -20,10 +20,10 @@
   margin-left: 260px;
   width: calc(100% - 260px);
   box-sizing: border-box;
-  padding: 30px;
+  padding: 22px 26px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: stretch;
   background: transparent;
   min-height: 100vh;
 }

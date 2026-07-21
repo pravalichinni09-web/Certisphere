@@ -160,6 +160,8 @@ const ActionReview: React.FC = () => {
   const [selectedReview, setSelectedReview] = useState<ActionPlan | null>(null);
   const [comment, setComment] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'All' | 'Pending Review' | 'Approved' | 'Revision Requested'>('All');
+  const cycleFilter = () => setStatusFilter(f => f === 'All' ? 'Pending Review' : f === 'Pending Review' ? 'Approved' : f === 'Approved' ? 'Revision Requested' : 'All');
   const [showReviewModal, setShowReviewModal] = useState(false);
   const [viewingEvidences, setViewingEvidences] = useState<Evidence[] | null>(null);
   const [showEvidenceModal, setShowEvidenceModal] = useState(false);
@@ -339,8 +341,8 @@ const ActionReview: React.FC = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button className="btn-filter">
-            <Filter size={16} /> Filter
+          <button className="btn-filter" onClick={cycleFilter} title="Cycle status filter">
+            <Filter size={16} /> {statusFilter}
           </button>
         </div>
 
@@ -358,8 +360,9 @@ const ActionReview: React.FC = () => {
             </thead>
             <tbody>
               {reviews.filter(r => 
-                r.auditTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                r.findingId.toLowerCase().includes(searchTerm.toLowerCase())
+                (statusFilter === 'All' || r.status === statusFilter || (statusFilter === 'Approved' && r.status === 'Closed')) &&
+                (r.auditTitle.toLowerCase().includes(searchTerm.toLowerCase()) || 
+                r.findingId.toLowerCase().includes(searchTerm.toLowerCase()))
               ).map(plan => (
                 <tr key={plan.id}>
                   <td>

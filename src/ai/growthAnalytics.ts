@@ -65,8 +65,63 @@ const clientIndustry = (c: any) => str(c.clientType || c.industry || c.sector ||
 
 const INDUSTRY_GAPS = ['Healthcare', 'Software / IT', 'Food & Beverage', 'Construction', 'Energy', 'Manufacturing', 'Logistics', 'Financial Services'];
 
+/* ---------------- period + client breakdown ---------------- */
+export type GrowthPeriod = 'week' | 'month' | 'year' | 'all';
+export const PERIOD_LABEL: Record<GrowthPeriod, string> = { week: 'This Week', month: 'This Month', year: 'This Year', all: 'All Time' };
+const periodDays = (p: GrowthPeriod) => (p === 'week' ? 7 : p === 'month' ? 30 : p === 'year' ? 365 : Infinity);
+const withinPeriod = (dateStr: string, p: GrowthPeriod): boolean => {
+  if (p === 'all') return true;
+  const d = new Date(dateStr).getTime();
+  if (isNaN(d)) return false;
+  return (Date.now() - d) <= periodDays(p) * 86400000;
+};
+const schedDate = (s: any) => str(s.date || s.scheduledDate || s.startDate || '');
+
+export interface ClientGrowthRow {
+  client: string;
+  industry: string;
+  standard: string;
+  country: string;
+  status: string;
+  audits: number;
+  certs: number;
+}
+
+export const getClientBreakdown = (period: GrowthPeriod = 'all'): ClientGrowthRow[] => {
+  const clients = getClients();
+  const schedules = getSchedules();
+  const certs = getCertificates();
+  const byName = new Map<string, ClientGrowthRow>();
+  clients.filter((c) => c && typeof c === 'object').forEach((c: any) => {
+    const name = str(c.organizationName || c.client || c.clientName || c.name);
+    if (!name) return;
+    byName.set(name, {
+      client: name,
+      industry: clientIndustry(c) || 'General',
+      standard: stdCode(clientStandard(c)) || '—',
+      country: str(c.country) || '—',
+      status: str(c.status) || 'Active',
+      audits: 0, certs: 0,
+    });
+  });
+  schedules.filter((s) => s && typeof s === 'object').forEach((s: any) => {
+    if (!withinPeriod(schedDate(s), period)) return;
+    const name = str(s.organizationName || s.client || s.clientName);
+    if (!name) return;
+    const row = byName.get(name) || { client: name, industry: 'General', standard: stdCode(str(s.standard)) || '—', country: str(s.country) || '—', status: 'Active', audits: 0, certs: 0 };
+    row.audits += 1;
+    byName.set(name, row);
+  });
+  certs.filter((c) => c && typeof c === 'object').forEach((ct: any) => {
+    const name = str(ct.organizationName || ct.client || ct.clientName);
+    const row = byName.get(name);
+    if (row) row.certs += 1;
+  });
+  return [...byName.values()].sort((a, b) => (b.audits + b.certs) - (a.audits + a.certs));
+};
+
 /* ---------------- heuristic analyzer ---------------- */
-export const analyzeGrowthHeuristic = (): GrowthAnalysis => {
+export const analyzeGrowthHeuristic = (period: GrowthPeriod = 'all'): GrowthAnalysis => {
   const clients = getClients();
   const certs = getCertificates();
   const schedules = getSchedules();
@@ -116,7 +171,8 @@ export const analyzeGrowthHeuristic = (): GrowthAnalysis => {
 
   // 3. Service line expansion (surveillance capture)
   const activeCerts = certs.filter((c) => c && typeof c === 'object').length;
-  const surveillance = schedules.filter((s) => /surveillance|recert/i.test(str((s as any).auditType))).length;
+  const inPeriod = schedules.filter((s) => withinPeriod(schedDate(s), period));
+  const surveillance = inPeriod.filter((s) => /surveillance|recert/i.test(str((s as any).auditType))).length;
   if (activeCerts > 0 && surveillance < activeCerts) {
     opps.push({
       title: 'Capture recurring surveillance & recertification revenue',
@@ -169,7 +225,7 @@ export const analyzeGrowthHeuristic = (): GrowthAnalysis => {
 
   const ranked = rankOpportunities(opps);
   const summary =
-    `Analysed ${clients.length} client(s), ${activeCerts} certificate(s) across ${servedStd.size} standard(s) and ${servedCountry.size} region(s). ` +
+    `[${PERIOD_LABEL[period]}] Analysed ${clients.length} client(s), ${activeCerts} certificate(s) across ${servedStd.size} standard(s) and ${servedCountry.size} region(s). ` +
     `Identified ${ranked.length} actionable growth levers — the fastest wins are recurring surveillance revenue and advisory service lines, with new standards and geography as larger, higher-effort plays.`;
 
   return { summary, opportunities: ranked, source: 'heuristic' };
@@ -186,7 +242,7 @@ const rankOpportunities = (opps: Omit<GrowthOpportunity, 'rank'>[]): GrowthOppor
 };
 
 /* ---------------- Claude analyzer ---------------- */
-export const analyzeGrowthWithClaude = async (signal?: AbortSignal): Promise<GrowthAnalysis | null> => {
+export const analyzeGrowthWithClaude = async (period: GrowthPeriod = 'all', signal?: AbortSignal): Promise<GrowthAnalysis | null> => {
   if (!isClaudeConfigured()) return null;
   const clients = getClients();
   const certs = getCertificates();
@@ -197,7 +253,7 @@ export const analyzeGrowthWithClaude = async (signal?: AbortSignal): Promise<Gro
   const snapshot =
     `Clients: ${clients.length}\nActive certificates: ${certs.length}\nScheduled audits: ${schedules.length}\n` +
     `Standards served: ${served.join(', ') || 'none'}\nCountries served: ${countries.join(', ') || 'none'}\n` +
-    `Industries served: ${industries.slice(0, 12).join(', ') || 'none'}`;
+    `Industries served: ${industries.slice(0, 12).join(', ') || 'none'}\nAnalysis window: ${PERIOD_LABEL[period]}`;
   try {
     const out = await complete(`Certification body data snapshot:\n${snapshot}`, {
       system: GROWTH_SYSTEM_PROMPT, maxTokens: 1400, temperature: 0.4, signal,

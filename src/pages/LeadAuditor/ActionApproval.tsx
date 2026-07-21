@@ -73,6 +73,8 @@ const ActionApproval: React.FC = () => {
   const [requests, setRequests] = useState<ActionPlanRequest[]>(() => loadRequests());
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'Pending' | 'Approved' | 'Rejected' | 'All'>('Pending');
+  const cycleFilter = () => setStatusFilter(f => f === 'Pending' ? 'Approved' : f === 'Approved' ? 'Rejected' : f === 'Rejected' ? 'All' : 'Pending');
   const [approvalComment, setApprovalComment] = useState('');
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [selectedAction, setSelectedAction] = useState<{ id: string, type: 'Approve' | 'Reject' } | null>(null);
@@ -207,15 +209,15 @@ const ActionApproval: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
-        <button className="btn-filter">
-          <Filter size={16} /> Filter
+        <button className="btn-filter" onClick={cycleFilter} title="Cycle status filter">
+          <Filter size={16} /> {statusFilter === 'All' ? 'All Statuses' : statusFilter}
         </button>
       </div>
 
       {/* Requests List */}
       <div className="requests-list">
         {requests.filter(r => 
-          r.status === 'Pending' && 
+          (statusFilter === 'All' || r.status === statusFilter) && 
           (r.clientName.toLowerCase().includes(searchTerm.toLowerCase()) || r.auditTitle.toLowerCase().includes(searchTerm.toLowerCase()))
         ).map((request) => (
           <div key={request.id} className={`request-card ${expandedId === request.id ? 'expanded' : ''}`}>

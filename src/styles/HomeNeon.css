@@ -237,3 +237,47 @@
 [data-theme="light"] .cs-home .cs-footer-bottom,
 [data-theme="light"] .cs-home .cs-footer-static,
 [data-theme="light"] .cs-home .cs-footer-slogan { color: #a9b8d8 !important; }
+
+/* =============================================================
+   Orbit — rotating spotlight: active module scales up & glows
+   ============================================================= */
+[data-theme="light"] .cs-home .cs-orbital-node {
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1), z-index 0s;
+  z-index: 2;
+}
+[data-theme="light"] .cs-home .cs-orbital-node .cs-orbital-circle,
+[data-theme="light"] .cs-home .cs-orbital-node .cs-orbital-label {
+  transition: transform .5s cubic-bezier(.34,1.56,.64,1), box-shadow .5s ease, background .5s ease, color .5s ease, border-color .5s ease;
+}
+/* active module rises to front + grows */
+[data-theme="light"] .cs-home .cs-orbital-node.is-active {
+  z-index: 20 !important;
+}
+[data-theme="light"] .cs-home .cs-orbital-node.is-active .cs-orbital-circle {
+  transform: scale(1.45);
+  background: linear-gradient(135deg, rgba(56,189,248,.28), rgba(167,139,250,.28)) !important;
+  border-color: var(--nc) !important;
+  color: #eaf1ff !important;
+  box-shadow: 0 0 0 3px rgba(34,211,238,.35), 0 0 26px rgba(34,211,238,.85), 0 0 48px rgba(167,139,250,.45) !important;
+  animation: cs-node-pulse 1.5s ease-in-out;
+}
+[data-theme="light"] .cs-home .cs-orbital-node.is-active .cs-orbital-label {
+  transform: translateY(2px) scale(1.08);
+  background: rgba(34,211,238,.16) !important;
+  border-color: var(--nc) !important;
+  color: #eaf1ff !important;
+  box-shadow: 0 0 18px rgba(34,211,238,.4) !important;
+  font-weight: 800 !important;
+}
+@keyframes cs-node-pulse {
+  0%   { box-shadow: 0 0 0 3px rgba(34,211,238,.35), 0 0 20px rgba(34,211,238,.6); }
+  50%  { box-shadow: 0 0 0 5px rgba(34,211,238,.45), 0 0 34px rgba(34,211,238,.95), 0 0 60px rgba(167,139,250,.55); }
+  100% { box-shadow: 0 0 0 3px rgba(34,211,238,.35), 0 0 26px rgba(34,211,238,.85); }
+}
+/* dim the non-active nodes slightly so the spotlight reads */
+[data-theme="light"] .cs-home .cs-orbital-ring:hover .cs-orbital-node:not(.is-active) { opacity: 1; }
+[data-theme="light"] .cs-home .cs-orbital-node:not(.is-active) .cs-orbital-circle { opacity: .82; }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="light"] .cs-home .cs-orbital-node.is-active .cs-orbital-circle { animation: none; transform: scale(1.25); }
+}

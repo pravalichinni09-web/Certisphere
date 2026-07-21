@@ -205,7 +205,7 @@ const EmailJSSettings: React.FC = () => {
   });
 
   return (
-    <div style={{ maxWidth: 720, padding: 4 }}>
+    <div style={{ maxWidth: 1100, padding: 4 }}>
 
       {/* Header */}
       <div style={{ marginBottom: 24 }}>
