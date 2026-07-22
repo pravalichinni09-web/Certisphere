@@ -1716,3 +1716,8 @@ html[data-theme="dark"] body {
   color: #92400E !important;
   border-color: #FCD34D !important;
 }
+
+/* CS FONT BASE */
+html, body {
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+}

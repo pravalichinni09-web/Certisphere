@@ -53,7 +53,7 @@
   background: rgba(212, 175, 55, 0.07) !important;
   border: 1px solid rgba(212, 175, 55, 0.35) !important;
   color: #d4af37 !important;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 10px !important;
   font-weight: 600 !important;
   letter-spacing: 2.6px;
@@ -80,7 +80,7 @@
 #about .cs-home-title,
 [data-theme="light"] #about .cs-home-title,
 [data-theme="dark"]  #about .cs-home-title {
-  font-family: 'Playfair Display', Georgia, 'Times New Roman', serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   color: #f7f2e2 !important;
   letter-spacing: 0 !important;
   animation: nxh-fade-up 0.8s ease-out 0.25s both;
@@ -122,7 +122,7 @@
 [data-theme="light"] #about .cs-home-sub,
 [data-theme="dark"]  #about .cs-home-sub {
   color: rgba(247, 242, 226, 0.62) !important;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 300;
   animation: nxh-fade-up 0.8s ease-out 0.38s both;
 }
@@ -142,7 +142,7 @@
   padding: 12px 26px !important;
   border-radius: 10px !important;
   cursor: pointer !important;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 12px !important;
   font-weight: 700 !important;
   letter-spacing: 2.2px;
@@ -200,7 +200,7 @@
 [data-theme="light"] #about .cs-home-trust li,
 [data-theme="dark"]  #about .cs-home-trust li {
   color: rgba(247, 242, 226, 0.72) !important;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 400 !important;
   font-size: 12.5px !important;
   letter-spacing: 0.6px;
@@ -234,7 +234,7 @@
   background: rgba(212, 175, 55, 0.08) !important;
   border: 1px solid rgba(212, 175, 55, 0.35) !important;
   color: #d4af37 !important;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 600 !important;
   letter-spacing: 2.2px !important;
 }
@@ -274,7 +274,7 @@
   color: rgba(247, 242, 226, 0.85) !important;
   background: rgba(8, 7, 5, 0.75) !important;
   border: 1px solid rgba(212, 175, 55, 0.20);
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 500 !important;
   letter-spacing: 0.6px !important;
 }
@@ -311,7 +311,7 @@
     radial-gradient(60% 45% at 50% 95%, rgba(150, 119, 42, 0.06) 0%, transparent 65%),
     linear-gradient(180deg, #080706 0%, #050505 40%, #0a0806 100%) !important;
   color: #f7f2e2 !important;
-  font-family: 'Outfit', 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 }
 .cs-home .cs-bubble,
 [data-theme="light"] .cs-home .cs-bubble,
@@ -416,7 +416,7 @@
 .bento-stat strong,
 [data-theme="light"] .bento-stat strong,
 [data-theme="dark"] .bento-stat strong {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   background: linear-gradient(135deg, #f7f2e2 0%, #f6d878 45%, #d4af37 100%) !important;
   -webkit-background-clip: text !important;
   background-clip: text !important;
@@ -455,7 +455,7 @@
 [data-theme="light"] .cs-bento-section-head .cs-home-section-title,
 [data-theme="dark"] .cs-home-section-title,
 [data-theme="dark"] .cs-bento-section-head .cs-home-section-title {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   color: #f7f2e2 !important;
 }
 .cs-home-section-title em,
@@ -634,7 +634,7 @@
 .cs-founder-name,
 [data-theme="light"] .cs-founder-name, [data-theme="light"] #about-us .cs-founder-name,
 [data-theme="dark"] .cs-founder-name {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   color: #f6d878 !important;
 }
 .cs-founder-role, .cs-founder-org,
@@ -736,7 +736,7 @@
 .cs-prefooter-title,
 [data-theme="light"] .cs-prefooter-title,
 [data-theme="dark"] .cs-prefooter-title {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   color: #f7f2e2 !important;
 }
 .cs-prefooter-title em,
@@ -762,14 +762,14 @@
 
 /* Contact detail links — quiet gold text, no button chrome */
 .cs-prefooter a[href^="tel"], .cs-prefooter a[href*="qmicssolutions"],
-.cs-prefooter a[href*="qcertisphere"], .cs-prefooter .cs-contact-address,
+.cs-prefooter a[href*="qmicscertifications"], .cs-prefooter .cs-contact-address,
 [data-theme="light"] .cs-prefooter a[href^="tel"],
 [data-theme="light"] .cs-prefooter a[href*="qmicssolutions"],
-[data-theme="light"] .cs-prefooter a[href*="qcertisphere"],
+[data-theme="light"] .cs-prefooter a[href*="qmicscertifications"],
 [data-theme="light"] .cs-prefooter .cs-contact-address,
 [data-theme="dark"] .cs-prefooter a[href^="tel"],
 [data-theme="dark"] .cs-prefooter a[href*="qmicssolutions"],
-[data-theme="dark"] .cs-prefooter a[href*="qcertisphere"],
+[data-theme="dark"] .cs-prefooter a[href*="qmicscertifications"],
 [data-theme="dark"] .cs-prefooter .cs-contact-address {
   background: transparent !important;
   color: #f6d878 !important;
@@ -794,8 +794,31 @@
 }
 .cs-prefooter a[href^="tel"]:hover,
 .cs-prefooter a[href*="qmicssolutions"]:hover,
-.cs-prefooter a[href*="qcertisphere"]:hover {
+.cs-prefooter a[href*="qmicscertifications"]:hover {
   color: #ffe79a !important;
+}
+
+
+/* Website + phone contact links — polished pill treatment */
+.cs-prefooter a.cs-contact-pill,
+[data-theme="light"] .cs-prefooter a.cs-contact-pill,
+[data-theme="dark"] .cs-prefooter a.cs-contact-pill {
+  background: rgba(212,175,55,0.07) !important;
+  border: 1px solid rgba(212,175,55,0.28) !important;
+  border-radius: 999px !important;
+  padding: 8px 20px 8px 8px !important;
+  color: #f6d878 !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18) !important;
+  transition: transform .2s ease, box-shadow .25s ease, border-color .2s ease, background .2s ease !important;
+}
+.cs-prefooter a.cs-contact-pill:hover,
+[data-theme="light"] .cs-prefooter a.cs-contact-pill:hover,
+[data-theme="dark"] .cs-prefooter a.cs-contact-pill:hover {
+  background: rgba(212,175,55,0.14) !important;
+  border-color: rgba(212,175,55,0.55) !important;
+  color: #ffe79a !important;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(212,175,55,0.20) !important;
 }
 
 /* --------------------------- Footer --------------------------- */
@@ -879,7 +902,7 @@
 [data-theme="light"] .cs-home .cs-founder-name,
 [data-theme="dark"] .cs-home .cs-founder-name {
   color: #f6d878 !important;
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
 }
 .cs-home .cs-founder-bio p strong,
 [data-theme="light"] .cs-home .cs-founder-bio p strong,
@@ -1061,7 +1084,7 @@
   border: 2px solid #d4af37 !important;
   color: #f6d878 !important;
   box-shadow: 0 0 0 6px rgba(212, 175, 55, 0.10), 0 16px 40px rgba(0, 0, 0, 0.6) !important;
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
 }
 
 /* Section titles that had a blue text-clip gradient → cream/gold sheen */
@@ -1084,7 +1107,7 @@
   background-clip: text !important;
   -webkit-text-fill-color: transparent !important;
   color: transparent !important;
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   animation: nxh-sheen 8s ease-in-out infinite;
 }
 
@@ -1098,7 +1121,7 @@
 .cs-founder-exp strong,
 [data-theme="light"] .cs-founder-exp strong,
 [data-theme="dark"] .cs-founder-exp strong {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   color: #f6d878 !important;
 }
 
@@ -1125,8 +1148,11 @@
 .cs-home .cs-home-brand-plate,
 [data-theme="light"] .cs-home .cs-home-brand-plate,
 [data-theme="dark"] .cs-home .cs-home-brand-plate {
-  background: transparent !important;
-  box-shadow: none !important;
+  background: #ffffff !important;
+  border: 1px solid rgba(212,175,55,0.45) !important;
+  border-radius: 12px !important;
+  padding: 8px 16px !important;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.30), 0 0 0 3px rgba(255,255,255,0.06) !important;
 }
 
 /* Brand showcase — compact layout */
@@ -1170,7 +1196,7 @@
 .cs-hero-quote,
 [data-theme="light"] .cs-hero-quote,
 [data-theme="dark"] .cs-hero-quote {
-  font-family: 'Playfair Display', Georgia, serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
   font-style: italic;
   font-size: 15px;
   letter-spacing: 0.6px;
@@ -1206,7 +1232,7 @@
 }
 .cs-stat-tile strong {
   display: block;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 40px;
   font-weight: 700;
   line-height: 1.05;
@@ -1219,7 +1245,7 @@
 .cs-stat-tile span {
   display: block;
   margin-top: 6px;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 1.8px;
@@ -1284,7 +1310,7 @@
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  font-family: 'Playfair Display', Georgia, serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 19px;
   font-weight: 700;
   color: #f6d878;
@@ -1301,7 +1327,7 @@
 }
 .cs-process-step h3 {
   margin: 14px 0 6px;
-  font-family: 'Outfit', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: 0.4px;
@@ -1456,3 +1482,47 @@
   image-rendering: auto;
 }
 .cs-home-brand-plate img { height: 42px !important; }
+
+/* Qmics Group contact link — same quiet-gold treatment */
+.cs-prefooter a[href*="qmicsgroup"],
+[data-theme="light"] .cs-prefooter a[href*="qmicsgroup"],
+[data-theme="dark"] .cs-prefooter a[href*="qmicsgroup"] {
+  background: transparent !important; color: #f6d878 !important;
+  border: none !important; box-shadow: none !important;
+  transition: color .2s ease, transform .2s ease;
+}
+.cs-prefooter a[href*="qmicsgroup"]:hover { color: #ffe79a !important; }
+
+/* ── Brand column: logo + QMICS tag + Sign In stacked ─────────── */
+.cs-home-brand,
+[data-theme="light"] .cs-home-brand,
+[data-theme="dark"] .cs-home-brand {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 5px !important;
+}
+.cs-home-brand-qmics,
+[data-theme="light"] .cs-home-brand-qmics,
+[data-theme="dark"] .cs-home-brand-qmics {
+  font-size: 10px !important;
+  font-weight: 500 !important;
+  color: rgba(246, 216, 120, 0.55) !important;
+  letter-spacing: 0.05em !important;
+  padding-left: 2px !important;
+  line-height: 1 !important;
+}
+.cs-home-brand-qmics strong,
+[data-theme="light"] .cs-home-brand-qmics strong,
+[data-theme="dark"] .cs-home-brand-qmics strong {
+  color: #f6d878 !important;
+  font-weight: 800 !important;
+}
+/* Header grid: brand-stack | nav (no third column) */
+.cs-home-header-inner,
+[data-theme="light"] .cs-home-header-inner,
+[data-theme="dark"] .cs-home-header-inner {
+  grid-template-columns: auto 1fr auto !important;
+  align-items: center !important;
+}
+

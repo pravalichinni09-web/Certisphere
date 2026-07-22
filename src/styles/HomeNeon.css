@@ -14,11 +14,13 @@
 /* ---- Page base: deep dark + tech grid + gradient blooms ---- */
 [data-theme="light"] .cs-home, .cs-home{
   background:
+    linear-gradient(rgba(5,7,15,0.66), rgba(5,7,15,0.84)),
     linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 46px 46px,
     linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px) 0 0 / 46px 46px,
     radial-gradient(60% 55% at 10% -5%, rgba(56,189,248,0.16), transparent 60%),
     radial-gradient(55% 50% at 95% 6%, rgba(167,139,250,0.16), transparent 60%),
     radial-gradient(60% 45% at 50% 108%, rgba(34,211,238,0.12), transparent 60%),
+    url('/images/home-bg.jpg') center top / cover no-repeat fixed,
     var(--n-bg) !important;
   color: var(--n-text) !important;
 }
@@ -219,7 +221,7 @@
   background: rgba(11,17,34,0.95) !important;
   border: 1px solid var(--n-line) !important;
   box-shadow: 0 0 0 5px rgba(56,189,248,0.10), 0 0 22px rgba(56,189,248,0.35) !important;
-  font-family: 'Outfit', system-ui, sans-serif !important;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif !important;
 }
 [data-theme="light"] .cs-home .cs-process-step:hover .cs-process-num{
   background: linear-gradient(135deg, var(--nb), var(--nv)) !important;
@@ -280,4 +282,64 @@
 
 @media (prefers-reduced-motion: reduce) {
   [data-theme="light"] .cs-home .cs-orbital-node.is-active .cs-orbital-circle { animation: none; transform: scale(1.25); }
+}
+
+/* =============================================================
+   3D orbit — perspective tilt + float, raised nodes & hub orb
+   ============================================================= */
+[data-theme="light"] .cs-home .bento-orbital { perspective: 1300px; perspective-origin: 50% 40%; }
+[data-theme="light"] .cs-home .cs-orbital-diagram {
+  transform-style: preserve-3d;
+  animation: cs-orbit-3d 9s ease-in-out infinite;
+}
+@keyframes cs-orbit-3d {
+  0%, 100% { transform: rotateX(12deg) rotateY(-6deg); }
+  50%      { transform: rotateX(16deg) rotateY(6deg) translateY(-6px); }
+}
+/* raised 3D node "buttons" */
+[data-theme="light"] .cs-home .cs-orbital-circle {
+  background: radial-gradient(circle at 34% 28%, rgba(120,220,255,.5), rgba(11,17,34,.96) 72%) !important;
+  border: 1.5px solid rgba(34,211,238,.7) !important;
+  color: #eaf1ff !important;
+  box-shadow:
+    0 12px 22px rgba(0,0,0,.55),
+    0 0 16px rgba(34,211,238,.45),
+    inset 0 2px 5px rgba(255,255,255,.30),
+    inset 0 -7px 13px rgba(0,0,0,.5) !important;
+}
+/* labels lift slightly for depth */
+[data-theme="light"] .cs-home .cs-orbital-label {
+  box-shadow: 0 8px 16px rgba(0,0,0,.45) !important;
+}
+/* 3D hub orb */
+[data-theme="light"] .cs-home .cs-orbital-triangle {
+  filter: drop-shadow(0 22px 36px rgba(0,0,0,.6)) drop-shadow(0 0 28px rgba(56,189,248,.5)) !important;
+}
+/* deeper octagon plate with cast shadow */
+[data-theme="light"] .cs-home .cs-orbital-outer {
+  box-shadow: inset 0 0 90px rgba(34,211,238,.10), 0 34px 64px rgba(0,0,0,.55) !important;
+}
+/* active node pops brighter in the 3D scene */
+[data-theme="light"] .cs-home .cs-orbital-node.is-active .cs-orbital-circle {
+  transform: scale(1.5);
+  box-shadow:
+    0 16px 30px rgba(0,0,0,.6),
+    0 0 0 3px rgba(34,211,238,.4),
+    0 0 34px rgba(34,211,238,.95),
+    0 0 60px rgba(167,139,250,.5),
+    inset 0 2px 6px rgba(255,255,255,.4) !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-theme="light"] .cs-home .cs-orbital-diagram { animation: none; transform: rotateX(10deg); }
+}
+
+/* FOUNDER PROFILE highlight — brighter glowing gold eyebrow */
+.cs-home .cs-bio-label,
+[data-theme="light"] .cs-home .cs-bio-label,
+[data-theme="dark"] .cs-home .cs-bio-label {
+  color: #ffdc4a !important;
+  font-size: 14px !important;
+  font-weight: 900 !important;
+  letter-spacing: 2.6px !important;
+  text-shadow: 0 0 16px rgba(245,193,48,0.55), 0 0 5px rgba(245,193,48,0.45) !important;
 }

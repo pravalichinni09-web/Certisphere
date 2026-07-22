@@ -288,20 +288,20 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
           {/* Logo plate */}
           <div className="cs-logo-plate">
             <a
-              href="https://www.qcertisphere.com"
+              href="https://qmicscertifications.com/"
               target="_blank"
               rel="noopener noreferrer"
               title="Visit the CertiSphere website"
               style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}
             >
             <img
-              src="/images/certisphere-logo-hd.png"
+              src="/images/certisphere-logo.png"
               alt="CertiSphere"
               className="cs-logo-img"
               onError={(e) => {
                 const el = e.currentTarget as HTMLImageElement;
-                if (!el.src.endsWith('certisphere-logo-clear.png')) {
-                  el.src = '/images/certisphere-logo-clear.png';
+                if (!el.src.endsWith('certisphere-logo.jpeg')) {
+                  el.src = '/images/certisphere-logo.jpeg';
                 }
               }}
             />

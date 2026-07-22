@@ -18,8 +18,8 @@
   --nx-line:        rgba(212, 175, 55, 0.22);
   --nx-line-strong: rgba(212, 175, 55, 0.45);
   --nx-glow:        rgba(212, 175, 55, 0.16);
-  --nx-serif:  'Playfair Display', Georgia, 'Times New Roman', serif;
-  --nx-sans:   'Outfit', 'Segoe UI', system-ui, sans-serif;
+  --nx-serif: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --nx-sans: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ============================ SHELL ============================ */
@@ -31,7 +31,7 @@
   overflow: hidden;
   position: relative;
   background: var(--nx-black, #050505);
-  font-family: var(--nx-sans);
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   color: var(--nx-cream);
   animation: nx-shell-in 0.8s ease-out both;
 }
@@ -435,7 +435,7 @@
 
 /* Brand title (if rendered) — engraved serif with gold sheen */
 .cs-main-title, .main-title {
-  font-family: var(--nx-serif);
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 44px;
   font-weight: 700;
   letter-spacing: 0.5px;

@@ -9,12 +9,12 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  font-family: var(--nx-sans, 'Outfit', 'Segoe UI', sans-serif);
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ---- Title: classic serif with gold rule + diamond ---- */
 .form-title {
-  font-family: var(--nx-serif, 'Playfair Display', Georgia, serif);
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 30px;
   font-weight: 700;
   letter-spacing: 1px;

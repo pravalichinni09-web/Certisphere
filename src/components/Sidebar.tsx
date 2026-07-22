@@ -385,7 +385,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
           <div className="vertical-sidebar-header cs-sidebar-header-stacked">
             <div className="cs-sidebar-brand">
               <a
-                href="https://www.qcertisphere.com"
+                href="https://qmicscertifications.com/"
                 target="_blank"
                 rel="noopener noreferrer"
                 title="Visit the CertiSphere website"

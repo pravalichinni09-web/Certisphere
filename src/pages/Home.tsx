@@ -32,7 +32,6 @@ import '../styles/HomeHeroNoir.css';
 import '../styles/HomeNeon.css';
 import CertiSphereLogo from '../components/CertiSphereLogo';
 import ContactForm from '../components/ContactForm';
-import CertBgParticles from '../components/CertBgParticles';
 
 
 /* ---------- Mouse-follow spotlight wrapper ---------- */
@@ -133,23 +132,18 @@ const Home: React.FC = () => {
 
   return (
     <div className="cs-home cs-home-bento">
-      {/* Certification background particles */}
-      <CertBgParticles />
-
-      {/* Floating bubbles */}
-      <div className="cs-bubble-layer" aria-hidden="true">
-        {Array.from({ length: 18 }).map((_, i) => <span key={i} className={'cs-bubble cs-bubble-' + (i % 6)} />)}
-      </div>
-
       {/* ===== Header ===== */}
       <header className="cs-home-header">
         <div className="cs-home-header-inner">
-          <div className="cs-home-brand">
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: 6 }}>
             <div className="cs-home-brand-plate">
-              <a href="https://www.qcertisphere.com" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
+              <a href="https://qmicscertifications.com/" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
                 <CertiSphereLogo size={56} iconOnly={false} />
               </a>
             </div>
+            <span style={{ fontSize: 10, fontWeight: 500, color: 'rgba(246,216,120,0.6)', letterSpacing: '0.05em', paddingLeft: 2 }}>
+              A product by <strong style={{ color: '#f6d878', fontWeight: 800 }}>QMICS Solutions</strong>
+            </span>
           </div>
           <nav className="cs-home-nav">
             <a href="#about">About {cfg.orgShortName}</a>
@@ -177,8 +171,8 @@ const Home: React.FC = () => {
               Global Certification Management Platform
             </span>
             <h1 className="cs-home-title">
-              Structured Certification Operations,<br />
-              Delivered <em>Globally</em>.
+              One Platform. Every Certification.<br />
+              Fully <em>Assured</em>.
             </h1>
             <p className="cs-home-sub">
               CertiSphere shifts certification from
@@ -363,22 +357,32 @@ const Home: React.FC = () => {
             <span className="cs-home-tag"><span className="cs-home-tag-dot" /> Certification Bodies</span>
             <h2 className="cs-home-section-title">Supported Certification Standards</h2>
             <p className="cs-home-section-sub">
-              CertiSphere supports all major ISO management systems plus global compliance frameworks — SOC 2, GDPR, HIPAA, CMMI, GMP, GDP and GLP.
+              CertiSphere supports all major ISO management systems plus global compliance frameworks — SOC 2, GDPR, HIPAA and CMMI.
               Sign in to access your certification body's dedicated portal.
             </p>
           </header>
           <div className="cs-cert-bodies-grid">
             {[
-              { code: 'ISO 9001:2015', name: 'Quality Management',       icon: <Medal size={30} />, desc: 'Internationally recognised quality management system standard for consistent product & service delivery.' },
-              { code: 'ISO 14001:2015', name: 'Environmental Management', icon: <Leaf size={30} />, desc: 'Framework for organisations to improve environmental performance and manage regulatory compliance.' },
-              { code: 'ISO 45001:2018', name: 'OH&S Management',          icon: <HardHat size={30} />, desc: 'Occupational health & safety management system to reduce workplace incidents and hazards.' },
-              { code: 'ISO 27001:2022', name: 'Information Security',     icon: <Lock size={30} />, desc: 'Systematic approach to managing sensitive company information and information security risks.' },
-              { code: 'SOC 2',          name: 'Service Organization Control', icon: <ShieldCheck size={30} />, desc: 'Trust-services audit for data security, availability, processing integrity and confidentiality.' },
-              { code: 'GDPR',           name: 'Data Protection',          icon: <KeyRound size={30} />, desc: 'General Data Protection Regulation compliance for privacy and data protection rights.' },
-              { code: 'HIPAA',          name: 'Healthcare Compliance',    icon: <HeartPulse size={30} />, desc: 'Health Insurance Portability & Accountability Act for healthcare data protection.' },
-              { code: 'CMMI',           name: 'Process Maturity',         icon: <TrendingUp size={30} />, desc: 'Capability Maturity Model Integration for process improvement and performance excellence.' },
-              { code: 'GMP',            name: 'Good Manufacturing Practice', icon: <Factory size={30} />, desc: 'Quality standards for pharmaceutical, food and cosmetics manufacturing.' },
-              { code: 'GDP · GLP',      name: 'Distribution & Laboratory Practice', icon: <FlaskConical size={30} />, desc: 'Good Distribution and Laboratory Practice for supply-chain and non-clinical study integrity.' },
+              { code: 'ISO 9001', name: 'Quality Management System', icon: <Medal size={30} />, desc: 'Internationally recognised quality management system for consistent product and service delivery.' },
+              { code: 'ISO 14001', name: 'Environmental Management System', icon: <Leaf size={30} />, desc: 'Framework for organisations to improve environmental performance and manage regulatory compliance.' },
+              { code: 'ISO 45001', name: 'Occupational Health & Safety', icon: <HardHat size={30} />, desc: 'Occupational health & safety management system to reduce workplace incidents and hazards.' },
+              { code: 'ISO/IEC 27001', name: 'Information Security Management System', icon: <Lock size={30} />, desc: 'Systematic approach to managing sensitive company information and information security risks.' },
+              { code: 'ISO 50001', name: 'Energy Management System', icon: <RefreshCw size={30} />, desc: 'Establish, implement and improve energy performance, efficiency and consumption.' },
+              { code: 'ISO 37001', name: 'Anti-Bribery Management System', icon: <ShieldCheck size={30} />, desc: 'Prevent, detect and address bribery and corruption risks across the organisation.' },
+              { code: 'ISO 22000', name: 'Food Safety Management System', icon: <FlaskConical size={30} />, desc: 'Food safety management across the supply chain, from farm to fork.' },
+              { code: 'ISO 22301', name: 'Business Continuity Management Systems', icon: <Workflow size={30} />, desc: 'Prepare for, respond to and recover from disruptions to keep operations running.' },
+              { code: 'ISO/IEC 20000-1', name: 'IT Service Management System', icon: <Smartphone size={30} />, desc: 'IT service management for reliable, high-quality delivery of IT services.' },
+              { code: 'ISO 13485', name: 'Quality Management For Medical Devices', icon: <HeartPulse size={30} />, desc: 'Quality management for the design and manufacture of safe, compliant medical devices.' },
+              { code: 'ISO 41001', name: 'Facility Management System', icon: <FolderOpen size={30} />, desc: 'Facility management for efficient, safe and cost-effective built environments.' },
+              { code: 'ISO 42001', name: 'Artificial Intelligence Management System', icon: <Command size={30} />, desc: 'Governance framework for responsible development and use of artificial intelligence.' },
+              { code: 'ISO 30000', name: 'Ship Recycling Management System', icon: <Globe size={30} />, desc: 'Safe and environmentally sound management systems for ship recycling facilities.' },
+              { code: 'ISO 21001', name: 'Educational Organizations Management System', icon: <Users size={30} />, desc: 'Management system for educational organisations to enhance learner satisfaction.' },
+              { code: 'ISO 55001', name: 'Asset Management System', icon: <ClipboardList size={30} />, desc: 'Asset management to maximise value and performance across the asset lifecycle.' },
+              { code: 'ISO/IEC 17025', name: 'Testing and Calibration Laboratories', icon: <ClipboardCheck size={30} />, desc: 'Competence requirements for testing and calibration laboratories to ensure valid results.' },
+              { code: 'SOC 2', name: 'Service Organization Control', icon: <Award size={30} />, desc: 'Trust-services audit for data security, availability, processing integrity and confidentiality.' },
+              { code: 'GDPR', name: 'Data Protection', icon: <KeyRound size={30} />, desc: 'General Data Protection Regulation compliance for privacy and data protection rights.' },
+              { code: 'HIPAA', name: 'Healthcare Compliance', icon: <FileText size={30} />, desc: 'Health Insurance Portability & Accountability Act for healthcare data protection.' },
+              { code: 'CMMI', name: 'Process Maturity', icon: <TrendingUp size={30} />, desc: 'Capability Maturity Model Integration for process improvement and performance excellence.' },
             ].map((cb, i) => (
               <article
                 key={i}
@@ -464,21 +468,21 @@ const Home: React.FC = () => {
             const link = { display:'flex', alignItems:'center', gap:10, color:ink, textDecoration:'none', fontSize:15, fontWeight:600 } as React.CSSProperties;
             return (
               <>
-                <div style={{ display:'flex', gap:28, justifyContent:'center', flexWrap:'wrap', margin:'26px 0 6px' }}>
-                  <a href="tel:9849499111" style={link}>
-                    <span style={chip}><Phone size={18} /></span> 98494 99111
+                {/* Websites — top row */}
+                <div style={{ display:'flex', gap:16, justifyContent:'center', flexWrap:'nowrap', margin:'26px 0 20px' }}>
+                  <a className="cs-contact-pill" href="https://qmicscertifications.com/" target="_blank" rel="noopener noreferrer" style={link}>
+                    <span style={chip}><Globe size={18} /></span> qmicscertifications.com
                   </a>
-                  <a href={`mailto:${cfg.contactEmail}`} style={link}>
-                    <span style={chip}><Send size={18} /></span> {cfg.contactEmail}
-                  </a>
-                  <a href="https://www.qmicssolutions.com" target="_blank" rel="noopener noreferrer" style={link}>
+                  <a className="cs-contact-pill" href="https://www.qmicssolutions.com" target="_blank" rel="noopener noreferrer" style={link}>
                     <span style={chip}><Globe size={18} /></span> www.qmicssolutions.com
                   </a>
-                  <a href="https://www.qcertisphere.com" target="_blank" rel="noopener noreferrer" style={link}>
-                    <span style={chip}><Globe size={18} /></span> www.qcertisphere.com
+                  <a className="cs-contact-pill" href="https://qmicsgroup.com/" target="_blank" rel="noopener noreferrer" style={link}>
+                    <span style={chip}><Globe size={18} /></span> qmicsgroup.com
                   </a>
                 </div>
-                <div style={{ display:'flex', justifyContent:'center', margin:'10px 0 4px' }}>
+
+                {/* Address */}
+                <div style={{ display:'flex', justifyContent:'center', margin:'0 0 18px' }}>
                   <a
                     href="https://www.google.com/maps/search/?api=1&query=V%20Starx%20IT%20Hub%2C%20Plot%20No%2055%2C%204th%20Floor%2C%2015th%20Phase%2C%20Green%20Hills%20Road%2C%20KPHB%20Colony%2C%20Kukatpally%2C%20Hyderabad%20500072"
                     target="_blank"
@@ -489,6 +493,13 @@ const Home: React.FC = () => {
                   >
                     <span style={chip}><MapPin size={18} /></span>
                     <span><strong style={{ color:ink }}>V Starx IT Hub</strong><br />Plot No: 55, 4th Floor, 15th Phase, Green Hills Road,<br />KPHB Colony, Kukatpally, Hyderabad &ndash; 500072</span>
+                  </a>
+                </div>
+
+                {/* Phone */}
+                <div style={{ display:'flex', justifyContent:'center', margin:'0 0 4px' }}>
+                  <a className="cs-contact-pill" href="tel:9849499111" style={link}>
+                    <span style={chip}><Phone size={18} /></span> +91 98494 99111
                   </a>
                 </div>
               </>
@@ -519,8 +530,10 @@ const Home: React.FC = () => {
           <span className="cs-home-tag"><span className="cs-home-tag-dot" /> About Us</span>
           <h2 className="cs-home-section-title">The Organization Behind the Platform</h2>
           <p className="cs-home-section-sub">
-            {cfg.orgShortName} is the audit intelligence platform behind CertiSphere, backed by 35 years of
-            experience in auditing, compliance and certification workflows across global standards.
+            CertiSphere is built on over 35 years of expertise in certification, auditing, and compliance.
+            Combining deep industry knowledge with cutting-edge digital technology, we help certification bodies
+            and organizations streamline audit workflows, ensure regulatory compliance, and manage certification
+            programs across global standards with confidence.
           </p>
           <a
             href="https://qmicscertifications.com"
@@ -560,8 +573,8 @@ const Home: React.FC = () => {
               <span className="cs-founder-star"><Star size={14} /></span>
             </div>
             <h3 className="cs-founder-name">Mr. Ramakrishna Chinmaya</h3>
-            <span className="cs-founder-role">LEAD AUDITOR</span>
-            <p className="cs-founder-org">CertiSphere Audit Practice</p>
+            <span className="cs-founder-role">Founder &amp; CEO</span>
+            <p className="cs-founder-org">QMICS Group</p>
             <div className="cs-founder-exp">
               <strong>35+</strong>
               <span>Years of<br />Industry Experience</span>
@@ -574,7 +587,6 @@ const Home: React.FC = () => {
               <span className="cs-bio-bar" />
               <div>
                 <span className="cs-bio-label">FOUNDER PROFILE</span>
-                <span className="cs-bio-sub">M.Tech — Industrial Engineering &amp; Management, JNTU</span>
               </div>
             </div>
 
@@ -635,7 +647,7 @@ const Home: React.FC = () => {
         <div className="cs-footer-grid">
           <div className="cs-footer-brand">
             <div className="cs-footer-logo-plate">
-              <a href="https://www.qcertisphere.com" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
+              <a href="https://qmicscertifications.com/" target="_blank" rel="noopener noreferrer" title="Visit the CertiSphere website" style={{ display: 'inline-flex', textDecoration: 'none', cursor: 'pointer' }}>
                 <CertiSphereLogo size={52} iconOnly={false} />
               </a>
             </div>

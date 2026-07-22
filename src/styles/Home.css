@@ -6,7 +6,7 @@
   min-height: 100vh;
   background: #fbf8f1; /* warm cream */
   color: #0f172a;
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* ===== Header ===== */
@@ -24,6 +24,12 @@
   align-items: center;
   gap: 24px;
 }
+.cs-home-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
 .cs-home-brand-plate {
   background: #fff;
   padding: 6px 14px;
@@ -32,6 +38,20 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+}
+.cs-home-brand-qmics {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.55);
+  letter-spacing: 0.04em;
+  padding-left: 4px;
+}
+.cs-home-brand-qmics strong {
+  color: #f5c130;
+  font-weight: 800;
+}
+.cs-home-signin-under {
+  margin-top: 2px;
 }
 .cs-home-brand-plate img {
   height: 36px;
@@ -114,7 +134,7 @@
 /* Title */
 .cs-home-title {
   margin: 22px 0 16px;
-  font-family: 'Georgia', 'Times New Roman', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 58px;
   font-weight: 700;
   line-height: 1.08;
@@ -323,7 +343,7 @@
   margin-top: 64px;
 }
 .cs-home-section-title {
-  font-family: 'Georgia', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 32px;
   font-weight: 700;
   color: #0f172a;
@@ -435,7 +455,7 @@
   margin: 0 auto;
 }
 .cs-prefooter-title {
-  font-family: 'Georgia', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 38px;
   font-weight: 700;
   line-height: 1.15;
@@ -1080,7 +1100,7 @@
 }
 .bento-stat strong {
   display: block;
-  font-family: 'Georgia', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 36px;
   font-weight: 800;
   background: linear-gradient(135deg, #ffffff 0%, #FFD700 100%);
@@ -1282,8 +1302,8 @@
 /* ============== Benefits Bento grid ============== */
 .cs-bento-benefits {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
 }
 @media (max-width: 1024px) { .cs-bento-benefits { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 600px)  { .cs-bento-benefits { grid-template-columns: 1fr; } }
@@ -1967,7 +1987,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 84px; }
   inset: 0;
   display: none;            /* shown via JS onError */
   place-items: center;
-  font-family: 'Georgia', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-weight: 800;
   font-size: 56px;
   color: #FFD700;
@@ -2018,7 +2038,7 @@ html { scroll-behavior: smooth; scroll-padding-top: 84px; }
   margin-top: auto;
 }
 .cs-founder-exp strong {
-  font-family: 'Georgia', serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   font-size: 28px;
   color: #FFD700;
   line-height: 1;

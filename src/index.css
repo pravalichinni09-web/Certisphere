@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+/* ===== CS FONT BASE — global UI typeface (Montserrat) ===== */
+html, body, #root, button, input, select, textarea, optgroup {
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+}
+
 
 
 

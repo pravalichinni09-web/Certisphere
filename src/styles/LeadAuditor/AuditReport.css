@@ -2,7 +2,7 @@
   padding: 20px;
   max-width: 1400px;
   margin: 0 auto;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   color: #334155;
 }
 
@@ -472,7 +472,7 @@
 
 .paper-content pre {
   white-space: pre-wrap;
-  font-family: 'Segoe UI', sans-serif;
+  font-family: 'Montserrat', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
   line-height: 1.6;
 }
 

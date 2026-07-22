@@ -24,7 +24,7 @@ const CertiSphereLogo: React.FC<Props> = ({ size = 28, iconOnly = true, classNam
 
   const srcFor = (s: Stage): string => {
     switch (s) {
-      case 'hd':   return '/images/certisphere-logo-hd.png';
+      case 'hd':   return '/images/certisphere-logo.png';
       case 'png':  return '/images/certisphere-logo-transparent.png';
       case 'jpeg': return '/images/CertiSphere%20logo.jpeg';
       case 'svg':  return '/images/certisphere-logo.svg';
