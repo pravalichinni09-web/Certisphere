@@ -155,7 +155,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
       title: 'Client Registration',
       icon: <FileText size={18} />,
       items: [
-        { path: '/auditor-coordinator/client-enquiry', icon: <Users size={16} />, label: 'Client Enquiry' },
         { path: '/auditor-coordinator/application-dispatch', icon: <FileText size={16} />, label: 'Application' },
         { path: '/auditor-coordinator/client-registration', icon: <UserPlus size={16} />, label: 'Client Registration' },
       ],
