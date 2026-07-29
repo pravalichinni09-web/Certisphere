@@ -20,7 +20,7 @@
 
 import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, FileText, Send, Users, ClipboardCheck, Workflow, AlertOctagon, Award, RefreshCw, Check, Star, ClipboardList, FolderOpen, Smartphone, Command, Phone, Globe, MapPin, Medal, Leaf, HardHat, Lock, KeyRound, HeartPulse, TrendingUp, Factory, FlaskConical } from 'lucide-react';
+import { ArrowRight, ShieldCheck, FileText, Send, Users, ClipboardCheck, Workflow, AlertOctagon, Award, RefreshCw, Check, Star, ClipboardList, FolderOpen, Smartphone, Command, Phone, Globe, MapPin, Medal, Leaf, HardHat, Lock, KeyRound, HeartPulse, TrendingUp, FlaskConical } from 'lucide-react';
 import { readGlobalConfig } from '../utils/globalConfig';
 import FlagImg from '../components/FlagImg';
 import { useScrollReveal } from '../hooks/useScrollReveal';
