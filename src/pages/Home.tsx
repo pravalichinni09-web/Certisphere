@@ -93,14 +93,18 @@ const Home: React.FC = () => {
     document.head.appendChild(link);
     return () => { document.head.removeChild(link); };
   }, []);
-  const founderImageSources = [
-    '/images/founder.jpg',
-    '/images/founder.png',
-    '/images/founder.jpeg',
-    '/images/founder.webp',
-  ];
-  const [founderImageIndex, setFounderImageIndex] = useState(0);
-  const [founderImageLoaded, setFounderImageLoaded] = useState(false);
+  /**
+   * Founder photo — FIXED. Mr. Ramakrishna Chinmaya's official portrait ships with
+   * the app at /public/images/founder-rk-chinmaya.png. It is intentionally not
+   * user-editable: no upload control and no localStorage override, so every
+   * visitor sees the same official photo.
+   */
+  const FOUNDER_PHOTO = '/images/founder-rk-chinmaya.png';
+  const [founderPhotoErr, setFounderPhotoErr] = useState(false);
+  // Clear any photo a previous build let the user store locally.
+  React.useEffect(() => {
+    try { localStorage.removeItem('cms_founder_photo'); } catch { /* ignore */ }
+  }, []);
   const [showContact, setShowContact] = useState(false);
   // Rotating spotlight across the 8 orbit modules
   const [activeModule, setActiveModule] = useState(0);
@@ -108,7 +112,7 @@ const Home: React.FC = () => {
     const t = window.setInterval(() => setActiveModule((n) => (n + 1) % 8), 1500);
     return () => window.clearInterval(t);
   }, []);
-  const founderImageSrc = founderImageSources[founderImageIndex];
+
 
   const modules: Mod[] = [
     { label: 'Audit Workflow',       icon: <Workflow size={22} />,       desc: 'The single 14-stage tracker every certification flows through.', featured: true, demoRole: 'Audit Coordinator', demoPath: '/auditor-coordinator/audit-workflow' },
@@ -554,21 +558,20 @@ const Home: React.FC = () => {
         <div className="cs-aboutus-card cs-reveal cs-reveal-zoom">
           {/* Left — Founder identity panel */}
           <aside className="cs-founder-side">
-            <div className="cs-founder-photo">
-              <img
-                src={founderImageSrc}
-                alt="Mr. Ramakrishna Chinmaya — Founder & CEO"
-                className="cs-founder-img"
-                style={{ display: founderImageLoaded ? 'block' : 'none' }}
-                onLoad={() => setFounderImageLoaded(true)}
-                onError={() => {
-                  if (founderImageIndex < founderImageSources.length - 1) {
-                    setFounderImageIndex((idx) => idx + 1);
-                  }
-                }}
-              />
-              {!founderImageLoaded && (
-                <div className="cs-founder-photo-fallback" style={{ display: 'grid' }} aria-hidden="true">RC</div>
+            <div className="cs-founder-photo" style={{ position: 'relative' }}>
+              {!founderPhotoErr ? (
+                <img
+                  src={FOUNDER_PHOTO}
+                  alt="Mr. Ramakrishna Chinmaya — Founder & CEO"
+                  className="cs-founder-img"
+                  draggable={false}
+                  loading="eager"
+                  decoding="async"
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 22%', display: 'block', userSelect: 'none' }}
+                  onError={() => setFounderPhotoErr(true)}
+                />
+              ) : (
+                <div className="cs-founder-photo-fallback" style={{ display: 'grid' }}>RC</div>
               )}
               <span className="cs-founder-star"><Star size={14} /></span>
             </div>

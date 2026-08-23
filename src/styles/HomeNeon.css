@@ -343,3 +343,5 @@
   letter-spacing: 2.6px !important;
   text-shadow: 0 0 16px rgba(245,193,48,0.55), 0 0 5px rgba(245,193,48,0.45) !important;
 }
+
+.cs-home .cs-founder-photo { position: relative; }
