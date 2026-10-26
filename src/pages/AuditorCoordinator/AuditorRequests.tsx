@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { useFocusParam } from '../../hooks/useFocusParam';
 import {
   UserPlus,
   Search,
@@ -309,6 +310,14 @@ const AuditorRequests: React.FC = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | RequestStatus>('All');
   const [viewing, setViewing] = useState<AuditorRequest | null>(null);
+  const { focusId, navKey } = useFocusParam();
+
+  // Opened from a notification → open that request directly
+  useEffect(() => {
+    if (!focusId) return;
+    const hit = loadRequests().find((r) => String(r.id) === focusId);
+    if (hit) { setStatusFilter('All'); setViewing(hit); }
+  }, [focusId, navKey]);
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {

@@ -15,6 +15,7 @@
  */
 
 import React, { useEffect, useMemo, useState } from 'react';
+import { useFocusParam } from '../../hooks/useFocusParam';
 import {
   Search,
   ShieldCheck,
@@ -98,6 +99,14 @@ const ManagementAuditorApprovals: React.FC = () => {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<AuditorRequest | null>(null);
   const [rejectReason, setRejectReason] = useState('');
+  const { focusId, navKey } = useFocusParam();
+
+  // Opened from a notification → open that auditor's request directly
+  useEffect(() => {
+    if (!focusId) return;
+    const hit = readReqs().find((r) => String(r.id) === focusId);
+    if (hit) { setFilter('All'); setSelected(hit); }
+  }, [focusId, navKey]);
 
   // Live refresh when other pages mutate the same store
   useEffect(() => {

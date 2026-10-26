@@ -45,7 +45,7 @@ const relative = (iso?: string): string => {
 
 const RoleInbox: React.FC<RoleInboxProps> = ({ role, limit = 8, title = 'Pending for you' }) => {
   const navigate = useNavigate();
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
 
   // Re-pull on workflow handoff events
   useEffect(() => {
@@ -60,7 +60,8 @@ const RoleInbox: React.FC<RoleInboxProps> = ({ role, limit = 8, title = 'Pending
     };
   }, []);
 
-  const items: PendingItem[] = useMemo(() => getPendingForRole(role), [role]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const items: PendingItem[] = useMemo(() => getPendingForRole(role), [role, tick]);
   const visible = items.slice(0, limit);
   const more = Math.max(0, items.length - limit);
 

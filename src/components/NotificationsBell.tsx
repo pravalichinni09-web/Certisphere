@@ -13,9 +13,9 @@
  */
 
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Bell, X, ExternalLink, Clock, Inbox } from 'lucide-react';
-import { Role, PendingItem, getPendingForRole } from '../services/workflowHandoff';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Bell, X, ExternalLink, Clock, Inbox, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Role, PendingItem, PendingAction, getPendingForRole } from '../services/workflowHandoff';
 
 interface NotificationsBellProps {
   role: Role;
@@ -42,8 +42,13 @@ const relative = (iso?: string): string => {
 
 const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [open, setOpen] = useState(false);
-  const [, setTick] = useState(0);
+  const [tick, setTick] = useState(0);
+  /** Action currently asking for input: `${itemId}::${actionId}` */
+  const [pending, setPending] = useState<string | null>(null);
+  const [inputValue, setInputValue] = useState('');
+  const [feedback, setFeedback] = useState<{ ok: boolean; text: string } | null>(null);
   const popRef = useRef<HTMLDivElement>(null);
 
   // Live refresh on any handoff / storage event
@@ -74,12 +79,64 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 
     };
   }, [open]);
 
-  const items: PendingItem[] = useMemo(() => getPendingForRole(role), [role]);
+  // `tick` is a dependency so the list re-reads after every handoff event
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const items: PendingItem[] = useMemo(() => getPendingForRole(role), [role, tick]);
   const visible = items.slice(0, limit);
   const more = Math.max(0, items.length - limit);
   const count = items.length;
 
-  const onJump = (link: string) => { navigate(link); setOpen(false); };
+  const onJump = (link: string) => {
+    const target = new URL(link, window.location.origin);
+    const samePage = target.pathname === location.pathname;
+    // Always push the link (with ?focus=) so the screen can open the record,
+    // even when we are already on that page.
+    navigate(`${target.pathname}${target.search}`, { state: { focusAt: Date.now() } });
+    if (samePage) window.scrollTo({ top: 0, behavior: 'smooth' });
+    setOpen(false);
+  };
+
+  const runAction = (item: PendingItem, action: PendingAction, value?: string) => {
+    if (action.input?.required && !String(value ?? '').trim()) {
+      setFeedback({ ok: false, text: `Please enter ${action.input.label.toLowerCase()}.` });
+      return;
+    }
+    let result: unknown;
+    try {
+      result = action.run(value);
+    } catch (err) {
+      result = null;
+      // eslint-disable-next-line no-console
+      console.error('[Notifications] action failed', err);
+    }
+    if (result === null || result === false) {
+      setFeedback({ ok: false, text: `Could not complete "${action.label}" for ${item.title}. Please open the screen instead.` });
+      return;
+    }
+    setFeedback({ ok: true, text: action.doneMessage });
+    setPending(null);
+    setInputValue('');
+    setTick((t) => t + 1);
+  };
+
+  const onActionClick = (e: React.MouseEvent, item: PendingItem, action: PendingAction) => {
+    e.stopPropagation();
+    const key = `${item.id}::${action.id}`;
+    if (action.input) {
+      if (pending === key) { runAction(item, action, inputValue); return; }
+      setPending(key);
+      setInputValue(action.input.kind === 'select' ? (action.input.options?.[0] ?? '') : '');
+      setFeedback(null);
+      return;
+    }
+    runAction(item, action);
+  };
+
+  const toneStyle = (tone: PendingAction['tone']): React.CSSProperties => {
+    if (tone === 'danger') return { background: '#fff', color: '#be123c', border: '1px solid #fecdd3' };
+    if (tone === 'secondary') return { background: '#fff', color: '#0e7490', border: '1px solid #a5f3fc' };
+    return { background: '#0e7490', color: '#fff', border: '1px solid #0e7490' };
+  };
 
   return (
     <div ref={popRef} style={{
@@ -90,7 +147,7 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 
     }}>
       {/* Bell button */}
       <button
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => { setOpen((o) => !o); setFeedback(null); setPending(null); }}
         title={`Notifications — ${count} pending`}
         aria-label="Notifications"
         style={{
@@ -190,6 +247,30 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 
             </button>
           </header>
 
+          {feedback && (
+            <div
+              role="status"
+              style={{
+                display: 'flex', alignItems: 'flex-start', gap: 8,
+                padding: '8px 14px', fontSize: 12, fontWeight: 600,
+                background: feedback.ok ? '#ecfdf5' : '#fff1f2',
+                color: feedback.ok ? '#047857' : '#be123c',
+                borderBottom: '1px solid #e2e8f0',
+              }}
+            >
+              {feedback.ok ? <CheckCircle2 size={14} style={{ flexShrink: 0, marginTop: 1 }} /> : <AlertCircle size={14} style={{ flexShrink: 0, marginTop: 1 }} />}
+              <span style={{ flex: 1 }}>{feedback.text}</span>
+              <button
+                type="button"
+                onClick={() => setFeedback(null)}
+                aria-label="Dismiss"
+                style={{ background: 'transparent', border: 'none', color: 'inherit', cursor: 'pointer', padding: 0 }}
+              >
+                <X size={12} />
+              </button>
+            </div>
+          )}
+
           <div style={{ overflowY: 'auto', flex: 1 }}>
             {count === 0 ? (
               <div style={{ padding: '24px 16px', textAlign: 'center', color: '#64748b', fontSize: 13 }}>
@@ -229,12 +310,80 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 
                     <p style={{ margin: '4px 0 6px 0', fontSize: 11, color: '#475569' }}>
                       {it.subtitle}
                     </p>
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 4,
-                      fontSize: 11, color: '#0e7490', fontWeight: 600,
-                    }}>
-                      <ExternalLink size={11} /> {it.linkLabel}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+                      {(it.actions || []).map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          onClick={(e) => onActionClick(e, it, a)}
+                          style={{
+                            ...toneStyle(a.tone),
+                            fontSize: 11, fontWeight: 700, borderRadius: 6,
+                            padding: '5px 10px', cursor: 'pointer',
+                          }}
+                        >
+                          {pending === `${it.id}::${a.id}` ? `Confirm ${a.label.toLowerCase()}` : a.label}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); onJump(it.link); }}
+                        style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 4,
+                          fontSize: 11, color: '#0e7490', fontWeight: 600,
+                          background: 'transparent', border: 'none', padding: '5px 4px', cursor: 'pointer',
+                        }}
+                      >
+                        <ExternalLink size={11} /> {it.linkLabel}
+                      </button>
                     </div>
+
+                    {(it.actions || []).map((a) => (pending === `${it.id}::${a.id}` && a.input) ? (
+                      <div
+                        key={`in-${a.id}`}
+                        onClick={(e) => e.stopPropagation()}
+                        style={{ marginTop: 8, display: 'flex', flexDirection: 'column', gap: 6 }}
+                      >
+                        <label style={{ fontSize: 11, color: '#475569', fontWeight: 600 }}>{a.input.label}</label>
+                        {a.input.kind === 'select' ? (
+                          <select
+                            autoFocus
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            style={{ fontSize: 12, padding: '6px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                          >
+                            {(a.input.options || []).map((o) => <option key={o} value={o}>{o}</option>)}
+                          </select>
+                        ) : (
+                          <input
+                            autoFocus
+                            type={a.input.kind === 'date' ? 'date' : 'text'}
+                            value={inputValue}
+                            placeholder={a.input.placeholder}
+                            min={a.input.kind === 'date' ? new Date().toISOString().slice(0, 10) : undefined}
+                            onChange={(e) => setInputValue(e.target.value)}
+                            onKeyDown={(e) => { if (e.key === 'Enter') runAction(it, a, inputValue); }}
+                            style={{ fontSize: 12, padding: '6px 8px', borderRadius: 6, border: '1px solid #cbd5e1' }}
+                          />
+                        )}
+                        <div style={{ display: 'flex', gap: 6 }}>
+                          <button
+                            type="button"
+                            onClick={() => runAction(it, a, inputValue)}
+                            style={{ ...toneStyle(a.tone), fontSize: 11, fontWeight: 700, borderRadius: 6, padding: '5px 10px', cursor: 'pointer' }}
+                          >
+                            {a.label}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => { setPending(null); setInputValue(''); }}
+                            style={{ ...toneStyle('secondary'), fontSize: 11, fontWeight: 600, borderRadius: 6, padding: '5px 10px', cursor: 'pointer' }}
+                          >
+                            Cancel
+                          </button>
+                        </div>
+                      </div>
+                    ) : null)}
                   </li>
                 ))}
                 {more > 0 && (
@@ -253,7 +402,7 @@ const NotificationsBell: React.FC<NotificationsBellProps> = ({ role, limit = 10 
             padding: '8px 14px', borderTop: '1px solid #e2e8f0',
             background: '#f8fafc', fontSize: 11, color: '#64748b', textAlign: 'center',
           }}>
-            Click any item to jump to its screen.
+            Use the buttons to act now, or click a card to open its screen.
           </footer>
         </div>
       )}

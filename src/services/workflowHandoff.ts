@@ -58,6 +58,27 @@ export interface PendingItem {
   receivedAt?: string;
   /** Used for sorting — higher means more urgent */
   weight: number;
+  /** One-click actions the user can run straight from the notification. */
+  actions?: PendingAction[];
+}
+
+/** A quick action rendered as a button on a notification card. */
+export interface PendingAction {
+  id: string;
+  label: string;
+  tone?: 'primary' | 'secondary' | 'danger';
+  /** Optional input collected before running (e.g. a coordinator or date). */
+  input?: {
+    kind: 'select' | 'date' | 'text';
+    label: string;
+    options?: string[];
+    required?: boolean;
+    placeholder?: string;
+  };
+  /** Performs the handoff. Returning null/false means it failed. */
+  run: (value?: string) => unknown;
+  /** Message shown after the action succeeds. */
+  doneMessage: string;
 }
 
 /* ---------- Internal helpers ---------------------------------------------- */
@@ -81,6 +102,23 @@ const clientLabel = (clientId: number): string => {
   const clients = safeJSON<any[]>('cms_client_registrations', []);
   const hit = clients.find((c) => Number(c.id) === Number(clientId));
   return hit ? (hit.organizationName || hit.name || `Client #${clientId}`) : `Client #${clientId}`;
+};
+
+/** Appends `?focus=<id>` so the target screen can open that exact record. */
+const withFocus = (path: string, id: string | number): string =>
+  `${path}?focus=${encodeURIComponent(String(id))}`;
+
+/** Coordinators that Management can assign a new client to. */
+const coordinatorOptions = (): string[] => {
+  const names = new Set<string>(['Praveen Gangarapu', 'Cora Dinh']);
+  try {
+    readWorkflows().forEach((w) => { if (w.assignedCoordinator) names.add(w.assignedCoordinator); });
+    const people = safeJSON<any[]>('cms_auditors', []);
+    people
+      .filter((p) => /coordinator/i.test(String(p.role || p.designation || '')))
+      .forEach((p) => { if (p.name) names.add(String(p.name)); });
+  } catch { /* ignore */ }
+  return Array.from(names);
 };
 
 /* ---------- Handoff mutations -------------------------------------------- */
@@ -231,6 +269,22 @@ export const releaseCertification = (
   return r;
 };
 
+/** Management returns a certificate request to the audit team for rework. */
+export const sendBackForReview = (
+  clientId: number,
+  by: string,
+  reason?: string,
+): WorkflowRecord | null => {
+  const r = setStage(
+    clientId,
+    'Action items released to Auditor',
+    by,
+    `Returned for review${reason ? ': ' + reason : ''}`,
+  );
+  broadcast();
+  return r;
+};
+
 /* ---------- Helper exported for callers ---------------------------------- */
 
 export const beginRegistration = (
@@ -273,7 +327,7 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: r.status,
         badgeColor: '#0e7490',
         badgeBg: '#cffafe',
-        link: '/auditor-coordinator/auditor-requests',
+        link: withFocus('/auditor-coordinator/auditor-requests', r.id),
         linkLabel: 'Review',
         receivedAt: r.receivedAt,
         weight: 80,
@@ -291,10 +345,17 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#7c3aed',
         badgeBg: '#ede9fe',
-        link: '/auditor-coordinator/audit-workflow',
+        link: withFocus('/auditor-coordinator/audit-workflow', w.clientId),
         linkLabel: 'Open',
         receivedAt: w.updatedAt,
         weight: 70,
+        actions: [{
+          id: 'mark-reviewed',
+          label: 'Mark requirements reviewed',
+          tone: 'primary',
+          run: () => submitRequirementsReview(w.clientId, { notes: 'Marked reviewed from notifications.' }, 'Audit Coordinator'),
+          doneMessage: `Requirements reviewed for ${cl}.`,
+        }],
       });
     }
     if (w.currentStage === 'Requirements Reviewed') {
@@ -305,10 +366,18 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#0891b2',
         badgeBg: 'rgba(8,145,178,.10)',
-        link: '/auditor-coordinator/audit-schedules',
+        link: withFocus('/auditor-coordinator/audit-schedules', w.clientId),
         linkLabel: 'Schedule',
         receivedAt: w.updatedAt,
         weight: 75,
+        actions: [{
+          id: 'propose-date',
+          label: 'Propose date',
+          tone: 'primary',
+          input: { kind: 'date', label: 'Audit date', required: true },
+          run: (date) => proposeAuditSchedule(w.clientId, { proposedDate: date || '' }, 'Audit Coordinator'),
+          doneMessage: `Date proposed to ${cl}; waiting for auditee approval.`,
+        }],
       });
     }
     if (w.currentStage === 'Review and Approval by Auditor') {
@@ -319,7 +388,7 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#9333ea',
         badgeBg: 'rgba(168,85,247,.12)',
-        link: '/auditor-coordinator/audit-certifications',
+        link: withFocus('/auditor-coordinator/audit-certifications', w.clientId),
         linkLabel: 'Generate',
         receivedAt: w.updatedAt,
         weight: 90,
@@ -344,10 +413,18 @@ const pendingForManagement = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#1d4ed8',
         badgeBg: '#dbeafe',
-        link: '/management/audit-assignments',
-        linkLabel: 'Assign',
+        link: withFocus('/management/client-onboarding', w.clientId),
+        linkLabel: 'Open client',
         receivedAt: w.updatedAt,
         weight: 85,
+        actions: [{
+          id: 'assign-coordinator',
+          label: 'Assign',
+          tone: 'primary',
+          input: { kind: 'select', label: 'Audit Coordinator', options: coordinatorOptions(), required: true },
+          run: (name) => assignCoordinatorTo(w.clientId, name || '', 'Management'),
+          doneMessage: `Coordinator assigned to ${clientLabel(w.clientId)}.`,
+        }],
       });
     });
 
@@ -362,10 +439,24 @@ const pendingForManagement = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#9333ea',
         badgeBg: 'rgba(168,85,247,.12)',
-        link: '/management/audit-assignments',
-        linkLabel: 'Approve',
+        link: withFocus('/management/dashboard', w.clientId),
+        linkLabel: 'Open dashboard',
         receivedAt: w.updatedAt,
         weight: 95,
+        actions: [{
+          id: 'approve-certificate',
+          label: 'Approve & release',
+          tone: 'primary',
+          run: () => releaseCertification(w.clientId, 'Management'),
+          doneMessage: `Certificate approved and released for ${clientLabel(w.clientId)}.`,
+        }, {
+          id: 'send-back',
+          label: 'Send back',
+          tone: 'danger',
+          input: { kind: 'text', label: 'Reason', placeholder: 'What needs fixing?', required: true },
+          run: (reason) => sendBackForReview(w.clientId, 'Management', reason),
+          doneMessage: `Sent back to the audit team for ${clientLabel(w.clientId)}.`,
+        }],
       });
     });
 
@@ -381,8 +472,8 @@ const pendingForManagement = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: r.status,
         badgeColor: '#0e7490',
         badgeBg: '#cffafe',
-        link: '/management/client-credentials',
-        linkLabel: 'Issue credentials',
+        link: withFocus('/management/auditor-approvals', r.id),
+        linkLabel: 'Review & approve',
         receivedAt: r.receivedAt,
         weight: 75,
       });
@@ -405,10 +496,17 @@ const pendingForLeadAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#047857',
         badgeBg: 'rgba(16,185,129,.12)',
-        link: '/lead-auditor/audit-schedules',
-        linkLabel: 'Confirm',
+        link: withFocus('/lead-auditor/audit-schedules', w.clientId),
+        linkLabel: 'Open schedule',
         receivedAt: w.updatedAt,
         weight: 80,
+        actions: [{
+          id: 'confirm-team',
+          label: 'Confirm team',
+          tone: 'primary',
+          run: () => auditorConfirmSchedule(w.clientId, 'Lead Auditor', 'Lead Auditor locked the team.'),
+          doneMessage: `Team confirmed for ${clientLabel(w.clientId)}.`,
+        }],
       });
     });
 
@@ -423,10 +521,17 @@ const pendingForLeadAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#4338ca',
         badgeBg: 'rgba(99,102,241,.10)',
-        link: '/lead-auditor/conduct-audit',
-        linkLabel: 'Open',
+        link: withFocus('/lead-auditor/conduct-audit', w.clientId),
+        linkLabel: 'Open audit',
         receivedAt: w.updatedAt,
         weight: 85,
+        actions: [{
+          id: 'complete-audit',
+          label: 'Mark audit completed',
+          tone: 'primary',
+          run: () => completeAudit(w.clientId, 'Lead Auditor'),
+          doneMessage: `On-site audit closed for ${clientLabel(w.clientId)}.`,
+        }],
       });
     });
 
@@ -441,10 +546,17 @@ const pendingForLeadAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#831843',
         badgeBg: 'rgba(236,72,153,.12)',
-        link: '/lead-auditor/action-review',
-        linkLabel: 'Review',
+        link: withFocus('/lead-auditor/action-review', w.clientId),
+        linkLabel: 'Review details',
         receivedAt: w.updatedAt,
         weight: 90,
+        actions: [{
+          id: 'accept-actions',
+          label: 'Accept actions',
+          tone: 'primary',
+          run: () => approveActionItems(w.clientId, 'Lead Auditor'),
+          doneMessage: `Corrective actions accepted for ${clientLabel(w.clientId)}; sent for certification.`,
+        }],
       });
     });
 
@@ -460,7 +572,7 @@ const pendingForLeadAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: 'Under Review',
         badgeColor: '#9a3412',
         badgeBg: '#fed7aa',
-        link: '/lead-auditor/auditor-approvals',
+        link: withFocus('/lead-auditor/auditor-approvals', r.id),
         linkLabel: 'Open',
         receivedAt: r.receivedAt,
         weight: 70,
@@ -485,10 +597,18 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#0f766e',
         badgeBg: 'rgba(20,184,166,.12)',
-        link: '/auditor/schedule-confirmations',
-        linkLabel: 'Confirm',
+        link: withFocus('/auditor/schedule-confirmations', w.clientId),
+        linkLabel: 'Open schedule',
         receivedAt: w.updatedAt,
         weight: 80,
+        // Auditor can only lock the date once the auditee has approved it
+        actions: w.currentStage === 'Schedule Approved by Auditee' ? [{
+          id: 'confirm-availability',
+          label: 'Confirm availability',
+          tone: 'primary',
+          run: () => auditorConfirmSchedule(w.clientId, 'Auditor'),
+          doneMessage: `Availability confirmed for ${clientLabel(w.clientId)}.`,
+        }] : undefined,
       });
     });
 
@@ -503,7 +623,7 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#4338ca',
         badgeBg: 'rgba(99,102,241,.10)',
-        link: '/auditor/conduct-audit',
+        link: withFocus('/auditor/conduct-audit', w.clientId),
         linkLabel: 'Open',
         receivedAt: w.updatedAt,
         weight: 90,
@@ -521,10 +641,17 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#b45309',
         badgeBg: 'rgba(245,158,11,.12)',
-        link: '/auditor/audit-report',
-        linkLabel: 'Draft',
+        link: withFocus('/auditor/audit-report', w.clientId),
+        linkLabel: 'Draft report',
         receivedAt: w.updatedAt,
         weight: 85,
+        actions: w.currentStage === 'Audit Completed' ? [{
+          id: 'release-findings',
+          label: 'Release findings to auditee',
+          tone: 'primary',
+          run: () => releaseFindings(w.clientId, 'Auditor'),
+          doneMessage: `Findings released to ${clientLabel(w.clientId)}.`,
+        }] : undefined,
       });
     });
 
@@ -545,10 +672,24 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#d97706',
         badgeBg: 'rgba(245,158,11,.12)',
-        link: '/audit-client/schedule-approvals',
-        linkLabel: 'Approve',
+        link: withFocus('/audit-client/schedule-approvals', w.clientId),
+        linkLabel: 'Open schedule',
         receivedAt: w.updatedAt,
         weight: 90,
+        actions: [{
+          id: 'approve-date',
+          label: 'Approve date',
+          tone: 'primary',
+          run: () => auditeeDecideSchedule(w.clientId, 'Approved', undefined, 'Auditee'),
+          doneMessage: 'Audit date approved.',
+        }, {
+          id: 'decline-date',
+          label: 'Decline',
+          tone: 'danger',
+          input: { kind: 'text', label: 'Reason / preferred date', placeholder: 'e.g. Please move to next week', required: true },
+          run: (note) => auditeeDecideSchedule(w.clientId, 'Declined', note, 'Auditee'),
+          doneMessage: 'Declined — the coordinator will propose a new date.',
+        }],
       });
     });
 
@@ -563,7 +704,7 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#b45309',
         badgeBg: 'rgba(245,158,11,.12)',
-        link: '/audit-client/submit-report',
+        link: withFocus('/audit-client/submit-report', w.clientId),
         linkLabel: 'Submit',
         receivedAt: w.updatedAt,
         weight: 85,
@@ -582,7 +723,7 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: 'Awaiting auditee',
         badgeColor: '#1d4ed8',
         badgeBg: '#dbeafe',
-        link: '/audit-client/pending-applications',
+        link: withFocus('/audit-client/pending-applications', a.id),
         linkLabel: 'Open',
         receivedAt: a.sentAt || a.createdAt,
         weight: 70,
@@ -591,6 +732,29 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
 
   return items;
 };
+
+/**
+ * Client Coordinator sees the same items as the Auditee, but read-only and
+ * linked to the Client Coordinator screens (they cannot open /audit-client/*).
+ */
+const CLIENT_COORD_LINKS: Record<string, string> = {
+  '/audit-client/schedule-approvals': '/client-coordinator/audit-schedules',
+  '/audit-client/submit-report': '/client-coordinator/audit-reports',
+  '/audit-client/pending-applications': '/client-coordinator/notifications',
+};
+const pendingForClientCoordinator = (ctx: BuildPendingCtx): PendingItem[] =>
+  pendingForAuditee(ctx).map((it) => {
+    const [path, query] = it.link.split('?');
+    const mapped = CLIENT_COORD_LINKS[path] || '/client-coordinator/dashboard';
+    return {
+      ...it,
+      id: `cc-${it.id}`,
+      subtitle: `${it.subtitle} (Auditee action)`,
+      link: query ? `${mapped}?${query}` : mapped,
+      linkLabel: 'View',
+      actions: undefined,
+    };
+  });
 
 /** Returns the inbox for a role, sorted high-priority first. */
 export const getPendingForRole = (role: Role): PendingItem[] => {
@@ -604,7 +768,7 @@ export const getPendingForRole = (role: Role): PendingItem[] => {
     case 'Lead Auditor':      items = pendingForLeadAuditor(ctx); break;
     case 'Auditor':           items = pendingForAuditor(ctx); break;
     case 'Auditee':           items = pendingForAuditee(ctx); break;
-    case 'Client Coordinator': items = pendingForAuditee(ctx); break;
+    case 'Client Coordinator': items = pendingForClientCoordinator(ctx); break;
   }
 
   // Sort: weight desc, then receivedAt desc

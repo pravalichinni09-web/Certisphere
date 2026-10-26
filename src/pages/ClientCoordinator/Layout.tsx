@@ -23,7 +23,7 @@ const ClientCoordinatorLayout: React.FC<LayoutProps> = ({ onLogout }) => {
   return (
     <div className="client-layout">
       <Sidebar role="Client Coordinator" onLogout={onLogout} />
-      <NotificationsBell role="Auditee" />
+      <NotificationsBell role="Client Coordinator" />
       <div className="client-content">
         <BackButton />
         <Routes>
