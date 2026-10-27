@@ -1,5 +1,12 @@
 /**
- * Claude API client (BYO key, browser-direct).
+ * Claude API client.
+ * ----------------------------------------------------------------------
+ * PRIMARY MODE — server-managed key (recommended for the live site):
+ *   The key is stored once as the Vercel env var ANTHROPIC_API_KEY and
+ *   every call goes through the /api/claude server function. Users never
+ *   enter a key. `initClaudeServer()` (called from main.tsx) detects it.
+ *
+ * FALLBACK MODE — BYO key, browser-direct (local development only):
  * ----------------------------------------------------------------------
  * - Reads the API key from localStorage 'cms_anthropic_api_key'.
  * - Calls api.anthropic.com /v1/messages directly from the browser.
@@ -17,6 +24,65 @@ const MODEL_STORAGE = 'cms_anthropic_model';
 const EVENT_NAME = 'cms-claude-config-updated';
 
 const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
+
+/* ── Server-managed key detection ──────────────────────────────────── */
+const SERVER_ENDPOINT = '/api/claude';
+const SERVER_CACHE = 'cms_claude_server_v1';
+/** Placeholder returned by getApiKey() when the server holds the key. */
+export const SERVER_MANAGED_KEY = '__server_managed__';
+
+let serverAvailable: boolean = (() => {
+  try { return localStorage.getItem(SERVER_CACHE) === '1'; } catch { return false; }
+})();
+
+/** True when AI calls are handled by the /api/claude server function. */
+export const isServerManaged = (): boolean => serverAvailable;
+
+/**
+ * Asks the server whether ANTHROPIC_API_KEY is set. Resolves quickly
+ * (timeout) so the app never waits long; result is cached for next load.
+ */
+export const initClaudeServer = async (timeoutMs = 2000): Promise<boolean> => {
+  const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timer = ctrl ? setTimeout(() => ctrl.abort(), timeoutMs) : null;
+  let available = false;
+  try {
+    const res = await fetch(SERVER_ENDPOINT, { method: 'GET', signal: ctrl?.signal, cache: 'no-store' });
+    const type = res.headers.get('content-type') || '';
+    if (res.ok && type.includes('application/json')) {
+      const json = await res.json();
+      available = !!json?.configured;
+    }
+  } catch {
+    available = false;
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+  const changed = available !== serverAvailable;
+  serverAvailable = available;
+  try { localStorage.setItem(SERVER_CACHE, available ? '1' : '0'); } catch { /* ignore */ }
+  if (changed) {
+    try { window.dispatchEvent(new CustomEvent(EVENT_NAME)); } catch { /* ignore */ }
+  }
+  return available;
+};
+
+/**
+ * Drop-in replacement for `fetch('https://api.anthropic.com/v1/messages', init)`.
+ * Uses the server proxy when available (the caller's x-api-key header is
+ * ignored), otherwise calls Anthropic directly with the caller's headers.
+ */
+export const anthropicFetch = (init: RequestInit = {}): Promise<Response> => {
+  if (serverAvailable) {
+    return fetch(SERVER_ENDPOINT, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: init.body,
+      signal: init.signal,
+    });
+  }
+  return fetch('https://api.anthropic.com/v1/messages', init);
+};
 
 export const SUPPORTED_MODELS: { id: string; label: string; description: string }[] = [
   {
@@ -36,7 +102,8 @@ export const SUPPORTED_MODELS: { id: string; label: string; description: string 
   },
 ];
 
-export const getApiKey = (): string | null => {
+/** Key the user typed into AI Settings on this browser (fallback mode). */
+export const getLocalApiKey = (): string | null => {
   try {
     const v = localStorage.getItem(API_KEY_STORAGE);
     return v && v.trim() ? v.trim() : null;
@@ -44,6 +111,13 @@ export const getApiKey = (): string | null => {
     return null;
   }
 };
+
+/**
+ * Key to use for a call. When the server manages the key this returns a
+ * placeholder (the real key never reaches the browser).
+ */
+export const getApiKey = (): string | null =>
+  serverAvailable ? SERVER_MANAGED_KEY : getLocalApiKey();
 
 export const setApiKey = (key: string): void => {
   try {
@@ -122,7 +196,7 @@ export const complete = async (
   const apiKey = getApiKey();
   if (!apiKey) {
     throw buildError(
-      'Claude is not configured. Add an API key in AI Settings.',
+      'Claude is not configured. Ask your administrator to add ANTHROPIC_API_KEY in Vercel.',
       0,
       'not_configured'
     );
@@ -143,7 +217,7 @@ export const complete = async (
 
   let res: Response;
   try {
-    res = await fetch('https://api.anthropic.com/v1/messages', {
+    res = await anthropicFetch({
       method: 'POST',
       headers: {
         'content-type': 'application/json',

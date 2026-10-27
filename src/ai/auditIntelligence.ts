@@ -11,7 +11,7 @@
  *
  * The heuristics read the app's real findings store so results reflect actual data.
  */
-import { complete, isClaudeConfigured } from './claudeClient';
+import { complete, isClaudeConfigured, anthropicFetch } from './claudeClient';
 import { loadFindings, AuditFinding, FindingCategory } from '../pages/shared/auditAnalysisData';
 
 const safeArr = <T,>(key: string): T[] => {
@@ -495,7 +495,7 @@ Findings / Notes: ${ctx.findings || 'No specific findings noted.'}`;
   const model = (await import('./claudeClient')).getModel();
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await anthropicFetch({
       method: 'POST',
       headers: {
         'content-type': 'application/json',

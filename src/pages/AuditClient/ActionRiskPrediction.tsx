@@ -10,7 +10,7 @@ import {
   ChevronDown, ChevronUp, RefreshCw, Copy,
   ShieldAlert, Target, Eye, Lightbulb,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions, type CorrectiveActionRecord } from '../../services/correctiveActions';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -136,7 +136,7 @@ async function claudePredict(record: CorrectiveActionRecord | null, customText: 
     ? `CAP ID: ${record.capId}\nSeverity: ${record.severity}\nStandard: ${record.standard}\nFinding: ${record.description}\nRoot Cause: ${record.rootCause || 'Not specified'}\nProposed Corrective Plan: ${record.correctivePlan || 'Not specified'}\nDue Date: ${record.dueDate}\nCurrent Status: ${record.status}`
     : `Corrective Action Description:\n${customText}`;
 
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -280,7 +280,7 @@ const ActionRiskPrediction: React.FC = () => {
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — risk scored from your action data and keyword analysis.
-            Configure your Claude API key in <strong>AI Settings</strong> for a full AI risk assessment.
+            Live Claude AI (enabled by your administrator) is needed for a full AI risk assessment.
           </p>
         </div>
       )}

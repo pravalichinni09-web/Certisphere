@@ -8,12 +8,14 @@ import './styles/responsive.css';
 import './styles/light-polish.css';
 import { initTheme } from './hooks/useTheme';
 import { installStorageProxy } from './utils/storageProxy';
+import { initClaudeServer } from './ai/claudeClient';
 
 initTheme();
 
 // Mirror all CMS localStorage writes to Supabase automatically.
 installStorageProxy();
 
+const renderApp = () => {
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <App />
@@ -33,3 +35,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   const elapsed = Date.now() - start;
   window.setTimeout(hide, Math.max(0, 450 - elapsed));
 })();
+};
+
+// Detect whether the server holds the Anthropic key (/api/claude).
+// First visit: wait briefly (max 1.5 s) so AI pages render in the right mode.
+// Later visits: use the cached answer instantly and refresh in the background.
+let hasCachedAiStatus = false;
+try { hasCachedAiStatus = localStorage.getItem('cms_claude_server_v1') !== null; } catch { /* ignore */ }
+if (hasCachedAiStatus) {
+  renderApp();
+  void initClaudeServer();
+} else {
+  initClaudeServer(1500).finally(renderApp);
+}

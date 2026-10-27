@@ -292,7 +292,7 @@ Provide the top 5 priority compliance actions in the JSON format specified.`;
           <Info size={17} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 13, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Heuristic mode</strong> — structured recommendations from your live audit data.
-            Configure your Claude API key in <strong>AI Settings</strong> for a fully personalised AI response.
+            Live Claude AI (enabled by your administrator) is needed for a fully personalised AI response.
           </p>
         </div>
       )}

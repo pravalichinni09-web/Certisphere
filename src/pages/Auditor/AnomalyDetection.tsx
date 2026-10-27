@@ -8,7 +8,7 @@ import {
   Copy, RefreshCw, ShieldAlert, Eye, ChevronDown, ChevronUp,
   AlertCircle, Clock, FileX, TrendingUp, Zap,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions, type CorrectiveActionRecord } from '../../services/correctiveActions';
 
 /* ──────────────────────── Types ───────────────────────────────── */
@@ -267,7 +267,7 @@ async function callClaude(prompt: string, signal: AbortSignal): Promise<string> 
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
   let buf = '';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
     body: JSON.stringify({ model: getModel(), max_tokens: 3000, temperature: 0.2, stream: true, system: SYSTEM, messages: [{ role: 'user', content: prompt }] }),
@@ -432,7 +432,7 @@ Identify all anomalies. Place Critical ones first. Return JSON array only.`;
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
-            <strong style={{ color: GOLD }}>Heuristic mode</strong> — scans for 9 anomaly types across corrective actions, schedules, and certificates. Configure your Claude API key in <strong>AI Settings</strong> for deep AI pattern recognition.
+            <strong style={{ color: GOLD }}>Heuristic mode</strong> — scans for 9 anomaly types across corrective actions, schedules, and certificates. Live Claude AI (enabled by your administrator) is needed for deep AI pattern recognition.
           </p>
         </div>
       )}

@@ -9,7 +9,7 @@ import {
   Copy, RefreshCw, Plus, Trash2, ChevronDown, ChevronUp,
   CheckCircle2, XCircle, AlertCircle, FileCheck,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
 
 /* ──────────────────────── Types ────────────────────────────────── */
@@ -200,7 +200,7 @@ async function claudeAssessAll(items: EvidenceItem[], signal: AbortSignal): Prom
     severity: it.severity, standard: it.standard, capId: it.capId,
   }));
   let buf = '';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
     body: JSON.stringify({ model: getModel(), max_tokens: 3000, temperature: 0.2, stream: true, system: SYSTEM, messages: [{ role: 'user', content: `Assess these ${items.length} evidence items:\n${JSON.stringify(payload, null, 0)}` }] }),

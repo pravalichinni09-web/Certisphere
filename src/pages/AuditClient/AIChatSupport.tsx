@@ -8,7 +8,7 @@ import {
   MessageCircle, Send, Sparkles, Bot, User,
   RefreshCw, Info,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface Msg {
@@ -143,7 +143,7 @@ async function askClaude(
     system: SYSTEM,
     messages: messages.map(m => ({ role: m.role, content: m.content })),
   };
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -297,7 +297,7 @@ const AIChatSupport: React.FC = () => {
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '9px 14px', marginBottom: 12, display: 'flex', gap: 10, alignItems: 'center', flexShrink: 0 }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
-            <strong style={{ color: GOLD }}>FAQ mode</strong> — instant answers from a built-in knowledge base. Configure your Claude API key in <strong>AI Settings</strong> for live conversational AI.
+            <strong style={{ color: GOLD }}>FAQ mode</strong> — instant answers from a built-in knowledge base. Live Claude AI (enabled by your administrator) is needed for live conversational AI.
           </p>
         </div>
       )}

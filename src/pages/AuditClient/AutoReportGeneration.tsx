@@ -8,7 +8,7 @@ import {
   FileText, Wand2, Loader2, Info, Sparkles,
   Copy, Download, RefreshCw, CheckCircle2,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
 
 /* ─── Read live context ──────────────────────────────────────────── */
@@ -195,7 +195,7 @@ async function streamReport(
 ): Promise<void> {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -340,7 +340,7 @@ Include all 8 sections. Use formal certification body language. Be thorough and 
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
             <strong style={{ color: GOLD }}>Template mode</strong> — fully structured report auto-filled from your live findings data.
-            Configure your Claude API key in <strong>AI Settings</strong> for a fully written AI draft.
+            Live Claude AI (enabled by your administrator) is needed for a fully written AI draft.
           </p>
         </div>
       )}

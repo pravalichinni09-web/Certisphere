@@ -11,7 +11,8 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import {
-  getApiKey,
+  getLocalApiKey as getApiKey,
+  isServerManaged,
   setApiKey,
   clearApiKey,
   getModel,
@@ -32,6 +33,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
   const [modelChoice, setModelChoice] = useState(getModel());
   const [reveal, setReveal] = useState(false);
   const [savedKey, setSavedKey] = useState<string | null>(getApiKey());
+  const [serverManaged, setServerManaged] = useState<boolean>(isServerManaged());
   const [busy, setBusy] = useState<'idle' | 'saving' | 'testing'>('idle');
   const [feedback, setFeedback] = useState<
     | { kind: 'ok'; text: string }
@@ -43,6 +45,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
     const off = onClaudeConfigChange(() => {
       setSavedKey(getApiKey());
       setModelChoice(getModel());
+      setServerManaged(isServerManaged());
     });
     return off;
   }, []);
@@ -85,7 +88,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
 
   const handleTest = async () => {
     if (!isClaudeConfigured()) {
-      setFeedback({ kind: 'error', text: 'Save a key first.' });
+      setFeedback({ kind: 'error', text: 'AI is not enabled yet. Add ANTHROPIC_API_KEY in Vercel (or save a key below for this browser).' });
       return;
     }
     setBusy('testing');
@@ -133,10 +136,37 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
         )}
       </header>
 
+      {/* Server-managed status — the normal setup for the live site */}
+      <section className="ai-settings__section">
+        <div className="ai-settings__label">
+          <Sparkles size={14} />
+          <span>Organisation AI access</span>
+        </div>
+        {serverManaged ? (
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', borderRadius: 10, background: '#ecfdf5', border: '1px solid #a7f3d0', color: '#065f46', fontSize: 13 }}>
+            <Check size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+            <span>
+              <strong>Claude is enabled for everyone.</strong> The API key is stored securely on the server
+              (Vercel environment variable), so no user needs to enter a key.
+            </span>
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, padding: '10px 12px', borderRadius: 10, background: '#fffbeb', border: '1px solid #fde68a', color: '#92400e', fontSize: 13 }}>
+            <AlertCircle size={16} style={{ flexShrink: 0, marginTop: 1 }} />
+            <span>
+              <strong>Not enabled on the server yet.</strong> Administrator: in Vercel open
+              {' '}<em>Project → Settings → Environment Variables</em>, add <code>ANTHROPIC_API_KEY</code>, then redeploy.
+              Every user then gets live Claude responses automatically.
+            </span>
+          </div>
+        )}
+      </section>
+
+      {!serverManaged && (
       <section className="ai-settings__section">
         <div className="ai-settings__label">
           <KeyRound size={14} />
-          <span>Anthropic API key</span>
+          <span>Personal key for this browser only (optional, for testing)</span>
         </div>
 
         {savedKey ? (
@@ -201,6 +231,7 @@ const AISettings: React.FC<AISettingsProps> = ({ onClose }) => {
           </div>
         )}
       </section>
+      )}
 
       <section className="ai-settings__section">
         <div className="ai-settings__label">

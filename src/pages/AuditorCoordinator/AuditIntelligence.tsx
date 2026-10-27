@@ -56,8 +56,8 @@ const NoKeyBanner: React.FC = () => (
   <div style={{ background: 'rgba(201,146,42,0.08)', border: '1px solid rgba(201,146,42,0.3)', borderRadius: 10, padding: '12px 16px', marginBottom: 24, display: 'flex', alignItems: 'center', gap: 12 }}>
     <Info size={18} color={GOLD} style={{ flexShrink: 0 }} />
     <p style={{ margin: 0, fontSize: 13, color: 'var(--cms-text-primary, #0f172a)', lineHeight: 1.5 }}>
-      <strong style={{ color: GOLD }}>Claude AI key not configured.</strong> Heuristic results are shown.{' '}
-      Configure your Anthropic API key in <strong>Email Configuration → AI Settings</strong> to unlock live Claude agent responses for all tools.
+      <strong style={{ color: GOLD }}>Live Claude AI is not enabled yet.</strong> Built-in heuristic results are shown.{' '}
+      Administrator: add <strong>ANTHROPIC_API_KEY</strong> in Vercel → Project → Settings → Environment Variables and redeploy — every user then gets live Claude responses automatically.
     </p>
   </div>
 );

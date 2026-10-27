@@ -10,7 +10,7 @@ import {
   MapPin, Clock, CheckCircle2, AlertCircle,
   ChevronDown, ChevronUp, Copy, Download, RefreshCw,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { getAuditors } from './utils/dataStorage';
 import type { Auditor } from './mockData';
 
@@ -259,7 +259,7 @@ async function claudeMatch(jobs: AuditJob[], auditors: Auditor[], workload: Reco
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
   let buf = '';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
     body: JSON.stringify({

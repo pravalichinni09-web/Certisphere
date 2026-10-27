@@ -9,7 +9,7 @@ import {
   Copy, Download, RefreshCw, AlertTriangle, CheckCircle2,
   Users, Clock, MapPin, TrendingUp, Plus, ChevronDown, ChevronUp,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { getAuditors } from './utils/dataStorage';
 import type { Auditor } from './mockData';
 
@@ -239,7 +239,7 @@ async function streamSchedule(prompt: string, signal: AbortSignal): Promise<stri
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
   let buf = '';
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
     body: JSON.stringify({ model: getModel(), max_tokens: 3000, temperature: 0.2, stream: true, system: SYSTEM, messages: [{ role: 'user', content: prompt }] }),

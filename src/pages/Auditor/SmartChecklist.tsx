@@ -8,7 +8,7 @@ import {
   Copy, Download, RefreshCw, ChevronDown, ChevronUp,
   ClipboardCheck, AlertTriangle, CheckCircle2, BookOpen,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 
 /* ──────────────────────── Types ───────────────────────────────── */
 interface CheckItem {
@@ -476,7 +476,7 @@ Return ONLY the JSON array, no markdown fences, no other text.`;
 async function streamChecklist(prompt: string, onChunk: (c: string) => void, signal: AbortSignal): Promise<void> {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: {
       'content-type': 'application/json',
@@ -614,7 +614,7 @@ Include all 8 content types specified. Make it practical for field use. Return J
         <div style={{ background: 'rgba(201,146,42,0.07)', border: '1px solid rgba(201,146,42,0.25)', borderRadius: 9, padding: '10px 14px', marginBottom: 16, display: 'flex', gap: 10, alignItems: 'center' }}>
           <Info size={15} color={GOLD} style={{ flexShrink: 0 }} />
           <p style={{ margin: 0, fontSize: 12, color: '#0f2547', lineHeight: 1.5 }}>
-            <strong style={{ color: GOLD }}>Heuristic mode</strong> — high-quality built-in checklists for all major standards. Configure your Claude API key in <strong>AI Settings</strong> for fully tailored, industry-specific AI output.
+            <strong style={{ color: GOLD }}>Heuristic mode</strong> — high-quality built-in checklists for all major standards. Live Claude AI (enabled by your administrator) is needed for fully tailored, industry-specific AI output.
           </p>
         </div>
       )}

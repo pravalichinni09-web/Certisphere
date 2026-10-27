@@ -8,7 +8,7 @@ import {
   MessageSquare, Send, Sparkles, Bot, User,
   RefreshCw, Info, Mic, Loader2,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -313,7 +313,7 @@ Current audit context:
 async function askClaude(messages: Msg[], signal: AbortSignal): Promise<string> {
   const apiKey = getApiKey();
   if (!apiKey) throw new Error('not_configured');
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: {
       'content-type': 'application/json',

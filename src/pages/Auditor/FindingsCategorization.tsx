@@ -8,7 +8,7 @@ import {
   Plus, Trash2, Copy, Download, RefreshCw,
   ChevronDown, ChevronUp, AlertTriangle, CheckCircle2,
 } from 'lucide-react';
-import { isClaudeConfigured, getApiKey, getModel } from '../../ai/claudeClient';
+import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
 
 /* ──────────────────────── Types ─────────────────────────────────── */
@@ -179,7 +179,7 @@ async function claudeClassify(findings: Finding[], signal: AbortSignal): Promise
   if (!apiKey) throw new Error('not_configured');
   let buf = '';
   const payload = findings.map(f => ({ id: f.id, description: f.description, clause: f.clause, severity: f.severity }));
-  const res = await fetch('https://api.anthropic.com/v1/messages', {
+  const res = await anthropicFetch({
     method: 'POST',
     headers: { 'content-type': 'application/json', 'x-api-key': apiKey, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' },
     body: JSON.stringify({ model: getModel(), max_tokens: 2800, temperature: 0.1, stream: true, system: SYSTEM, messages: [{ role: 'user', content: `Classify these ${findings.length} audit findings:\n${JSON.stringify(payload)}` }] }),

@@ -53,7 +53,7 @@ const GrowthAnalytics: React.FC = () => {
         </div>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, padding: '7px 14px', borderRadius: 999, fontSize: 12.5, fontWeight: 700,
           background: claude ? '#ecfdf5' : '#f1f5f9', color: claude ? '#047857' : '#475569', border: `1px solid ${claude ? '#a7f3d0' : '#e2e8f0'}` }}>
-          <Sparkles size={14} /> {claude ? 'Claude connected' : 'Heuristic mode · add a key in AI Settings'}
+          <Sparkles size={14} /> {claude ? 'Claude connected' : 'Heuristic mode · AI not enabled on server'}
         </span>
       </div>
 
