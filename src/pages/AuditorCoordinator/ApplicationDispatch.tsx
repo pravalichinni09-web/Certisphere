@@ -89,11 +89,28 @@ const ApplicationDispatch: React.FC = () => {
   const STORAGE_KEY = 'cms_application_dispatch_v7'; // Updated version
   const DEFAULT_LINK = 'Application For Certification - QCS 3.31.32 PM (3).doc';
   
-  const handleOpenDocument = (docName: string) => {
-    // Simulates opening/downloading the document
-    const link = document.createElement('a');
+  /** Application whose details are open in the View modal. */
+  const [viewingApp, setViewingApp] = useState<DispatchRecord | null>(null);
+
+  const handleOpenDocument = async (docName: string) => {
+    // Only download the template if it really exists. A missing file would
+    // otherwise be served as the app's index.html (SPA rewrite), reloading
+    // the whole app onto the loading screen.
     const cleanName = docName.split('\\').pop() || docName;
-    link.href = `/${cleanName}`; 
+    const url = `/${encodeURIComponent(cleanName)}`;
+    try {
+      const res = await fetch(url, { method: 'HEAD' });
+      const type = res.headers.get('content-type') || '';
+      if (!res.ok || type.includes('text/html')) {
+        alert(`The document "${cleanName}" is not available yet. Upload it to the project's public folder to enable this download.`);
+        return;
+      }
+    } catch {
+      alert(`Could not reach "${cleanName}". Please try again.`);
+      return;
+    }
+    const link = document.createElement('a');
+    link.href = url;
     link.download = cleanName;
     document.body.appendChild(link);
     link.click();
@@ -960,7 +977,7 @@ const ApplicationDispatch: React.FC = () => {
                             {/* Actions for RECEIVED Tab */}
                             {activeTab === 'received' && (
                                 <>
-                                    <button className="link-btn" title="View Application Details" onClick={() => handleOpenDocument(item.link || DEFAULT_LINK)}>
+                                    <button className="link-btn" title="View Application Details" onClick={() => setViewingApp(item)}>
                                         <Eye size={16} />
                                     </button>
                                     <button className="link-btn danger" title="Delete" onClick={() => handleDelete(item.id)}>
@@ -972,7 +989,7 @@ const ApplicationDispatch: React.FC = () => {
                             {/* Actions for REVIEW Tab */}
                             {activeTab === 'review' && (
                                 <>
-                                    <button className="link-btn" title="View Details" onClick={() => handleOpenDocument(item.link || DEFAULT_LINK)}>
+                                    <button className="link-btn" title="View Details" onClick={() => setViewingApp(item)}>
                                         <Eye size={16} />
                                     </button>
                                     <button 
@@ -1278,6 +1295,19 @@ const ApplicationDispatch: React.FC = () => {
         }
       `}</style>
 
+      {viewingApp && (
+        <ApplicationDetailsModal
+          app={viewingApp}
+          hasQcs={!!loadQCSRecord(viewingApp.id)?.submittedAt}
+          onOpenQcs={() => {
+            const submitted = !!loadQCSRecord(viewingApp.id)?.submittedAt;
+            setQcsFormFor({ id: viewingApp.id, mode: submitted ? 'view' : 'preview' });
+            setViewingApp(null);
+          }}
+          onClose={() => setViewingApp(null)}
+        />
+      )}
+
       {qcsFormFor && (
         <QCSApplicationForm
           dispatchId={qcsFormFor.id}
@@ -1285,6 +1315,115 @@ const ApplicationDispatch: React.FC = () => {
           onClose={() => setQcsFormFor(null)}
         />
       )}
+    </div>
+  );
+};
+
+/* -----------------------------------------------------------------
+   ApplicationDetailsModal — read-only view of one application,
+   opened by the eye (View) icon in the Receive / Review tabs.
+----------------------------------------------------------------- */
+interface ApplicationDetailsModalProps {
+  app: DispatchRecord;
+  hasQcs: boolean;
+  onOpenQcs: () => void;
+  onClose: () => void;
+}
+
+const fmtDay = (v?: string) => {
+  if (!v) return '—';
+  const d = new Date(v);
+  return Number.isNaN(d.getTime()) ? v : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
+const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({ app, hasQcs, onOpenQcs, onClose }) => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const rows: Array<[string, React.ReactNode]> = [
+    ['Client name', app.clientName || '—'],
+    ['Organization', app.organization || '—'],
+    ['Contact person', app.contactName || app.clientName || '—'],
+    ['Email', app.email ? <a href={`mailto:${app.email}`}>{app.email}</a> : '—'],
+    ['Mobile', app.mobile || '—'],
+    ['Application type', app.applicationType || '—'],
+    ['Standard(s)', app.standard || '—'],
+    ['Audit type', app.auditType || '—'],
+    ['Preferred audit window', app.preferredStart || app.preferredEnd ? `${fmtDay(app.preferredStart)} → ${fmtDay(app.preferredEnd)}` : '—'],
+    ['Auditors requested', app.auditorsCount != null ? String(app.auditorsCount) : '—'],
+    ['Application date', fmtDay(app.dispatchedDate)],
+    ['Review date', fmtDay(app.reviewDate)],
+  ];
+
+  const fileLink = (f?: { name: string; dataUrl: string; size: number }) =>
+    f ? (
+      <a href={f.dataUrl} download={f.name} style={{ color: '#0e7490', fontWeight: 600 }}>
+        {f.name} <span style={{ color: '#94a3b8', fontWeight: 400 }}>({Math.max(1, Math.round(f.size / 1024))} KB)</span>
+      </a>
+    ) : <span style={{ color: '#94a3b8' }}>Not uploaded</span>;
+
+  return (
+    <div
+      className="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Application details — ${app.organization}`}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div className="modal-content" style={{ width: 640, maxWidth: '95%', maxHeight: '88vh', overflowY: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12, marginBottom: 16 }}>
+          <div>
+            <h3 style={{ margin: 0, fontSize: 20, color: '#0f172a' }}>{app.organization || app.clientName}</h3>
+            <div style={{ fontSize: 13, color: '#64748b', marginTop: 4 }}>Application #{app.id}</div>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <span style={{
+              padding: '4px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700,
+              background: app.status === 'Received' || app.status === 'Approved' ? '#dcfce7' : app.status === 'Rejected' ? '#fee2e2' : '#fef3c7',
+              color: app.status === 'Received' || app.status === 'Approved' ? '#15803d' : app.status === 'Rejected' ? '#b91c1c' : '#b45309',
+            }}>{app.status}</span>
+            <button type="button" className="link-btn" onClick={onClose} aria-label="Close" title="Close"><X size={18} /></button>
+          </div>
+        </div>
+
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '10px 20px' }}>
+          {rows.map(([label, value]) => (
+            <div key={label}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em' }}>{label}</div>
+              <div style={{ fontSize: 14, color: '#0f172a', marginTop: 2, wordBreak: 'break-word' }}>{value}</div>
+            </div>
+          ))}
+        </div>
+
+        {app.auditScope && (
+          <div style={{ marginTop: 16 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '.04em' }}>Audit scope</div>
+            <p style={{ margin: '4px 0 0', fontSize: 14, color: '#0f172a', whiteSpace: 'pre-wrap' }}>{app.auditScope}</p>
+          </div>
+        )}
+
+        <div style={{ marginTop: 16, padding: 12, borderRadius: 10, background: '#f8fafc', border: '1px solid #e2e8f0', display: 'grid', gap: 8 }}>
+          <div style={{ fontSize: 13 }}><strong>Application attachment:</strong> {fileLink(app.attachment)}</div>
+          <div style={{ fontSize: 13 }}><strong>Agreement:</strong> {fileLink(app.agreement)}</div>
+        </div>
+
+        {(app.sendReviewNote || app.rejectNote) && (
+          <div style={{ marginTop: 12, fontSize: 13, color: '#475569' }}>
+            {app.sendReviewNote && <div><strong>Review note:</strong> {app.sendReviewNote}</div>}
+            {app.rejectNote && <div style={{ color: '#b91c1c' }}><strong>Rejection note:</strong> {app.rejectNote}</div>}
+          </div>
+        )}
+
+        <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10, marginTop: 20 }}>
+          <button type="button" className="doc-attachment-btn" onClick={onOpenQcs}>
+            <FileText size={16} /> {hasQcs ? 'View submitted QCS form' : 'Preview QCS application form'}
+          </button>
+          <button type="button" className="doc-attachment-btn" onClick={onClose}>Close</button>
+        </div>
+      </div>
     </div>
   );
 };
