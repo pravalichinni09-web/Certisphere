@@ -12,6 +12,7 @@ import {
   Calendar,
   PieChart as PieIcon,
   Filter,
+  CalendarDays,
 } from 'lucide-react';
 import {
   AuditFinding,
@@ -19,7 +20,11 @@ import {
   periodLabel,
   loadFindings,
   seedFindings,
-  inPeriod,
+  periodRange,
+  inDateRange,
+  rangeDays,
+  todayYMD,
+  DateRange,
 } from '../shared/auditAnalysisData';
 
 /* -----------------------------------------------------------
@@ -39,6 +44,22 @@ const PERIODS: { key: Period; label: string }[] = [
   { key: 'day', label: '1 Day' },
 ];
 
+const dateInput: React.CSSProperties = {
+  padding: '5px 8px',
+  borderRadius: 8,
+  border: '1px solid #cbd5e1',
+  fontSize: 12,
+  color: '#0f172a',
+  outline: 'none',
+  background: '#fff',
+};
+
+const fmtRangeDay = (ymd: string | null): string => {
+  if (!ymd) return '…';
+  const [y, m, d] = ymd.split('-').map(Number);
+  return new Date(y, m - 1, d).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' });
+};
+
 const CAT_COLORS = {
   Major: '#dc2626',
   Minor: '#f59e0b',
@@ -54,7 +75,25 @@ const STATUS_COLORS = {
 
 const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) => {
   const [findings, setFindings] = useState<AuditFinding[]>([]);
-  const [period, setPeriod] = useState<Period>('all');
+  const [period, setPeriod] = useState<Period | 'custom'>('all');
+  /** Date the period counts back from (inclusive). */
+  const [anchorDate, setAnchorDate] = useState<string>(() => todayYMD());
+  const [customFrom, setCustomFrom] = useState<string>(() => {
+    const d = new Date(); d.setDate(d.getDate() - 29);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  });
+  const [customTo, setCustomTo] = useState<string>(() => todayYMD());
+
+  /** The concrete date window every chart and KPI uses. */
+  const range: DateRange = useMemo(() => {
+    if (period === 'custom') {
+      const a = customFrom || null;
+      const b = customTo || null;
+      // Swap if the user picked them backwards
+      return a && b && a > b ? { from: b, to: a } : { from: a, to: b };
+    }
+    return periodRange(period, anchorDate || todayYMD());
+  }, [period, anchorDate, customFrom, customTo]);
   const [clientFilter, setClientFilter] = useState<string>('all');
   const [standardFilter, setStandardFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
@@ -81,7 +120,7 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
   const filtered = useMemo(() => {
     const q = searchQuery.toLowerCase().trim();
     return findings.filter(f => {
-      if (!inPeriod(f.date, period)) return false;
+      if (!inDateRange(f.date, range)) return false;
       if (clientFilter !== 'all' && f.client !== clientFilter) return false;
       if (standardFilter !== 'all' && f.standard !== standardFilter) return false;
       if (!q) return true;
@@ -94,7 +133,7 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
         (f.auditTitle || '').toLowerCase().includes(q)
       );
     });
-  }, [findings, period, clientFilter, standardFilter, searchQuery]);
+  }, [findings, range, clientFilter, standardFilter, searchQuery]);
 
   /* -------- Aggregations -------- */
   const stats = useMemo(() => {
@@ -293,7 +332,7 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
           <button
             key={p.key}
             onClick={() => setPeriod(p.key)}
-            title={periodLabel[p.key]}
+            title={`${periodLabel[p.key]} up to the “As of” date`}
             style={{
               padding: '5px 12px',
               borderRadius: 14,
@@ -308,6 +347,25 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
             {p.label}
           </button>
         ))}
+        <button
+          onClick={() => setPeriod('custom')}
+          title="Pick your own from / to dates"
+          style={{
+            padding: '5px 12px',
+            borderRadius: 14,
+            border: '1px solid ' + (period === 'custom' ? '#2563eb' : '#cbd5e1'),
+            background: period === 'custom' ? '#2563eb' : '#fff',
+            color: period === 'custom' ? '#fff' : '#475569',
+            fontSize: 12,
+            fontWeight: 600,
+            cursor: 'pointer',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 4,
+          }}
+        >
+          <CalendarDays size={12} /> Custom
+        </button>
         <span style={{ width: 1, height: 22, background: '#e2e8f0', margin: '0 4px' }} />
 
         <select
@@ -344,6 +402,55 @@ const AuditAnalysis: React.FC<AuditAnalysisProps> = ({ role = 'coordinator' }) =
             }}
           />
         </div>
+      </div>
+
+      {/* Date window — anchor date or custom range, plus what's being shown */}
+      <div
+        style={{
+          display: 'flex',
+          gap: 10,
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          margin: '-4px 0 12px',
+          padding: '10px 12px',
+          background: '#f8fafc',
+          borderRadius: 12,
+          border: '1px solid #e2e8f0',
+          fontSize: 12,
+          color: '#475569',
+        }}
+      >
+        <CalendarDays size={14} color="#2563eb" />
+        {period === 'custom' ? (
+          <>
+            <label style={{ fontWeight: 600 }} htmlFor="aa-from">From</label>
+            <input id="aa-from" type="date" value={customFrom} max={customTo || undefined}
+              onChange={(e) => setCustomFrom(e.target.value)} style={dateInput} />
+            <label style={{ fontWeight: 600 }} htmlFor="aa-to">To</label>
+            <input id="aa-to" type="date" value={customTo} min={customFrom || undefined}
+              onChange={(e) => setCustomTo(e.target.value)} style={dateInput} />
+          </>
+        ) : period === 'all' ? (
+          <span style={{ fontWeight: 600 }}>All dates — choose a period to focus on a date window.</span>
+        ) : (
+          <>
+            <label style={{ fontWeight: 600 }} htmlFor="aa-anchor">As of</label>
+            <input id="aa-anchor" type="date" value={anchorDate}
+              onChange={(e) => setAnchorDate(e.target.value || todayYMD())} style={dateInput} />
+            {anchorDate !== todayYMD() && (
+              <button type="button" onClick={() => setAnchorDate(todayYMD())}
+                style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid #cbd5e1', background: '#fff', color: '#2563eb', fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>
+                Today
+              </button>
+            )}
+          </>
+        )}
+        <span style={{ marginLeft: 'auto', fontWeight: 600, color: '#0f172a' }}>
+          {range.from || range.to
+            ? <>Showing {fmtRangeDay(range.from)} – {fmtRangeDay(range.to)}{rangeDays(range) ? ` (${rangeDays(range)} day${rangeDays(range) === 1 ? '' : 's'})` : ''}</>
+            : 'Showing all dates'}
+          {' · '}{filtered.length} finding{filtered.length === 1 ? '' : 's'}
+        </span>
       </div>
 
       {/* KPI row */}

@@ -44,6 +44,62 @@ const write = (k: string, v: unknown) => {
 const iso = (offsetDays: number) =>
   new Date(Date.now() + offsetDays * 86400000).toISOString();
 
+/**
+ * Small per-client shift (0–9 days back) so demo clients don't all share
+ * the same dates. Previously the raw client id (e.g. 105) was added to
+ * the offset, which put most demo dates ~100 days in the FUTURE and broke
+ * every date/period filter.
+ */
+const ago = (clientId: number): number => -(Math.abs(clientId) % 10);
+
+/**
+ * One-time repair for browsers seeded by the old version: any demo
+ * finding / report timestamp that sits in the future is moved back
+ * into the past, keeping the per-client spread.
+ */
+const REPAIR_FLAG = 'cms_demo_dates_repaired_v1';
+export const repairFutureDemoDates = (): boolean => {
+  try {
+    if (localStorage.getItem(REPAIR_FLAG) === '1') return false;
+    const now = Date.now();
+    const isFuture = (v: unknown) => typeof v === 'string' && !Number.isNaN(Date.parse(v)) && Date.parse(v) > now;
+    let changed = false;
+
+    const findings = safe<Record<string, any[]>>('cms_audit_findings_v1', {});
+    if (findings && typeof findings === 'object' && !Array.isArray(findings)) {
+      Object.entries(findings).forEach(([cid, list]) => {
+        if (!Array.isArray(list)) return;
+        list.forEach((f, i) => {
+          if (f && isFuture(f.createdAt)) {
+            f.createdAt = iso(-7 + (i === 2 ? 1 : 0) + ago(Number(cid)));
+            changed = true;
+          }
+        });
+      });
+      if (changed) write('cms_audit_findings_v1', findings);
+    }
+
+    const reports = safe<Record<string, any>>('cms_audit_reports_v1', {});
+    let repChanged = false;
+    if (reports && typeof reports === 'object') {
+      Object.entries(reports).forEach(([cid, r]) => {
+        if (!r || typeof r !== 'object') return;
+        if (isFuture(r.draftedAt)) { r.draftedAt = iso(-5 + ago(Number(cid))); repChanged = true; }
+        if (isFuture(r.submittedAt)) { r.submittedAt = iso(-3 + ago(Number(cid))); repChanged = true; }
+      });
+      if (repChanged) write('cms_audit_reports_v1', reports);
+    }
+
+    localStorage.setItem(REPAIR_FLAG, '1');
+    if (changed || repChanged) {
+      try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
+    }
+    return changed || repChanged;
+  } catch {
+    return false;
+  }
+};
+
 interface DemoClient {
   id: number;
   organizationName: string;
@@ -90,7 +146,7 @@ export const seedConnectedDemo = (): boolean => {
       contactPerson: c.contactPerson, email: c.email, phone: c.phone,
       address: `${c.city}, ${c.country}`, country: c.country, city: c.city,
       industry: c.industry, standard: c.standard, clientType: c.clientType,
-      status: c.status, registrationNumber: 'REG-' + c.id, createdAt: iso(-90 + c.id),
+      status: c.status, registrationNumber: 'REG-' + c.id, createdAt: iso(-90 + ago(c.id)),
     }));
     write('cms_client_registrations', [...existingClients, ...newClients]);
 
@@ -100,13 +156,13 @@ export const seedConnectedDemo = (): boolean => {
       clientId: c.id,
       currentStage: c.stage,
       assignedCoordinator: c.coordinator,
-      assignedAt: iso(-30 + c.id),
+      assignedAt: iso(-30 + ago(c.id)),
       requirements: c.coordinator ? {
         scope: `${c.industry} operations at ${c.city}, ${c.country}`,
         standards: [c.standard],
         documents: ['Quality Manual', 'Process Map', 'Internal Audit Logs'],
         notes: `${c.clientType} for ${c.standard}.`,
-        reviewedAt: iso(-25 + c.id), reviewedBy: c.coordinator,
+        reviewedAt: iso(-25 + ago(c.id)), reviewedBy: c.coordinator,
       } : undefined,
       schedule: c.scheduledDate ? {
         proposedDate: c.scheduledDate,
@@ -114,20 +170,20 @@ export const seedConnectedDemo = (): boolean => {
         leadAuditor: c.leadAuditor,
         auditor: c.auditor,
         notes: `${c.clientType} audit at ${c.city}.`,
-        proposedAt: iso(-15 + c.id),
+        proposedAt: iso(-15 + ago(c.id)),
         proposedBy: c.coordinator,
         decision: c.stage === 'Schedule Proposed' ? 'Pending' : 'Approved',
-        decisionAt: c.stage === 'Schedule Proposed' ? undefined : iso(-12 + c.id),
+        decisionAt: c.stage === 'Schedule Proposed' ? undefined : iso(-12 + ago(c.id)),
       } : undefined,
       history: [
-        { stage: 'Registration Submitted', at: iso(-40 + c.id), by: 'Auditee · ' + c.contactPerson },
-        ...(c.coordinator ? [{ stage: 'Coordinator Assigned', at: iso(-35 + c.id), by: 'Management', note: `Picked ${c.coordinator}` }] : []),
-        ...(c.coordinator ? [{ stage: 'Requirements Reviewed', at: iso(-25 + c.id), by: c.coordinator, note: 'Docs OK.' }] : []),
-        ...(c.scheduledDate ? [{ stage: 'Schedule Proposed', at: iso(-15 + c.id), by: c.coordinator }] : []),
-        { stage: c.stage, at: iso(-5 + c.id), by: 'System' },
+        { stage: 'Registration Submitted', at: iso(-40 + ago(c.id)), by: 'Auditee · ' + c.contactPerson },
+        ...(c.coordinator ? [{ stage: 'Coordinator Assigned', at: iso(-35 + ago(c.id)), by: 'Management', note: `Picked ${c.coordinator}` }] : []),
+        ...(c.coordinator ? [{ stage: 'Requirements Reviewed', at: iso(-25 + ago(c.id)), by: c.coordinator, note: 'Docs OK.' }] : []),
+        ...(c.scheduledDate ? [{ stage: 'Schedule Proposed', at: iso(-15 + ago(c.id)), by: c.coordinator }] : []),
+        { stage: c.stage, at: iso(-5 + ago(c.id)), by: 'System' },
       ],
-      createdAt: iso(-90 + c.id),
-      updatedAt: iso(-1 + c.id),
+      createdAt: iso(-90 + ago(c.id)),
+      updatedAt: iso(-1 + ago(c.id)),
     }));
     const wfMerged = [...wfExisting.filter((w: any) => !CLIENTS.some(c => c.id === w.clientId)), ...wfNew];
     write('cms_audit_workflow', wfMerged);
@@ -161,7 +217,7 @@ export const seedConnectedDemo = (): boolean => {
       auditor: c.auditor,
       status: c.stage === 'Audit In Progress' ? 'in-progress' : c.stage === 'Audit Completed' ? 'completed' : 'scheduled',
       notes: `${c.clientType} audit at ${c.city}.`,
-      createdAt: iso(-15 + c.id),
+      createdAt: iso(-15 + ago(c.id)),
     }));
     const schMerged = [...schExisting.filter((s: any) => !schNew.some(n => n.id === s.id)), ...schNew];
     write('cms_audit_schedules', schMerged);
@@ -171,9 +227,9 @@ export const seedConnectedDemo = (): boolean => {
     CLIENTS.filter(c => ['Audit findings', 'Action items released to Auditor', 'Review and Approval by Auditor'].includes(c.stage)).forEach(c => {
       if (!findings[String(c.id)]) {
         findings[String(c.id)] = [
-          { id: 'f-' + c.id + '-1', severity: 'Minor NC', clause: '8.5.1', description: 'Calibration record incomplete for QC instrument #04.', evidence: 'Document review', createdAt: iso(-7 + c.id) },
-          { id: 'f-' + c.id + '-2', severity: 'Observation', clause: '7.1.4', description: 'Internal lighting at workstation 3 below recommended lux level.', evidence: 'On-site observation', createdAt: iso(-7 + c.id) },
-          { id: 'f-' + c.id + '-3', severity: 'Opportunity', clause: '9.1.3', description: 'Process metrics dashboard could be automated.', evidence: 'Interview', createdAt: iso(-6 + c.id) },
+          { id: 'f-' + c.id + '-1', severity: 'Minor NC', clause: '8.5.1', description: 'Calibration record incomplete for QC instrument #04.', evidence: 'Document review', createdAt: iso(-7 + ago(c.id)) },
+          { id: 'f-' + c.id + '-2', severity: 'Observation', clause: '7.1.4', description: 'Internal lighting at workstation 3 below recommended lux level.', evidence: 'On-site observation', createdAt: iso(-7 + ago(c.id)) },
+          { id: 'f-' + c.id + '-3', severity: 'Opportunity', clause: '9.1.3', description: 'Process metrics dashboard could be automated.', evidence: 'Interview', createdAt: iso(-6 + ago(c.id)) },
         ];
       }
     });
@@ -188,8 +244,8 @@ export const seedConnectedDemo = (): boolean => {
           scope: `${c.industry} operations at ${c.city}, ${c.country}`,
           conclusion: 'The QMS demonstrates effective implementation of ' + c.standard + ' with a small number of minor non-conformities documented.',
           recommendation: 'Recommend certification',
-          draftedAt: iso(-5 + c.id), draftedBy: c.auditor,
-          submittedAt: c.stage === 'Review and Approval by Auditor' || c.stage === 'Certification released' ? iso(-3 + c.id) : undefined,
+          draftedAt: iso(-5 + ago(c.id)), draftedBy: c.auditor,
+          submittedAt: c.stage === 'Review and Approval by Auditor' || c.stage === 'Certification released' ? iso(-3 + ago(c.id)) : undefined,
         };
       }
     });

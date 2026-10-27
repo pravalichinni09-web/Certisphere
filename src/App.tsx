@@ -8,7 +8,7 @@ import { supabase, isSupabaseEnabled } from './lib/supabase';
 import { useSupabaseData } from './hooks/useSupabaseData';
 import { seedGlobalDemo } from './utils/globalDemoSeeder';
 import { seedInboxDemo } from './utils/inboxSeed';
-import { seedConnectedDemo } from './utils/connectedDemoSeed';
+import { seedConnectedDemo, repairFutureDemoDates } from './utils/connectedDemoSeed';
 
 // Run the global demo seeder once on module load so every CMS surface has
 // realistic data on first render.
@@ -17,6 +17,7 @@ seedGlobalDemo();
 seedInboxDemo();
 // Connected cross-role demo data — runs once per browser.
 seedConnectedDemo();
+repairFutureDemoDates();
 import AuditorCoordinatorLayout from './pages/AuditorCoordinator/Layout';
 import LeadAuditorLayout from './pages/LeadAuditor/Layout';
 import AuditorLayout from './pages/Auditor/Layout';

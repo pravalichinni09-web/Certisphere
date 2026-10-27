@@ -394,3 +394,66 @@ export const inPeriod = (iso: string | undefined, period: Period): boolean => {
   if (isNaN(t)) return false;
   return t >= periodCutoff(period);
 };
+
+/* -----------------------------------------------------------
+   Date-anchored ranges — periods counted back from a chosen
+   "as of" date (inclusive), compared as local YYYY-MM-DD so
+   time zones never push a finding into the wrong day.
+----------------------------------------------------------- */
+
+const pad2 = (n: number) => String(n).padStart(2, '0');
+
+/** Local calendar date → 'YYYY-MM-DD'. */
+export const toYMD = (d: Date): string =>
+  `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+
+/** 'YYYY-MM-DD' → local Date at midnight. */
+export const fromYMD = (ymd: string): Date => {
+  const [y, m, d] = ymd.split('-').map(Number);
+  return new Date(y, (m || 1) - 1, d || 1);
+};
+
+export const todayYMD = (): string => toYMD(new Date());
+
+export interface DateRange {
+  /** Inclusive start, 'YYYY-MM-DD'; null = no lower bound */
+  from: string | null;
+  /** Inclusive end, 'YYYY-MM-DD'; null = no upper bound */
+  to: string | null;
+}
+
+/** Range covered by a period ending on `anchor` (inclusive). */
+export const periodRange = (period: Period, anchor: string): DateRange => {
+  if (period === 'all') return { from: null, to: null };
+  const end = fromYMD(anchor);
+  const start = new Date(end);
+  switch (period) {
+    case 'day':     break;                                   // just the anchor day
+    case 'week':    start.setDate(start.getDate() - 6); break;  // 7 days
+    case 'month':   start.setMonth(start.getMonth() - 1); start.setDate(start.getDate() + 1); break;
+    case 'quarter': start.setMonth(start.getMonth() - 3); start.setDate(start.getDate() + 1); break;
+    case 'year':    start.setFullYear(start.getFullYear() - 1); start.setDate(start.getDate() + 1); break;
+  }
+  return { from: toYMD(start), to: anchor };
+};
+
+/** True when a finding date falls inside the (inclusive) range. */
+export const inDateRange = (dateStr: string | undefined, range: DateRange): boolean => {
+  if (!range.from && !range.to) return true;
+  if (!dateStr) return false;
+  // Accept 'YYYY-MM-DD' or full ISO timestamps; compare on the local day.
+  const ymd = /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : (() => {
+    const t = new Date(dateStr);
+    return Number.isNaN(t.getTime()) ? '' : toYMD(t);
+  })();
+  if (!ymd) return false;
+  if (range.from && ymd < range.from) return false;
+  if (range.to && ymd > range.to) return false;
+  return true;
+};
+
+/** Number of calendar days in an inclusive range. */
+export const rangeDays = (range: DateRange): number | null => {
+  if (!range.from || !range.to) return null;
+  return Math.round((fromYMD(range.to).getTime() - fromYMD(range.from).getTime()) / 86400000) + 1;
+};
