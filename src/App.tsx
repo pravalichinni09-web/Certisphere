@@ -28,9 +28,40 @@ import AIAssistant from './components/AIAssistant';
 import ErrorBoundary from './components/ErrorBoundary';
 import WelcomeToast from './components/WelcomeToast';
 
+/* ── Session persistence ──────────────────────────────────────────
+   Login state used to live only in React memory, so any page refresh
+   (F5 / Ctrl+F5) dropped the user back on /login. We now keep the
+   signed-in role in localStorage (expires after SESSION_TTL_MS) and
+   restore it on load, so a refresh reopens the same page. */
+const SESSION_KEY = 'cms_session_v1';
+const SESSION_TTL_MS = 12 * 60 * 60 * 1000; // 12 hours
+const VALID_ROLES = ['Management', 'Audit Coordinator', 'Lead Auditor', 'Auditor', 'Auditee', 'Client Coordinator'];
+
+const readSession = (): string => {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return '';
+    const { role, at } = JSON.parse(raw) as { role?: string; at?: number };
+    if (!role || !VALID_ROLES.includes(role)) return '';
+    if (!at || Date.now() - at > SESSION_TTL_MS) {
+      localStorage.removeItem(SESSION_KEY);
+      return '';
+    }
+    return role;
+  } catch {
+    return '';
+  }
+};
+const writeSession = (role: string) => {
+  try { localStorage.setItem(SESSION_KEY, JSON.stringify({ role, at: Date.now() })); } catch { /* noop */ }
+};
+const clearSession = () => {
+  try { localStorage.removeItem(SESSION_KEY); } catch { /* noop */ }
+};
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [loggedInUser, setLoggedInUser] = useState<string>('');
+  const [loggedInUser, setLoggedInUser] = useState<string>(() => readSession());
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!readSession());
   const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   // Load Supabase DB data into localStorage whenever user logs in
@@ -54,17 +85,22 @@ function App() {
           }
           setIsLoggedIn(true);
           setLoggedInUser(profile.role);
+          writeSession(profile.role);
         }
       }
     });
 
     // Listen for auth changes (sign in / sign out in other tabs)
     const { data: { subscription } } = supabase!.auth.onAuthStateChange(async (event, session) => {
-      if (event === 'SIGNED_OUT' || !session) {
+      // Only an explicit sign-out ends the session. (INITIAL_SESSION with no
+      // Supabase session is normal for demo logins and must not log out.)
+      if (event === 'SIGNED_OUT') {
         setIsLoggedIn(false);
         setLoggedInUser('');
+        clearSession();
         return;
       }
+      if (!session) return;
       if (event === 'SIGNED_IN' && session.user) {
         const { data: profile } = await (supabase as any)
           .from('users')
@@ -77,6 +113,7 @@ function App() {
           }
           setIsLoggedIn(true);
           setLoggedInUser(profile.role);
+          writeSession(profile.role);
         }
       }
     });
@@ -87,6 +124,7 @@ function App() {
   const handleLogin = (userRole: string) => {
     setIsLoggedIn(true);
     setLoggedInUser(userRole);
+    writeSession(userRole);
   };
 
   const handleLogout = async () => {
@@ -95,6 +133,7 @@ function App() {
       await supabase!.auth.signOut();
     }
     // Clear auth state — the logout splash covers the blank-page flash
+    clearSession();
     setIsLoggedIn(false);
     setLoggedInUser('');
     // Keep splash up briefly so the navigate to /login feels instant
