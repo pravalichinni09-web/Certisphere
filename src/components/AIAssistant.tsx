@@ -349,7 +349,25 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
       'The user is currently a ' + (role || 'guest') + '. ' +
       'If a question is about the app and you do not know the specific answer, say so honestly and suggest where the user might look.';
 
-    claudeComplete(text, { system: generalSystem, maxTokens: 900, temperature: 0.6 })
+    // Give Claude the recent conversation so follow-up questions make sense
+    // (previously each question was sent alone, producing repetitive answers).
+    const history = messages
+      .slice(-8)
+      .map((m) => {
+        if (m.type === 'user') return m.text ? `User: ${m.text}` : '';
+        const t = (m.response?.blocks || [])
+          .map((b) => (b.kind === 'text' ? b.text || '' : b.kind === 'list' ? (b.items || []).join('; ') : ''))
+          .filter(Boolean)
+          .join(' ');
+        return t ? `Assistant: ${t.slice(0, 600)}` : '';
+      })
+      .filter(Boolean)
+      .join('\n');
+    const prompt = history
+      ? `Conversation so far:\n${history}\n\nUser's new message: ${text}\n\nReply to the new message, using the conversation for context. Do not repeat earlier answers.`
+      : text;
+
+    claudeComplete(prompt, { system: generalSystem, maxTokens: 900, temperature: 0.6 })
       .then((reply) => {
         const resp: AssistantResponse = {
           blocks: [{ kind: 'text', text: reply }],
@@ -383,6 +401,8 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
   // Heuristic: did the rule-based engine produce a confident answer?
   // We treat short generic "I'm not sure" responses as unhandled.
   const isRuleHandled = (r: AssistantResponse): boolean => {
+    // The engine explicitly flags its generic "here's what I can do" replies.
+    if (r.fallback) return false;
     const blocks = r.blocks || [];
     if (blocks.length === 0) return false;
     // If the engine returned navigation, KPIs, cards, or lists — it knew the answer.

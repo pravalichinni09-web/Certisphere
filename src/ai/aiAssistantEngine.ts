@@ -20,6 +20,12 @@ export interface AssistantBlock {
 export interface AssistantResponse {
   blocks: AssistantBlock[];
   suggestions?: string[];
+  /**
+   * True when the rule engine had NO real answer and only produced a
+   * generic "here's what I can help with" reply. The assistant then hands
+   * the question to Claude (when enabled) instead of showing this.
+   */
+  fallback?: boolean;
 }
 
 export interface AssistantContext {
@@ -113,11 +119,29 @@ const data = () => ({
 /*  Intent helpers                                                       */
 /* --------------------------------------------------------------------- */
 
+/**
+ * Keyword test that only matches at the START of a word. Plain substring
+ * matching caused wrong canned answers (e.g. "nc" inside "France", "al"
+ * inside "capital"), so unrelated questions all got the same reply.
+ * Prefix matching keeps useful stems working: "audit" → "auditor", "certif" → "certification".
+ */
+const reCache = new Map<string, RegExp>();
+const wordStart = (needle: string): RegExp => {
+  const key = needle.toLowerCase();
+  let re = reCache.get(key);
+  if (!re) {
+    const esc = key.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    re = new RegExp(`(^|[^a-z0-9])${esc}`);
+    reCache.set(key, re);
+  }
+  return re;
+};
+
 const has = (text: string, ...needles: string[]) =>
-  needles.every((n) => text.includes(n.toLowerCase()));
+  needles.every((n) => wordStart(n).test(text));
 
 const hasAny = (text: string, ...needles: string[]) =>
-  needles.some((n) => text.includes(n.toLowerCase()));
+  needles.some((n) => wordStart(n).test(text));
 
 const lower = (s: string) => (s || '').trim().toLowerCase();
 
@@ -629,7 +653,7 @@ const KB: KBEntry[] = [
   {
     match: (i) =>
       (i === 'what is an audit' || i === 'what is audit' || i === 'define audit' ||
-        (has(i, 'what', 'audit') && !hasAny(i, 'scope', 'plan', 'type', 'report', 'checklist', 'evidence', 'finding', 'criteria', 'objective', 'team', 'trail', 'log', 'history'))),
+        (has(i, 'what', 'audit') && !hasAny(i, 'scope', 'plan', 'type', 'report', 'checklist', 'evidence', 'finding', 'criteria', 'objective', 'team', 'trail', 'log', 'history', 'surveillance', 'internal', 'external', 'recertif', 'stage', 'program', 'coordinator', 'lead', 'auditor', 'required', 'need', 'conduct'))),
     build: () => ({
       blocks: [
         {
@@ -1234,13 +1258,14 @@ function smartFallback(input: string, ctx: AssistantContext): AssistantResponse 
             'I can walk you through the audit lifecycle, certification process, and CertMS workflow.',
             'I can navigate you to any page in the app — just say "open <page name>".',
             'I can look up live data: clients, auditors, schedules, certificates, reports.',
-            'For general-knowledge questions, connect Claude (the ⚙ button) and I will answer anything.',
+            'Live AI answers for any question are available once your administrator enables Claude on the server.',
           ],
         },
       ],
       suggestions: matched.length
         ? Array.from(new Set(matched)).slice(0, 6)
         : suggestionsForRole(ctx.role),
+      fallback: true,
     };
   }
 
@@ -1254,6 +1279,7 @@ function smartFallback(input: string, ctx: AssistantContext): AssistantResponse 
         },
       ],
       suggestions: Array.from(new Set(matched)).slice(0, 6),
+      fallback: true,
     };
   }
 
@@ -1267,6 +1293,7 @@ function smartFallback(input: string, ctx: AssistantContext): AssistantResponse 
       },
     ],
     suggestions: suggestionsForRole(ctx.role),
+    fallback: true,
   };
 }
 
