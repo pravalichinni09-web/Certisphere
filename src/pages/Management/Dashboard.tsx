@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { forecastFindings } from '../../ai/models';
 import { buildKpiDashboard } from '../../ai/managementInsights';
 import { Gauge } from 'lucide-react';
@@ -244,6 +245,7 @@ const ManagementDashboard: React.FC = () => {
 
   return (
     <div className="management-dashboard">
+      <WorkflowStagePanel step="mgmt-certificate" />
       <RoleAIGuide />
       <AIPanel title="Executive Dashboard AI" subtitle="7 KPI groups — value, target, trend and RAG status from live data" icon={<Gauge size={15} />}>
         {(() => {

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { 
   CheckCircle, 
   XCircle, 
@@ -144,6 +145,7 @@ const ActionApproval: React.FC = () => {
 
   return (
     <div className="action-approval-container">
+      <WorkflowStagePanel step="lead-accept" />
       {/* Header */}
       <div className="approval-header">
         <div className="header-text">

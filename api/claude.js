@@ -12,17 +12,19 @@
  * Safety limits: same-origin requests only, allow-listed models,
  * capped output tokens and request size.
  *
- * Optional env: ANTHROPIC_MODEL — default model (else Claude Haiku 4.5).
+ * Optional env: ANTHROPIC_MODEL — default model (else Claude Haiku 5.5).
  */
 
+// Current Claude models (older IDs such as claude-haiku-4-5-20251001 or
+// claude-sonnet-4-6 are replaced; anything not listed falls back to the default).
 const ALLOWED_MODELS = new Set([
-  'claude-haiku-4-5-20251001',
-  'claude-sonnet-4-6',
-  'claude-opus-4-6',
+  'claude-haiku-5-5',
+  'claude-sonnet-5-5',
+  'claude-opus-5-5',
 ]);
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL && ALLOWED_MODELS.has(process.env.ANTHROPIC_MODEL)
   ? process.env.ANTHROPIC_MODEL
-  : 'claude-haiku-4-5-20251001';
+  : 'claude-haiku-5-5';
 const MAX_OUTPUT_TOKENS = 4096;
 const MAX_REQUEST_BYTES = 200 * 1024; // 200 KB of prompt
 

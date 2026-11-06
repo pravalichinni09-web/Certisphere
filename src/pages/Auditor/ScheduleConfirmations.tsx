@@ -6,6 +6,7 @@
  * the additive `auditorConfirmation` field ('Pending'|'Confirmed'|'Declined').
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, Calendar, CheckCircle2, AlertTriangle, MapPin, Users, FileText, Clock,
@@ -83,6 +84,7 @@ const ScheduleConfirmations: React.FC = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: 1200, margin: '0 auto' }}>
+      <WorkflowStagePanel step="auditor-confirm" />
       <button onClick={() => navigate('/auditor/dashboard')} style={btnGhost}>
         <ArrowLeft size={14} /> Back
       </button>

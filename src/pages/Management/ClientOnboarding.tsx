@@ -6,6 +6,7 @@
  * advances the workflow.
  */
 import React, { useEffect, useState } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { Users, CheckCircle2, XCircle, ArrowLeftRight, FileText, Mail, Phone, Globe, Building2, Eye, Search } from 'lucide-react';
 import Tooltip from '../../components/Tooltip';
 import { ensureCredentialsForClients } from '../AuditorCoordinator/utils/clientCredentials';
@@ -149,6 +150,7 @@ const ClientOnboarding: React.FC = () => {
 
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+      <WorkflowStagePanel step="mgmt-assign" />
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
         <div style={{ background: '#ede9fe', color: '#7c3aed', width: 40, height: 40, borderRadius: 10, display: 'grid', placeItems: 'center' }}>
           <Users size={22} />

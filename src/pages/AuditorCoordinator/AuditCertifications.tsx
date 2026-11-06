@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { Plus, Trash2, Edit2, Search } from 'lucide-react';
 import StandardPicker from '../../components/StandardPicker';
 import '../../styles/AuditorCoordinator.css';
@@ -211,6 +212,7 @@ const AuditCertifications: React.FC = () => {
 
   return (
     <div className="audit-scope-container">
+      <WorkflowStagePanel step="coord-certificate" />
       {/* Lead-auditor approval gate notice */}
       <div style={{ background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)', border: '1px solid #f5c130', borderLeft: '4px solid #f59e0b', padding: '10px 14px', borderRadius: 8, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 10, fontSize: 13, color: '#7c2d12', fontWeight: 600 }} title="Certificates require Lead Auditor sign-off before issuance">
         <span aria-hidden="true">⚠️</span>

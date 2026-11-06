@@ -147,6 +147,15 @@ export const assignAuditors = (
   by: string,
 ): WorkflowRecord | null => {
   ensureWorkflow(clientId, by);
+  // Keep the chosen team on the schedule so later steps show it
+  try {
+    const all = readWorkflows();
+    const i = all.findIndex((w) => w.clientId === clientId);
+    if (i >= 0 && all[i].schedule) {
+      all[i] = { ...all[i], schedule: { ...all[i].schedule!, leadAuditor: team.leadAuditor, auditor: team.auditor || all[i].schedule!.auditor } };
+      localStorage.setItem('cms_audit_workflow', JSON.stringify(all));
+    }
+  } catch { /* ignore */ }
   const r = setStage(
     clientId,
     'Assigned Auditors (Lead auditor, Auditor)',
@@ -275,12 +284,56 @@ export const sendBackForReview = (
   by: string,
   reason?: string,
 ): WorkflowRecord | null => {
+  setWorkflowFlags(clientId, { auditorReviewedAt: undefined, certificateGeneratedAt: undefined, certificateNumber: undefined });
   const r = setStage(
     clientId,
     'Action items released to Auditor',
     by,
     `Returned for review${reason ? ': ' + reason : ''}`,
   );
+  broadcast();
+  return r;
+};
+
+/* ---------- Per-client workflow flags (sub-steps inside a stage) --------- */
+
+/**
+ * Some map steps happen INSIDE a stage and don't change the stage itself:
+ * the auditor reviewing corrective actions (stage 12), the coordinator
+ * generating the certificate (stage 13) and delivering it (stage 14).
+ */
+export interface WorkflowFlags {
+  auditorReviewedAt?: string;
+  certificateNumber?: string;
+  certificateGeneratedAt?: string;
+  deliveredAt?: string;
+}
+const FLAGS_KEY = 'cms_workflow_flags_v1';
+
+export const getWorkflowFlags = (clientId: number): WorkflowFlags =>
+  safeJSON<Record<string, WorkflowFlags>>(FLAGS_KEY, {})[String(clientId)] || {};
+
+export const setWorkflowFlags = (clientId: number, patch: Partial<WorkflowFlags> | null): void => {
+  const all = safeJSON<Record<string, WorkflowFlags>>(FLAGS_KEY, {});
+  if (patch === null) delete all[String(clientId)];
+  else all[String(clientId)] = { ...(all[String(clientId)] || {}), ...patch };
+  try { localStorage.setItem(FLAGS_KEY, JSON.stringify(all)); } catch { /* ignore */ }
+  broadcast();
+};
+
+/** Adds a history note without changing the current stage. */
+export const noteWorkflow = (clientId: number, by: string, note: string): WorkflowRecord | null => {
+  const w = readWorkflows().find((x) => x.clientId === clientId);
+  if (!w) return null;
+  const r = setStage(clientId, w.currentStage, by, note);
+  broadcast();
+  return r;
+};
+
+/** Auditor / Lead Auditor returns corrective actions to the auditee for rework. */
+export const returnActionsToAuditee = (clientId: number, by: string, reason?: string): WorkflowRecord | null => {
+  setWorkflowFlags(clientId, { auditorReviewedAt: undefined });
+  const r = setStage(clientId, 'Audit findings', by, `Corrective actions returned${reason ? ': ' + reason : ''}`);
   broadcast();
   return r;
 };
@@ -380,7 +433,7 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         }],
       });
     }
-    if (w.currentStage === 'Review and Approval by Auditor') {
+    if (w.currentStage === 'Review and Approval by Auditor' && !getWorkflowFlags(w.clientId).certificateGeneratedAt) {
       items.push({
         id: `wf-${w.clientId}-cert`,
         title: `Issue certificate — ${cl}`,
@@ -392,6 +445,20 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
         linkLabel: 'Generate',
         receivedAt: w.updatedAt,
         weight: 90,
+      });
+    }
+    if (w.currentStage === 'Certification released' && !getWorkflowFlags(w.clientId).deliveredAt) {
+      items.push({
+        id: `wf-${w.clientId}-deliver`,
+        title: `Deliver certificate — ${cl}`,
+        subtitle: 'Management released the certificate; send it to the client and mark it delivered.',
+        badge: w.currentStage,
+        badgeColor: '#064e3b',
+        badgeBg: 'rgba(5,150,105,.12)',
+        link: withFocus('/auditor-coordinator/certificate-delivery', w.clientId),
+        linkLabel: 'Open Certificate Delivery',
+        receivedAt: w.updatedAt,
+        weight: 60,
       });
     }
   });
@@ -430,7 +497,7 @@ const pendingForManagement = (ctx: BuildPendingCtx): PendingItem[] => {
 
   // Cert approvals
   ctx.workflows
-    .filter((w) => w.currentStage === 'Review and Approval by Auditor')
+    .filter((w) => w.currentStage === 'Review and Approval by Auditor' && !!getWorkflowFlags(w.clientId).certificateGeneratedAt)
     .forEach((w) => {
       items.push({
         id: `mg-${w.clientId}-cert`,
@@ -537,7 +604,7 @@ const pendingForLeadAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
 
   // Action items returned by auditee for LA review
   ctx.workflows
-    .filter((w) => w.currentStage === 'Action items released to Auditor')
+    .filter((w) => w.currentStage === 'Action items released to Auditor' && !!getWorkflowFlags(w.clientId).auditorReviewedAt)
     .forEach((w) => {
       items.push({
         id: `la-${w.clientId}-actions`,
@@ -630,6 +697,24 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
       });
     });
 
+  // Corrective actions submitted by the auditee, waiting for the auditor's review
+  ctx.workflows
+    .filter((w) => w.currentStage === 'Action items released to Auditor' && !getWorkflowFlags(w.clientId).auditorReviewedAt)
+    .forEach((w) => {
+      items.push({
+        id: `au-${w.clientId}-review`,
+        title: `Review corrective actions — ${clientLabel(w.clientId)}`,
+        subtitle: 'Auditee submitted corrective actions; review and forward to the Lead Auditor.',
+        badge: w.currentStage,
+        badgeColor: '#831843',
+        badgeBg: 'rgba(236,72,153,.12)',
+        link: withFocus('/auditor/action-review', w.clientId),
+        linkLabel: 'Open Action Review',
+        receivedAt: w.updatedAt,
+        weight: 88,
+      });
+    });
+
   // Audit findings drafts / report drafting
   ctx.workflows
     .filter((w) => w.currentStage === 'Audit Completed' || w.currentStage === 'Audit findings')
@@ -663,7 +748,7 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
 
   // Schedule proposals awaiting auditee approval
   ctx.workflows
-    .filter((w) => w.currentStage === 'Schedule Proposed' && (!w.schedule?.decision || w.schedule.decision === 'Pending'))
+    .filter((w) => (w.currentStage === 'Schedule Proposed' || w.currentStage === 'Assigned Auditors (Lead auditor, Auditor)') && (!w.schedule?.decision || w.schedule.decision === 'Pending'))
     .forEach((w) => {
       items.push({
         id: `ae-${w.clientId}-sched`,
@@ -704,7 +789,7 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
         badge: w.currentStage,
         badgeColor: '#b45309',
         badgeBg: 'rgba(245,158,11,.12)',
-        link: withFocus('/audit-client/submit-report', w.clientId),
+        link: withFocus('/audit-client/audit-actions', w.clientId),
         linkLabel: 'Submit',
         receivedAt: w.updatedAt,
         weight: 85,
@@ -739,7 +824,7 @@ const pendingForAuditee = (ctx: BuildPendingCtx): PendingItem[] => {
  */
 const CLIENT_COORD_LINKS: Record<string, string> = {
   '/audit-client/schedule-approvals': '/client-coordinator/audit-schedules',
-  '/audit-client/submit-report': '/client-coordinator/audit-reports',
+  '/audit-client/audit-actions': '/client-coordinator/audit-reports',
   '/audit-client/pending-applications': '/client-coordinator/notifications',
 };
 const pendingForClientCoordinator = (ctx: BuildPendingCtx): PendingItem[] =>

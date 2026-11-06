@@ -4,6 +4,7 @@
  * Heuristic instant; Claude upgrade when key configured.
  */
 import React, { useState, useRef, useMemo } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import {
   Users, Wand2, Loader2, Info, Sparkles, Star,
 
@@ -391,6 +392,7 @@ const AuditorAssignment: React.FC = () => {
   /* ── Render ── */
   return (
     <div style={{ padding: 24, maxWidth: 980, margin: '0 auto', fontFamily: "'Inter',system-ui,sans-serif" }}>
+      <WorkflowStagePanel step="coord-team" />
 
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginBottom: 20 }}>

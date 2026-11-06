@@ -46,5 +46,11 @@ if (hasCachedAiStatus) {
   renderApp();
   void initClaudeServer();
 } else {
-  initClaudeServer(1500).finally(renderApp);
+  initClaudeServer(1500).finally(() => {
+    renderApp();
+    // A slow first check (e.g. the dev server compiling the function) must not
+    // leave AI switched off: check again with more time; components listening
+    // for the config event switch to live Claude as soon as it answers.
+    void initClaudeServer(10000);
+  });
 }

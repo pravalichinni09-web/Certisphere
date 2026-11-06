@@ -23,7 +23,7 @@ const API_KEY_STORAGE = 'cms_anthropic_api_key';
 const MODEL_STORAGE = 'cms_anthropic_model';
 const EVENT_NAME = 'cms-claude-config-updated';
 
-const DEFAULT_MODEL = 'claude-haiku-4-5-20251001';
+const DEFAULT_MODEL = 'claude-haiku-5-5';
 
 /* ── Server-managed key detection ──────────────────────────────────── */
 const SERVER_ENDPOINT = '/api/claude';
@@ -86,18 +86,18 @@ export const anthropicFetch = (init: RequestInit = {}): Promise<Response> => {
 
 export const SUPPORTED_MODELS: { id: string; label: string; description: string }[] = [
   {
-    id: 'claude-haiku-4-5-20251001',
-    label: 'Claude Haiku 4.5',
-    description: 'Fastest. Great for short drafts and quick answers.',
+    id: 'claude-haiku-5-5',
+    label: 'Claude Haiku 5.5',
+    description: 'Fastest and lowest cost. Great for short drafts and quick answers.',
   },
   {
-    id: 'claude-sonnet-4-6',
-    label: 'Claude Sonnet 4.6',
+    id: 'claude-sonnet-5-5',
+    label: 'Claude Sonnet 5.5',
     description: 'Balanced quality and speed. Recommended for NCRs and summaries.',
   },
   {
-    id: 'claude-opus-4-6',
-    label: 'Claude Opus 4.6',
+    id: 'claude-opus-5-5',
+    label: 'Claude Opus 5.5',
     description: 'Highest quality. Best for nuanced corrective-action drafting.',
   },
 ];
@@ -136,8 +136,10 @@ export const clearApiKey = (): void => setApiKey('');
 
 export const getModel = (): string => {
   try {
-    const v = localStorage.getItem(MODEL_STORAGE);
-    return v && v.trim() ? v.trim() : DEFAULT_MODEL;
+    const v = (localStorage.getItem(MODEL_STORAGE) || '').trim();
+    // A model saved by an older version (e.g. claude-sonnet-4-6) is no longer
+    // offered; fall back to the default instead of sending a failing request.
+    return SUPPORTED_MODELS.some((m) => m.id === v) ? v : DEFAULT_MODEL;
   } catch {
     return DEFAULT_MODEL;
   }

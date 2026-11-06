@@ -11,7 +11,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, FileText, Send, Save } from 'lucide-react';
 import { readWorkflows, WorkflowRecord } from '../../utils/auditWorkflow';
-import { approveActionItems } from '../../services/workflowHandoff';
+import { noteWorkflow } from '../../services/workflowHandoff';
 import {
   AuditReportRecord,
   AUDIT_REPORTS_UPDATED_EVENT,
@@ -124,7 +124,9 @@ const AuditReport: React.FC = () => {
       clientName: labelFor(selected),
     };
     writeReport(selected, report);
-    approveActionItems(selected, 'Auditor', `Audit report submitted (${form.recommendation}).`);
+    // Record the report on the workflow history only. The stage moves when the
+    // auditee submits corrective actions and the Lead Auditor accepts them.
+    noteWorkflow(selected, 'Auditor', `Audit report submitted (${form.recommendation}).`);
     alert('Report submitted to Lead Auditor for review.');
   };
 

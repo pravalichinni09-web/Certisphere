@@ -24,6 +24,8 @@ import {
   Sparkles,
 } from 'lucide-react';
 import AIPanel from '../../components/AIPanel';
+import { addClient } from './utils/clientCredentials';
+import { ensureWorkflow } from '../../utils/auditWorkflow';
 import {
   triageEnquiry,
   draftEnquiryReply,
@@ -623,54 +625,61 @@ const ClientEnquiry: React.FC = () => {
     ) {
       return;
     }
-    // Seed Client Registration
-    let regs: any[] = [];
-    try {
-      const raw = localStorage.getItem(REGISTRATION_KEY);
-      if (raw) regs = JSON.parse(raw) || [];
-    } catch {
-      /* ignore */
-    }
-    const newClientId = `client-${Date.now()}`;
-    const newReg = {
-      id: newClientId,
+    // Create the client exactly like a self-registration: a numeric client id,
+    // a login for the Auditee, and a workflow record at "Registration Submitted"
+    // so Management sees it in Client Onboarding (workflow Step 3).
+    const { client, credential } = addClient({
       organizationName: row.company,
       contactPerson: row.contactName,
       email: row.contactEmail,
       phone: row.contactPhone,
-      website: row.website,
-      country: row.country,
-      industry: row.industry,
-      employees: row.employees,
-      standard: row.standards[0] || '',
-      standards: row.standards,
+      address: row.country || '',
+      standard: row.standards[0] || 'ISO 9001:2015',
+      clientType: 'Initial',
       status: 'Pending',
-      registrationDate: new Date().toISOString(),
-      source: `Enquiry · ${row.source}`,
-      sourceEnquiryId: row.id,
-      notes: row.message,
-    };
+    } as any);
+    const newClientId = client.id;
+    // Keep the extra enquiry details on the registration record
     try {
-      localStorage.setItem(
-        REGISTRATION_KEY,
-        JSON.stringify([newReg, ...regs])
-      );
+      const regs: any[] = JSON.parse(localStorage.getItem(REGISTRATION_KEY) || '[]');
+      const i = regs.findIndex((r) => r.id === client.id);
+      if (i >= 0) {
+        regs[i] = {
+          ...regs[i],
+          website: row.website,
+          country: row.country,
+          industry: row.industry,
+          employees: row.employees,
+          standards: row.standards,
+          registrationDate: new Date().toISOString(),
+          source: `Enquiry · ${row.source}`,
+          sourceEnquiryId: row.id,
+          notes: row.message,
+        };
+        localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
+      }
     } catch {
       /* ignore */
     }
+    ensureWorkflow(client.id, 'Audit Coordinator');
+    try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
     persist(
       rows.map((r) =>
         r.id === row.id
           ? {
               ...r,
               status: 'Converted' as const,
-              convertedClientId: newClientId,
+              convertedClientId: String(newClientId),
               convertedAt: new Date().toISOString(),
             }
           : r
       )
     );
-    alert(`${row.company} has been added to Client Registration as Pending.`);
+    alert(
+      `${row.company} is now registered (workflow stage: Registration Submitted).\n\n` +
+      `Next: Management assigns a coordinator in Client Onboarding.\n\n` +
+      `Auditee login to share with the client:\nUsername: ${credential?.username ?? '—'}\nPassword: ${credential?.password ?? '—'}`
+    );
   };
 
   const counts = useMemo(() => {

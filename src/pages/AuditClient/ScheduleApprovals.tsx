@@ -8,6 +8,7 @@
  * `auditeeApproval` fields.
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import {
   CalendarCheck,
   CheckCircle2,
@@ -158,6 +159,7 @@ const ScheduleApprovals: React.FC = () => {
 
   return (
     <div className="sa-page">
+      <WorkflowStagePanel step="auditee-schedule" />
       <div className="sa-hero">
         <div>
           <div className="sa-badge">

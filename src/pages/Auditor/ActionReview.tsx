@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import AuditorRegistration from '../../components/AuditorRegistration';
 import { 
   CheckCircle, 
@@ -221,6 +222,7 @@ const ActionReview: React.FC = () => {
 
   return (
     <div className="auditor-action-review">
+      <WorkflowStagePanel step="auditor-review" />
       {/* Header */}
       <div className="page-header">
         <div className="header-title">

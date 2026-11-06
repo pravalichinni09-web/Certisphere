@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { Eye, Download } from 'lucide-react';
 import { getCertifications, getBranches } from './scope';
 import { useRealtimeScope } from './useRealtimeScope';
@@ -37,6 +38,7 @@ const Certifications: React.FC = () => {
   return (
     <div style={{ padding: 24 }}>
       <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#0f172a' }}>Certifications View</h1>
+      <div style={{ marginTop: 14 }}><WorkflowStagePanel step="cc-certificates" /></div>
       <p style={{ margin: '4px 0 10px', color: '#64748b', fontSize: 13 }}>{certs.length} total · paginated · read-only</p>
 
       <LiveBar lastUpdated={lastUpdated} isLive={isLive} onRefresh={refresh} count={filtered.length} unit="shown" />

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { sendCertificateIssued } from '../../services/emailService';
 import { Send, FileText, CheckCircle, Plus, Eye, Edit, X, Download, Upload, Save, CheckSquare, Layers, MessageCircle, Mail, Bell, CalendarClock } from 'lucide-react';
 import jsPDF from 'jspdf';
@@ -757,6 +758,7 @@ const CertificateDelivery: React.FC = () => {
 
   return (
     <div className="audit-scope-container" style={{ position: 'relative' }}>
+      <WorkflowStagePanel step="coord-deliver" />
        {notification.visible && (
         <div style={{
           position: 'fixed', top: '80px', right: '20px',

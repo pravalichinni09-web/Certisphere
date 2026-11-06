@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { Calendar, Clock, Trash2, Users, Bell, MapPin, X, Search, CheckCircle, Edit2, CalendarDays, Eye } from 'lucide-react';
 import '../../styles/LeadAuditor/AuditSchedules.css';
 import Tooltip from '../../components/Tooltip';
@@ -312,6 +313,7 @@ export default function AuditSchedules() {
 
   return (
     <div className="audit-schedules-container" style={{ padding: '20px', maxWidth: '100%', overflowX: 'auto' }}>
+      <WorkflowStagePanel step="lead-confirm" />
       {/* User-friendly flow steps for Lead Auditor */}
       <div className="cs-la-flow" style={{ background: 'linear-gradient(135deg, #ecfeff 0%, #f0fdfa 100%)', border: '1px solid #67e8f9', borderLeft: '4px solid #06b6d4', padding: '12px 16px', borderRadius: 10, marginBottom: 16 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, fontWeight: 800, color: '#155e75', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 8 }}>

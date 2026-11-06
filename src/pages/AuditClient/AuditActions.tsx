@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import WorkflowStagePanel from '../../components/WorkflowStagePanel';
 import { recommendActions } from '../../ai/models';
 import { GitBranch } from 'lucide-react';
 import { 
@@ -289,6 +290,7 @@ const AuditActions = () => {
 
   return (
     <div className="audit-container">
+      <WorkflowStagePanel step="auditee-actions" />
       
       {/* Header Section */}
       <div className="audit-header">
