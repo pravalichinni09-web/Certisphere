@@ -117,6 +117,39 @@ export const getWorkflow = (clientId: number): WorkflowRecord | null => {
   return readWorkflows().find((w) => w.clientId === clientId) || null;
 };
 
+// --- Allowed stage transitions -------------------------------------------
+
+/**
+ * The only moves the workflow may make. Every mutation below is checked
+ * against this map, so no screen, button or notification can push a client
+ * backwards or skip a stage (e.g. saving a requirements review for a client
+ * that is already being audited). Staying on the same stage (adding a note,
+ * editing the current step) is always allowed.
+ */
+export const ALLOWED_TRANSITIONS: Record<WorkflowStage, WorkflowStage[]> = {
+  'Pre-Registration':                          ['Registration Submitted'],
+  'Registration Submitted':                    ['Coordinator Assigned'],
+  'Coordinator Assigned':                      ['Requirements Reviewed'],
+  'Requirements Reviewed':                     ['Schedule Proposed'],
+  'Schedule Proposed':                         ['Assigned Auditors (Lead auditor, Auditor)', 'Schedule Approved by Auditee'],
+  'Assigned Auditors (Lead auditor, Auditor)': ['Schedule Proposed', 'Schedule Approved by Auditee'],
+  'Schedule Approved by Auditee':              ['Schedule Approved by Auditor'],
+  'Schedule Approved by Auditor':              ['Audit In Progress'],
+  'Audit In Progress':                         ['Audit Completed'],
+  'Audit Completed':                           ['Audit findings'],
+  'Audit findings':                            ['Action items released to Auditor'],
+  'Action items released to Auditor':          ['Review and Approval by Auditor', 'Audit findings'],
+  'Review and Approval by Auditor':            ['Certification released', 'Action items released to Auditor'],
+  'Certification released':                    [],
+};
+
+export const canMove = (from: WorkflowStage, to: WorkflowStage): boolean =>
+  from === to || (ALLOWED_TRANSITIONS[from] || []).includes(to);
+
+/** True when the client's workflow may move to `to` right now. */
+export const canMoveTo = (w: WorkflowRecord | null | undefined, to: WorkflowStage): boolean =>
+  !!w && canMove(w.currentStage, to);
+
 // --- Mutations ------------------------------------------------------------
 
 const NOW = () => new Date().toISOString();
@@ -139,10 +172,19 @@ export const ensureWorkflow = (
   return created;
 };
 
-const advance = (clientId: number, mutate: (w: WorkflowRecord) => void): WorkflowRecord | null => {
+const advance = (
+  clientId: number,
+  target: WorkflowStage | null,
+  mutate: (w: WorkflowRecord) => void,
+): WorkflowRecord | null => {
   const all = readWorkflows();
   const idx = all.findIndex((w) => w.clientId === clientId);
   if (idx === -1) return null;
+  if (target && !canMove(all[idx].currentStage, target)) {
+    // eslint-disable-next-line no-console
+    console.warn(`[workflow] Blocked: client ${clientId} cannot move from "${all[idx].currentStage}" to "${target}".`);
+    return null;
+  }
   const next = { ...all[idx], updatedAt: NOW() };
   mutate(next);
   all[idx] = next;
@@ -155,7 +197,7 @@ export const assignCoordinator = (
   coordinator: string,
   by?: string
 ): WorkflowRecord | null =>
-  advance(clientId, (w) => {
+  advance(clientId, 'Coordinator Assigned', (w) => {
     w.assignedCoordinator = coordinator;
     w.assignedAt = NOW();
     w.currentStage = 'Coordinator Assigned';
@@ -172,7 +214,7 @@ export const recordRequirementsReview = (
   payload: Omit<RequirementsReview, 'reviewedAt'>,
   by?: string
 ): WorkflowRecord | null =>
-  advance(clientId, (w) => {
+  advance(clientId, 'Requirements Reviewed', (w) => {
     w.requirements = { ...payload, reviewedAt: NOW(), reviewedBy: by };
     w.currentStage = 'Requirements Reviewed';
     w.history.push({
@@ -188,7 +230,7 @@ export const proposeSchedule = (
   payload: Omit<ProposedSchedule, 'proposedAt' | 'decision'>,
   by?: string
 ): WorkflowRecord | null =>
-  advance(clientId, (w) => {
+  advance(clientId, 'Schedule Proposed', (w) => {
     w.schedule = {
       ...payload,
       proposedAt: NOW(),
@@ -209,8 +251,12 @@ export const decideSchedule = (
   decision: 'Approved' | 'Declined',
   note: string | undefined,
   by?: string
-): WorkflowRecord | null =>
-  advance(clientId, (w) => {
+): WorkflowRecord | null => {
+  // A decision is only possible on a pending proposal
+  const cur = getWorkflow(clientId);
+  if (!cur || !cur.schedule || (cur.schedule.decision && cur.schedule.decision !== 'Pending')) return null;
+  if (cur.currentStage !== 'Schedule Proposed' && cur.currentStage !== 'Assigned Auditors (Lead auditor, Auditor)') return null;
+  return advance(clientId, decision === 'Approved' ? 'Schedule Approved by Auditee' : cur.currentStage, (w) => {
     if (!w.schedule) return;
     w.schedule = {
       ...w.schedule,
@@ -231,6 +277,7 @@ export const decideSchedule = (
       });
     }
   });
+};
 
 export const setStage = (
   clientId: number,
@@ -238,7 +285,7 @@ export const setStage = (
   by?: string,
   note?: string
 ): WorkflowRecord | null =>
-  advance(clientId, (w) => {
+  advance(clientId, stage, (w) => {
     w.currentStage = stage;
     w.history.push({ stage, at: NOW(), by, note });
   });

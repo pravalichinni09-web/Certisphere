@@ -9,9 +9,7 @@ import LoginForm from '../components/LoginForm';
 import DemoAccountModal, { DemoAccount } from '../components/DemoAccountModal';
 import { showWelcomeToast } from '../components/WelcomeToast';
 import { findCredentialByLogin, ensureCredentialsForClients, readCredentials } from './AuditorCoordinator/utils/clientCredentials';
-import { signIn } from '../services/supabase/authService';
-import { triggerSync } from '../utils/supabaseSync';
-import { isSupabaseEnabled } from '../lib/supabase';
+import { isLiveMode, liveSignIn, LiveProfile } from '../lib/liveAuth';
 import AuditeeRegistration from '../components/AuditeeRegistration';
 import AuditorRegistration from '../components/AuditorRegistration';
 import { readGlobalConfig } from '../utils/globalConfig';
@@ -23,7 +21,42 @@ interface SelectedUser {
   password: string;
 }
 
-interface LoginPageProps { onLogin: (userRole: string) => void; }
+interface LoginPageProps { onLogin: (userRole: string, profile?: LiveProfile) => void; }
+
+/* Live site: real accounts only — email + password, no demo roles. */
+const LiveLoginForm: React.FC<{ onLogin: LoginPageProps['onLogin'] }> = ({ onLogin }) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password) { setError('Enter your email and password.'); return; }
+    setBusy(true); setError(null);
+    const { profile, error: err } = await liveSignIn(email, password);
+    setBusy(false);
+    if (!profile) { setError(err); return; }
+    onLogin(profile.role, profile);
+  };
+  return (
+    <form className="login-form" onSubmit={submit} noValidate>
+      <h2 className="form-title">Sign in</h2>
+      <div className="form-group">
+        <label htmlFor="live-email" className="form-label">Email address</label>
+        <input id="live-email" type="email" autoComplete="username" className="form-input"
+          value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@company.com" />
+      </div>
+      <div className="form-group">
+        <label htmlFor="live-password" className="form-label">Password</label>
+        <input id="live-password" type="password" autoComplete="current-password" className="form-input"
+          value={password} onChange={(e) => setPassword(e.target.value)} />
+      </div>
+      {error && <div role="alert" style={{ color: '#fecaca', background: 'rgba(185,28,28,.25)', border: '1px solid rgba(248,113,113,.5)', borderRadius: 8, padding: '8px 10px', fontSize: 13, margin: '4px 0 10px' }}>{error}</div>}
+      <button type="submit" className="login-button" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
+      <a href="/reset-password" style={{ display: 'block', marginTop: 12, fontSize: 13, color: '#f6d878', textAlign: 'center' }}>Forgot your password?</a>
+    </form>
+  );
+};
 
 /** Map of country name → flag emoji, for reliable cross-platform display. */
 const COUNTRY_CODES: Record<string, string> = {
@@ -151,29 +184,6 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
       return;
     }
 
-    // ── Try Supabase auth first (when configured) ──────────────
-    // If Supabase returns an error (bad API key, missing user, network, …)
-    // we silently fall through to the demo localStorage path so the app
-    // remains usable in offline / mis-configured environments.
-    if (isSupabaseEnabled()) {
-      try {
-        const { user, error } = await signIn(email, password);
-        if (!error && user) {
-          if (user.orgId) {
-            try { localStorage.setItem('cms_active_org_id', String(user.orgId)); } catch { /* ignore */ }
-          }
-          triggerSync(); // migrate demo data → Supabase (no-op after first time)
-          onLogin(user.role);
-          return;
-        }
-        if (error) {
-          console.warn('[CertiSphere] Supabase auth failed, falling back to demo:', error);
-        }
-      } catch (err) {
-        console.warn('[CertiSphere] Supabase auth threw, falling back to demo:', err);
-      }
-    }
-
     // ── Demo / localStorage fallback ───────────────────────────
     const tryClientLogin = () => {
       const cred = findCredentialByLogin(email, password);
@@ -251,24 +261,30 @@ const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
               Sign in to access: {loginIntent}
             </div>
           )}
-          <LoginForm
-            selectedUser={selectedUser}
-            email={email}
-            password={password}
-            onEmailChange={setEmail}
-            onPasswordChange={setPassword}
-            onLogin={handleLogin}
-            onPickRole={handleRolePick}
-          />
+          {isLiveMode() ? (
+            <LiveLoginForm onLogin={onLogin} />
+          ) : (
+            <LoginForm
+              selectedUser={selectedUser}
+              email={email}
+              password={password}
+              onEmailChange={setEmail}
+              onPasswordChange={setPassword}
+              onLogin={handleLogin}
+              onPickRole={handleRolePick}
+            />
+          )}
         </div>
 
-        {/* Test Credentials sits directly below the form (per the sketch) */}
-        <div className="cs-creds-below">
-          <UserCredentials onUserSelect={handleRolePick} selectedUser={selectedUser} onQuickSignIn={handleQuickSignIn} />
-        </div>
+        {/* Demo mode only: one-click test accounts (never on the live site) */}
+        {!isLiveMode() && (
+          <div className="cs-creds-below">
+            <UserCredentials onUserSelect={handleRolePick} selectedUser={selectedUser} onQuickSignIn={handleQuickSignIn} />
+          </div>
+        )}
       </div>
 
-      {demoRole && (
+      {demoRole && !isLiveMode() && (
         <DemoAccountModal
           role={demoRole}
           accounts={buildDemoAccounts(demoRole)}

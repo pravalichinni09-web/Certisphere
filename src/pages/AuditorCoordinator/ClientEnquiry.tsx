@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { isLiveMode, apiFetch } from '../../lib/liveAuth';
 import {
   MailOpen,
   Plus,
@@ -266,7 +267,7 @@ const loadEnquiries = (): Enquiry[] => {
       if (Array.isArray(arr) && arr.length > 0) return arr;
     }
     // Seed only once: if the user has cleared the list intentionally, don't re-seed.
-    const alreadySeeded = localStorage.getItem(SEED_VERSION_KEY) === '1';
+    const alreadySeeded = isLiveMode() || localStorage.getItem(SEED_VERSION_KEY) === '1';
     if (!alreadySeeded) {
       const seed = buildSeedEnquiries();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
@@ -617,7 +618,7 @@ const ClientEnquiry: React.FC = () => {
     );
   };
 
-  const handleConvert = (row: Enquiry) => {
+  const handleConvert = async (row: Enquiry) => {
     if (
       !window.confirm(
         `Convert this enquiry into a Client Registration?\n\n${row.company} will be added to the registrations list with the captured details.`
@@ -675,6 +676,20 @@ const ClientEnquiry: React.FC = () => {
           : r
       )
     );
+    if (isLiveMode()) {
+      // Live site: create the client's real login on the server
+      const r = await apiFetch('/api/users', {
+        action: 'create', email: row.contactEmail, fullName: row.contactName, role: 'Auditee', clientId: client.id,
+      });
+      alert(
+        `${row.company} is now registered (workflow stage: Registration Submitted).\n\n` +
+        `Next: Management assigns a coordinator in Client Onboarding.\n\n` +
+        (r.ok
+          ? `Auditee login to share with the client:\nEmail: ${r.data.email}\nPassword: ${r.data.password}`
+          : `The login could not be created: ${r.data?.error || 'unknown error'}\nManagement can create it in Users & Access.`)
+      );
+      return;
+    }
     alert(
       `${row.company} is now registered (workflow stage: Registration Submitted).\n\n` +
       `Next: Management assigns a coordinator in Client Onboarding.\n\n` +

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { isLiveMode } from '../../lib/liveAuth';
 import { KeyRound, Search, Eye, EyeOff, Copy, RefreshCw, Lock, ShieldCheck, Users, Download, CheckCircle2, Plus, Edit2, Trash2, X, Sparkles, Building2, Mail, Phone, MapPin, Save } from 'lucide-react';
 import {
   ClientCredential,
@@ -347,6 +348,12 @@ const ClientCredentials: React.FC = () => {
   // ---- Render -------------------------------------------------------------
   return (
     <div className="cred-page">
+      {isLiveMode() && (
+        <div style={{ margin: '0 0 16px', padding: '12px 14px', borderRadius: 10, background: '#fffbeb', border: '1px solid #fde68a', color: '#92400e', fontSize: 13 }}>
+          <strong>Live site:</strong> client logins are real accounts now. Create, reset or disable them in{' '}
+          <a href="/management/users" style={{ color: '#1d4ed8', fontWeight: 700 }}>Users &amp; Access</a>. This page only shows records kept in this browser.
+        </div>
+      )}
       {/* Hero */}
       <div className="cred-hero">
         <div className="cred-hero-text">

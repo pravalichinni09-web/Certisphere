@@ -362,7 +362,15 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
     const err = a.validate?.(w, v, scoped);
     if (err) { setMsg({ ok: false, text: err }); return; }
     try {
+      const before = readWorkflows().find((x) => x.clientId === w.clientId);
+      const beforeLen = before?.history.length ?? 0;
       a.run(w, v, scoped);
+      const after = readWorkflows().find((x) => x.clientId === w.clientId);
+      if (!after || after.history.length === beforeLen) {
+        setMsg({ ok: false, text: `${org}: this step is not allowed at its current stage (${after?.currentStage ?? 'unknown'}). Refresh the page to see where the client is now.` });
+        setTick((t) => t + 1);
+        return;
+      }
       setMsg({ ok: true, text: a.done(org) });
       setActive(null); setValue('');
       setTick((t) => t + 1);

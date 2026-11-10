@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { isLiveMode } from '../../lib/liveAuth';
 import { useFocusParam } from '../../hooks/useFocusParam';
 import {
   UserPlus,
@@ -262,7 +263,7 @@ const loadRequests = (): AuditorRequest[] => {
       const arr = JSON.parse(raw);
       if (Array.isArray(arr) && arr.length > 0) return arr;
     }
-    const seeded = localStorage.getItem(SEED_FLAG_KEY) === '1';
+    const seeded = isLiveMode() || localStorage.getItem(SEED_FLAG_KEY) === '1';
     if (!seeded) {
       const seed = buildSeed();
       localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));

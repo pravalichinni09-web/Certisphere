@@ -227,6 +227,11 @@ const ConductAudit: React.FC = () => {
                   {sel.currentStage === 'Audit In Progress' && (
                     <button onClick={complete} style={btnGreen}><CheckCircle2 size={13} /> Close out + release findings</button>
                   )}
+                  {sel.currentStage === 'Audit Completed' && (
+                    <button onClick={() => releaseFindings(sel.clientId, 'Auditor', `${findings.length} finding(s) released to auditee.`)} style={btnGreen}>
+                      <CheckCircle2 size={13} /> Release findings to auditee
+                    </button>
+                  )}
                 </div>
               </header>
 

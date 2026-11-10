@@ -18,7 +18,9 @@ import { spawn } from 'node:child_process';
 
 const BASE_URL = (process.env.BASE_URL || 'http://localhost:3000').replace(/\/$/, '');
 const HEADED = !!process.env.HEADED;
-const CLIENT = `Test Client ${new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '')}`;
+const RUN_ID = new Date().toISOString().slice(0, 16).replace(/[-:T]/g, '');
+const MAIN_CLIENT = `Test Client ${RUN_ID}`;
+let CLIENT = MAIN_CLIENT; // the client the helpers below act on
 
 /* ------------------------------------------------------------------ */
 /* Result tracking                                                     */
@@ -120,6 +122,29 @@ const withReason = async (title, label, reason) => {
   await row(title).getByRole('button', { name: new RegExp(`^Confirm: ${label}`) }).click();
   await page.waitForTimeout(400);
 };
+
+const registerClient = async (name) => {
+  await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
+  if (!page.url().includes('/login')) {
+    await page.getByRole('button', { name: /Logout/ }).first().click();
+    await page.waitForTimeout(1200);
+    await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
+  }
+  await page.getByText('New client? Register here').click(); await page.waitForTimeout(500);
+  await page.fill('input[placeholder="Acme Industries Pvt Ltd"]', name);
+  await page.fill('input[placeholder="Jane Doe"]', 'Test Contact');
+  await page.fill('input[placeholder="contact@acme.com"]', 'test.contact@example.com');
+  await page.getByRole('button', { name: /Submit Registration/ }).click(); await page.waitForTimeout(800);
+};
+
+/* Notification bell helpers */
+const bell = async () => {
+  const pop = page.locator('[aria-label="Pending notifications"]');
+  if (!(await pop.isVisible().catch(() => false))) { await page.getByLabel('Notifications', { exact: true }).click(); await page.waitForTimeout(400); }
+  return pop;
+};
+const bellItem = async (titleStart) => (await bell()).locator('li').filter({ hasText: `${titleStart} — ${CLIENT}` }).first();
+const closeBell = async () => { await page.keyboard.press('Escape'); await page.waitForTimeout(200); };
 
 /* ------------------------------------------------------------------ */
 /* Reusable workflow segments                                          */
@@ -299,6 +324,96 @@ const run = async () => {
   check('S18', 'Client Coordinator sees the issued certificate', cc.includes(CLIENT) && /Certificate CS-\d{4}-\d+/.test(cc), (cc.match(/Certificate CS-[\d-]+/) || [''])[0]);
 
   check('H1', 'Every action is recorded in the client history', (await history()) >= 20, `${await history()} history entries`);
+
+  /* Client B – alternative path, stage locks and notifications */
+  section('Client B · alternative path, locks and notifications');
+  CLIENT = `Test Client B ${RUN_ID}`;
+  await registerClient(CLIENT);
+  check('B1', 'Client B registered', (await stage()) === 'Registration Submitted', await stage());
+
+  await login('Management');
+  let item = await bellItem('Assign coordinator');
+  check('B2a', 'Management bell lists "Assign coordinator"', await item.isVisible());
+  await item.getByRole('button', { name: 'Assign', exact: true }).click();
+  await item.getByRole('button', { name: 'Assign', exact: true }).last().click(); await page.waitForTimeout(400);
+  check('B2b', 'Assign from the bell → Coordinator Assigned', (await stage()) === 'Coordinator Assigned', await stage());
+  await closeBell();
+
+  await login('Audit Coordinator'); await open('Audit Workflow');
+  await page.getByText(CLIENT).first().click(); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /Save Requirements Review/ }).click(); await page.waitForTimeout(400);
+  await coordinatorProposes('B3', '2026-12-15', 'Client B date proposed');
+  await assignTeamAndApproveDate('B4');
+
+  await login('Auditee'); await open('Schedule Approvals');
+  await withReason('Approve the proposed audit date', 'Decline', 'Plant shutdown that week');
+  await login('Audit Coordinator');
+  item = await bellItem('Re-propose date');
+  check('B5a', 'Coordinator bell asks to re-propose after a decline', await item.isVisible());
+  await item.getByRole('button', { name: 'Propose new date' }).click();
+  await item.locator('input[type=date]').fill('2026-12-22');
+  await item.getByRole('button', { name: 'Propose new date' }).last().click(); await page.waitForTimeout(400);
+  check('B5b', 'Re-proposed from the bell → Schedule Proposed', (await stage()) === 'Schedule Proposed', await stage());
+  await closeBell();
+  await assignTeamAndApproveDate('B6');
+  await login('Auditee'); await open('Schedule Approvals');
+  await click('Approve the proposed audit date', 'Approve date');
+  check('B7', 'Auditee approves the new date', (await stage()) === 'Schedule Approved by Auditee', await stage());
+
+  await login('Auditor'); await open('Schedule Confirmations');
+  check('B8a', 'Client waits in Auditor "Confirm your availability"', await inPanel('Confirm your availability'));
+  await click('Confirm your availability', 'Confirm availability');
+  check('B8b', 'Auditor confirms → Schedule Approved by Auditor', (await stage()) === 'Schedule Approved by Auditor', await stage());
+
+  // Stage lock: the coordinator can no longer change requirements or the schedule
+  await login('Audit Coordinator'); await open('Audit Workflow');
+  await page.getByText(CLIENT).first().click(); await page.waitForTimeout(500);
+  const reqDisabled = await page.getByRole('button', { name: /Save Requirements Review/ }).isDisabled();
+  const schDisabled = await page.getByRole('button', { name: /(Send Schedule Proposal|Re-propose Schedule)/ }).isDisabled();
+  check('G1', 'Requirements and schedule are locked once the date is agreed', reqDisabled && schDisabled, `requirements ${reqDisabled ? 'locked' : 'OPEN'}, schedule ${schDisabled ? 'locked' : 'OPEN'}`);
+  check('G1b', 'Stage did not move backwards', (await stage()) === 'Schedule Approved by Auditor', await stage());
+
+  await login('Auditor'); await open('Conduct Audit');
+  await page.getByText(CLIENT).first().click(); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /Start audit/ }).click(); await page.waitForTimeout(400);
+  await page.locator('input[placeholder*="lause" i]').first().fill('8.5.1');
+  await page.locator('textarea, input[placeholder*="escri" i]').first().fill('Batch records incomplete');
+  await page.getByRole('button', { name: /Add finding/ }).click(); await page.waitForTimeout(300);
+
+  await login('Lead Auditor');
+  item = await bellItem('On-site audit');
+  await item.getByRole('button', { name: /Mark audit completed/ }).click(); await page.waitForTimeout(400);
+  check('B9', 'Lead Auditor closes the audit from the bell → Audit Completed', (await stage()) === 'Audit Completed', await stage());
+  await closeBell();
+  await login('Auditor'); await open('Conduct Audit');
+  await page.getByText(CLIENT).first().click(); await page.waitForTimeout(500);
+  await page.getByRole('button', { name: /Release findings to auditee/ }).click(); await page.waitForTimeout(400);
+  check('B10', 'Audit Completed → Release findings → Audit findings', (await stage()) === 'Audit findings', await stage());
+
+  await auditeeSubmitsActions('B11', 'Root cause: missing review step. Action: added batch record checklist and calibration log.');
+  await auditorForwards('B12');
+  await login('Lead Auditor'); await open('Action Approval');
+  await withReason('Accept corrective actions', 'Return to auditee', 'Root cause analysis too shallow');
+  check('B13', 'Lead Auditor returns → back to Audit findings', (await stage()) === 'Audit findings', await stage());
+
+  /* Client C – enquiry converted by the coordinator */
+  section('Client C · enquiry → registration');
+  CLIENT = `Test Client C ${RUN_ID}`;
+  await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' });
+  if (!page.url().includes('/login')) { await page.getByRole('button', { name: /Logout/ }).first().click(); await page.waitForTimeout(1000); await page.goto(`${BASE_URL}/login`, { waitUntil: 'networkidle' }); }
+  await page.getByText('Quick website enquiry').click(); await page.waitForLoadState('networkidle');
+  await page.fill('input[placeholder="Acme Corporation"]', CLIENT);
+  await page.fill('input[placeholder="Jane Doe"]', 'Enquiry Contact');
+  await page.fill('input[placeholder="jane@acme.example"]', 'enquiry.contact@example.com');
+  await page.getByRole('button', { name: /Submit/ }).last().click(); await page.waitForTimeout(800);
+  await login('Audit Coordinator'); await open('Application');
+  await page.locator('button').filter({ hasText: /^\s*Client Enquiry/ }).first().click(); await page.waitForTimeout(800);
+  const enq = page.locator('tr').filter({ hasText: CLIENT }).first();
+  check('C1', 'Coordinator sees the enquiry', await enq.isVisible());
+  await enq.locator('button[title="Convert to client registration"]').click(); await page.waitForTimeout(800);
+  check('C2', 'Convert → Registration Submitted with login details', (await stage()) === 'Registration Submitted' && dialogs.some((d) => d.includes(CLIENT) && /Username/.test(d)), await stage());
+  await login('Management'); await open('Client Onboarding');
+  check('C3', 'Converted client waits in Management Step 3', await inPanel('Approve client & assign an Audit Coordinator'));
   check('E1', 'No JavaScript errors on any screen', pageErrors.length === 0, pageErrors.slice(0, 2).join(' | '));
 
   await browser.close();

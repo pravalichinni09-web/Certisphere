@@ -1,3 +1,4 @@
+import { isLiveMode } from '../lib/liveAuth';
 /**
  * Global demo seeder — fills every CMS surface with realistic
  * globally-distributed certification data.
@@ -834,7 +835,7 @@ const writeIfEmpty = (key: string, value: any[]): boolean => {
  */
 export const seedGlobalDemo = (): boolean => {
   try {
-    if (localStorage.getItem(GLOBAL_FLAG_KEY) === '1') return false;
+    if (isLiveMode() || localStorage.getItem(GLOBAL_FLAG_KEY) === '1') return false;
     let wrote = false;
 
     // Auditors (both keys used by different surfaces)

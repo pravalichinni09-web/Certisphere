@@ -1,3 +1,4 @@
+import { isLiveMode } from '../lib/liveAuth';
 /**
  * Connected Demo Seed
  * -------------------
@@ -136,7 +137,7 @@ const CLIENTS: DemoClient[] = [
 
 export const seedConnectedDemo = (): boolean => {
   try {
-    if (localStorage.getItem(FLAG) === '1') return false;
+    if (isLiveMode() || localStorage.getItem(FLAG) === '1') return false;
 
     // 1) cms_client_registrations — merge with existing
     const existingClients = safe<any[]>('cms_client_registrations', []);

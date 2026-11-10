@@ -1,3 +1,4 @@
+import { isLiveMode } from '../../../lib/liveAuth';
 /**
  * One-time seeder for Dashboard demo data.
  *
@@ -311,7 +312,7 @@ const writeIfEmpty = (key: string, value: any[]) => {
  */
 export const seedDashboardDemoData = (): boolean => {
   try {
-    const alreadySeeded = localStorage.getItem(SEED_FLAG_KEY) === '1';
+    const alreadySeeded = isLiveMode() || localStorage.getItem(SEED_FLAG_KEY) === '1';
     if (alreadySeeded) return false;
 
     let wroteSomething = false;

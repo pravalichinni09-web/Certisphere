@@ -1,3 +1,4 @@
+import { isLiveMode } from '../../lib/liveAuth';
 /**
  * Client Coordinator — Demo Data Seeder
  *
@@ -204,7 +205,7 @@ const buildReports = () => [
 // ── Main seeder ──────────────────────────────────────────────────
 export const seedClientCoordinatorDemo = (): void => {
   try {
-    if (localStorage.getItem(SEED_VERSION) === '1') return;
+    if (isLiveMode() || localStorage.getItem(SEED_VERSION) === '1') return;
 
     // 1. Ensure org exists in cms_client_registrations
     const REG_KEY = 'cms_client_registrations';

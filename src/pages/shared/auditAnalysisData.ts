@@ -1,3 +1,4 @@
+import { isLiveMode } from '../../lib/liveAuth';
 /**
  * Shared types and helpers for audit findings.
  *
@@ -112,7 +113,7 @@ const day = (offset: number): string => {
  */
 export const seedFindings = (): boolean => {
   try {
-    if (localStorage.getItem(SEED_FLAG_KEY) === '1') return false;
+    if (isLiveMode() || localStorage.getItem(SEED_FLAG_KEY) === '1') return false;
     const existing = loadFindings();
     if (existing.length > 0) {
       localStorage.setItem(SEED_FLAG_KEY, '1');

@@ -4,20 +4,22 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import Home from './pages/Home';
 import PublicEnquiry from './pages/PublicEnquiry';
-import { supabase, isSupabaseEnabled } from './lib/supabase';
-import { useSupabaseData } from './hooks/useSupabaseData';
+import { supabase } from './lib/supabase';
+import { isLiveMode, currentLiveProfile, liveSignOut, LiveProfile } from './lib/liveAuth';
+import { startCloudSync, stopCloudSync } from './lib/cloudSync';
+import ResetPassword from './pages/ResetPassword';
 import { seedGlobalDemo } from './utils/globalDemoSeeder';
 import { seedInboxDemo } from './utils/inboxSeed';
 import { seedConnectedDemo, repairFutureDemoDates } from './utils/connectedDemoSeed';
 
-// Run the global demo seeder once on module load so every CMS surface has
-// realistic data on first render.
-seedGlobalDemo();
-// Ensure every role's inbox shows at least one pending handoff item.
-seedInboxDemo();
-// Connected cross-role demo data — runs once per browser.
-seedConnectedDemo();
-repairFutureDemoDates();
+// Demo mode only: fill every screen with sample data. The live site starts
+// empty and loads real data from Supabase after sign-in.
+if (!isLiveMode()) {
+  seedGlobalDemo();
+  seedInboxDemo();
+  seedConnectedDemo();
+  repairFutureDemoDates();
+}
 import AuditorCoordinatorLayout from './pages/AuditorCoordinator/Layout';
 import LeadAuditorLayout from './pages/LeadAuditor/Layout';
 import AuditorLayout from './pages/Auditor/Layout';
@@ -59,69 +61,66 @@ const clearSession = () => {
   try { localStorage.removeItem(SESSION_KEY); } catch { /* noop */ }
 };
 
+const LIVE = isLiveMode();
+
+/** Client users see only their own client: point the client screens at it. */
+const applyProfileScope = (p: LiveProfile) => {
+  try {
+    if (p.clientId !== null) {
+      localStorage.setItem('cms_active_client_id', String(p.clientId));
+      localStorage.setItem('cms_active_org_id', String(p.clientId));
+    } else {
+      localStorage.removeItem('cms_active_client_id');
+    }
+  } catch { /* ignore */ }
+};
+
 function App() {
-  const [loggedInUser, setLoggedInUser] = useState<string>(() => readSession());
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => !!readSession());
+  // Demo mode remembers the picked role in this browser; live mode uses the
+  // Supabase session and the role stored on the server.
+  const [loggedInUser, setLoggedInUser] = useState<string>(() => (LIVE ? '' : readSession()));
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(() => (LIVE ? false : !!readSession()));
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [booting, setBooting] = useState<boolean>(LIVE);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
-  // Load Supabase DB data into localStorage whenever user logs in
-  useSupabaseData(isLoggedIn);
+  /** Live mode: load the user's data from Supabase, then open their workspace. */
+  const enterLive = async (p: LiveProfile) => {
+    setBooting(true);
+    applyProfileScope(p);
+    const res = await startCloudSync();
+    setSyncError(res.ok ? null : `Could not load data from the server: ${res.error}`);
+    setLoggedInUser(p.role);
+    setIsLoggedIn(true);
+    setBooting(false);
+  };
 
-  // Restore Supabase session on page reload
+  // Live mode: restore the session on load/refresh and react to sign-out
+  // in another tab or an expired session.
   React.useEffect(() => {
-    if (!isSupabaseEnabled()) return;
-
-    // Restore existing session immediately
-    supabase!.auth.getSession().then(async ({ data: { session } }) => {
-      if (session?.user) {
-        const { data: profile } = await (supabase as any)
-          .from('users')
-          .select('role, org_id')
-          .eq('id', session.user.id)
-          .single();
-        if (profile?.role) {
-          if (profile.org_id) {
-            try { localStorage.setItem('cms_active_org_id', String(profile.org_id)); } catch { /* noop */ }
-          }
-          setIsLoggedIn(true);
-          setLoggedInUser(profile.role);
-          writeSession(profile.role);
-        }
-      }
+    if (!LIVE || !supabase) return;
+    let cancelled = false;
+    currentLiveProfile().then((p) => {
+      if (cancelled) return;
+      if (p) void enterLive(p);
+      else setBooting(false);
     });
-
-    // Listen for auth changes (sign in / sign out in other tabs)
-    const { data: { subscription } } = supabase!.auth.onAuthStateChange(async (event, session) => {
-      // Only an explicit sign-out ends the session. (INITIAL_SESSION with no
-      // Supabase session is normal for demo logins and must not log out.)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
+        void stopCloudSync();
         setIsLoggedIn(false);
         setLoggedInUser('');
-        clearSession();
-        return;
-      }
-      if (!session) return;
-      if (event === 'SIGNED_IN' && session.user) {
-        const { data: profile } = await (supabase as any)
-          .from('users')
-          .select('role, org_id')
-          .eq('id', session.user.id)
-          .single();
-        if (profile?.role) {
-          if (profile.org_id) {
-            try { localStorage.setItem('cms_active_org_id', String(profile.org_id)); } catch { /* noop */ }
-          }
-          setIsLoggedIn(true);
-          setLoggedInUser(profile.role);
-          writeSession(profile.role);
-        }
       }
     });
-
-    return () => subscription.unsubscribe();
+    return () => { cancelled = true; subscription.unsubscribe(); };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLogin = (userRole: string) => {
+  const handleLogin = (userRole: string, profile?: LiveProfile) => {
+    if (LIVE) {
+      if (profile) void enterLive(profile);
+      return;
+    }
     setIsLoggedIn(true);
     setLoggedInUser(userRole);
     writeSession(userRole);
@@ -129,8 +128,9 @@ function App() {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
-    if (isSupabaseEnabled()) {
-      await supabase!.auth.signOut();
+    if (LIVE) {
+      await stopCloudSync();   // saves pending changes, then wipes this browser's copy
+      await liveSignOut();
     }
     // Clear auth state — the logout splash covers the blank-page flash
     clearSession();
@@ -155,9 +155,26 @@ function App() {
     }
   };
 
+  if (booting) {
+    return (
+      <div role="status" style={{ position: 'fixed', inset: 0, display: 'grid', placeItems: 'center', background: '#0f2547', color: '#e2e8f0', fontFamily: 'system-ui, sans-serif' }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ width: 42, height: 42, margin: '0 auto 14px', borderRadius: '50%', border: '3px solid rgba(255,255,255,.2)', borderTopColor: '#f6d878', animation: 'cs-boot-spin .8s linear infinite' }} />
+          <div style={{ fontSize: 14, fontWeight: 600 }}>Loading your CertiSphere workspace…</div>
+          <style>{'@keyframes cs-boot-spin { to { transform: rotate(360deg); } }'}</style>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <Router>
       <ErrorBoundary>
+      {syncError && isLoggedIn && (
+        <div role="alert" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 99998, background: '#b91c1c', color: '#fff', padding: '8px 16px', fontSize: 13, fontWeight: 600, textAlign: 'center' }}>
+          {syncError} Changes may not be saved — refresh the page or sign in again.
+        </div>
+      )}
       {/* ── Logout splash — covers blank-page flash between roles ── */}
       {isLoggingOut && (
         <div style={{
@@ -244,6 +261,7 @@ function App() {
       <Routes>
         {/* Public enquiry route — accessible without login */}
         <Route path="/enquiry" element={<PublicEnquiry />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Home → Login (public funnel) */}
         <Route

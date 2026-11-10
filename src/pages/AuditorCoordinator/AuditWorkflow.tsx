@@ -18,6 +18,7 @@ import {
   readWorkflows,
   recordRequirementsReview,
   proposeSchedule,
+  canMoveTo,
   STAGE_META,
   STAGE_ORDER,
   WorkflowStage,
@@ -130,7 +131,7 @@ const AuditWorkflowPage: React.FC = () => {
         return c.organizationName.toLowerCase().includes(q) || (c.contactPerson || '').toLowerCase().includes(q);
       })
       .sort((a, b) => b.id - a.id);
-  }, [clients, wfByClient, search]);
+  }, [clients, wfByClient, search, stageFilter]);
 
   const selectedClient = clients.find((c) => c.id === selectedId) ?? null;
   const selectedWf = selectedId !== null ? wfByClient[selectedId] : null;
@@ -155,6 +156,7 @@ const AuditWorkflowPage: React.FC = () => {
 
   const submitRequirements = () => {
     if (!selectedClient) return;
+    if (!canReview) { setToast(`Requirements can't be changed at stage "${selectedWf?.currentStage}".`); return; }
     recordRequirementsReview(
       selectedClient.id,
       {
@@ -170,6 +172,7 @@ const AuditWorkflowPage: React.FC = () => {
   };
 
   const submitProposal = () => {
+    if (!canPropose) { setToast(`A schedule can't be proposed at stage "${selectedWf?.currentStage}".`); return; }
     if (!selectedClient || !schForm.proposedDate) {
       setToast('Please pick a proposed date');
       return;
@@ -188,6 +191,11 @@ const AuditWorkflowPage: React.FC = () => {
     setToast('Schedule proposal sent to Auditee');
     refresh();
   };
+
+  // Requirements can be (re)saved only before scheduling starts; a schedule can be
+  // proposed after the review, or re-proposed after the auditee declines.
+  const canReview = !!selectedWf && (selectedWf.currentStage === 'Coordinator Assigned' || selectedWf.currentStage === 'Requirements Reviewed');
+  const canPropose = !!selectedWf && !!selectedWf.requirements && canMoveTo(selectedWf, 'Schedule Proposed');
 
   const stageColor = (wf: WorkflowRecord | undefined) => {
     if (!wf) return STAGE_META['Registration Submitted'];
@@ -431,7 +439,10 @@ const AuditWorkflowPage: React.FC = () => {
                   <textarea rows={2} value={reqForm.notes} onChange={(e) => setReqForm({ ...reqForm, notes: e.target.value })} placeholder="Any observations or pending items..." />
                 </div>
                 <div className="cw-step-foot">
-                  <button className="cw-btn primary" onClick={submitRequirements}>
+                  {!canReview && selectedWf && (
+                    <span className="cw-hint">Locked: this client is past the requirements step (stage “{selectedWf.currentStage}”).</span>
+                  )}
+                  <button className="cw-btn primary" onClick={submitRequirements} disabled={!canReview}>
                     <CheckCircle2 size={16} /> Save Requirements Review
                   </button>
                 </div>
@@ -490,7 +501,10 @@ const AuditWorkflowPage: React.FC = () => {
                   <div className="cw-decline-note"><AlertCircle size={14} /> Auditee feedback: {selectedWf.schedule.decisionNote}</div>
                 )}
                 <div className="cw-step-foot">
-                  <button className="cw-btn primary" onClick={submitProposal} disabled={!selectedWf || !selectedWf.requirements}>
+                  {selectedWf?.requirements && !canPropose && (
+                    <span className="cw-hint">Locked: the schedule is already {selectedWf.currentStage === 'Coordinator Assigned' ? 'not ready' : 'agreed'} (stage “{selectedWf.currentStage}”).</span>
+                  )}
+                  <button className="cw-btn primary" onClick={submitProposal} disabled={!canPropose}>
                     <Send size={16} /> {selectedWf?.schedule ? 'Re-propose Schedule' : 'Send Schedule Proposal'}
                   </button>
                   {!selectedWf?.requirements && <span className="cw-hint">Save requirements review first.</span>}

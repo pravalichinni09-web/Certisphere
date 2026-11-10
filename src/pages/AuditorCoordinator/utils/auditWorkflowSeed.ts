@@ -7,6 +7,7 @@
  */
 
 import { WorkflowRecord, WORKFLOW_KEY } from '../../../utils/auditWorkflow';
+import { isLiveMode } from '../../../lib/liveAuth';
 
 const SEED_FLAG_KEY = 'cms_audit_workflow_seeded_v2';
 
@@ -666,7 +667,7 @@ const buildDynamicSeed = (clientIds: number[]): WorkflowRecord[] => {
 
 export const seedWorkflowDemo = (): boolean => {
   try {
-    if (localStorage.getItem(SEED_FLAG_KEY) === '1') return false;
+    if (isLiveMode() || localStorage.getItem(SEED_FLAG_KEY) === '1') return false;
     const existing = localStorage.getItem(WORKFLOW_KEY);
     if (existing) {
       const parsed = JSON.parse(existing);

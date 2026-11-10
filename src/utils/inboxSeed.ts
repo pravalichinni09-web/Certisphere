@@ -17,6 +17,7 @@
  *     an outstanding application form.
  */
 
+import { isLiveMode } from '../lib/liveAuth';
 import {
   readWorkflows,
   ensureWorkflow,
@@ -56,7 +57,7 @@ const advanceTo = (clientId: number, target: WorkflowStage) => {
 
 export const seedInboxDemo = (): boolean => {
   try {
-    if (localStorage.getItem(SEED_FLAG) === '1') return false;
+    if (isLiveMode() || localStorage.getItem(SEED_FLAG) === '1') return false;
 
     const clients = safe<any[]>('cms_client_registrations', []);
     if (clients.length < 6) {

@@ -7,13 +7,14 @@ import './index.css';
 import './styles/responsive.css';
 import './styles/light-polish.css';
 import { initTheme } from './hooks/useTheme';
-import { installStorageProxy } from './utils/storageProxy';
+import { installCloudSync } from './lib/cloudSync';
+import { isLiveMode } from './lib/liveAuth';
 import { initClaudeServer } from './ai/claudeClient';
 
 initTheme();
 
-// Mirror all CMS localStorage writes to Supabase automatically.
-installStorageProxy();
+// Live mode: every CertiSphere save goes to Supabase (see lib/cloudSync).
+if (isLiveMode()) installCloudSync();
 
 const renderApp = () => {
 ReactDOM.createRoot(document.getElementById('root')!).render(

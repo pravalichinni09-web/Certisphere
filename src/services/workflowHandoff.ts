@@ -25,6 +25,8 @@ import {
   proposeSchedule,
   decideSchedule,
   STAGE_ORDER,
+  canMoveTo,
+  getWorkflow,
 } from '../utils/auditWorkflow';
 
 /* ---------- Roles --------------------------------------------------------- */
@@ -147,6 +149,7 @@ export const assignAuditors = (
   by: string,
 ): WorkflowRecord | null => {
   ensureWorkflow(clientId, by);
+  if (!canMoveTo(getWorkflow(clientId), 'Assigned Auditors (Lead auditor, Auditor)')) return null;
   // Keep the chosen team on the schedule so later steps show it
   try {
     const all = readWorkflows();
@@ -284,6 +287,7 @@ export const sendBackForReview = (
   by: string,
   reason?: string,
 ): WorkflowRecord | null => {
+  if (!canMoveTo(getWorkflow(clientId), 'Action items released to Auditor')) return null;
   setWorkflowFlags(clientId, { auditorReviewedAt: undefined, certificateGeneratedAt: undefined, certificateNumber: undefined });
   const r = setStage(
     clientId,
@@ -332,6 +336,7 @@ export const noteWorkflow = (clientId: number, by: string, note: string): Workfl
 
 /** Auditor / Lead Auditor returns corrective actions to the auditee for rework. */
 export const returnActionsToAuditee = (clientId: number, by: string, reason?: string): WorkflowRecord | null => {
+  if (!canMoveTo(getWorkflow(clientId), 'Audit findings')) return null;
   setWorkflowFlags(clientId, { auditorReviewedAt: undefined });
   const r = setStage(clientId, 'Audit findings', by, `Corrective actions returned${reason ? ': ' + reason : ''}`);
   broadcast();
@@ -431,6 +436,42 @@ const pendingForCoordinator = (ctx: BuildPendingCtx): PendingItem[] => {
           run: (date) => proposeAuditSchedule(w.clientId, { proposedDate: date || '' }, 'Audit Coordinator'),
           doneMessage: `Date proposed to ${cl}; waiting for auditee approval.`,
         }],
+      });
+    }
+    if ((w.currentStage === 'Schedule Proposed' || w.currentStage === 'Assigned Auditors (Lead auditor, Auditor)') && w.schedule?.decision === 'Declined') {
+      items.push({
+        id: `wf-${w.clientId}-repropose`,
+        title: `Re-propose date — ${cl}`,
+        subtitle: `Auditee declined ${w.schedule.proposedDate || 'the date'}${w.schedule.decisionNote ? `: “${w.schedule.decisionNote}”` : ''}. Propose a new date.`,
+        badge: 'Date declined',
+        badgeColor: '#be123c',
+        badgeBg: 'rgba(244,63,94,.12)',
+        link: withFocus('/auditor-coordinator/audit-workflow', w.clientId),
+        linkLabel: 'Open Audit Workflow',
+        receivedAt: w.updatedAt,
+        weight: 86,
+        actions: [{
+          id: 'repropose',
+          label: 'Propose new date',
+          tone: 'primary',
+          input: { kind: 'date', label: 'New audit date', required: true },
+          run: (date) => proposeAuditSchedule(w.clientId, { proposedDate: date || '', leadAuditor: w.schedule?.leadAuditor, auditor: w.schedule?.auditor }, 'Audit Coordinator'),
+          doneMessage: `New date proposed to ${cl}; the audit team is assigned next.`,
+        }],
+      });
+    }
+    if (w.currentStage === 'Schedule Proposed' && w.schedule?.decision !== 'Declined') {
+      items.push({
+        id: `wf-${w.clientId}-team`,
+        title: `Assign audit team — ${cl}`,
+        subtitle: 'Date proposed; confirm the Lead Auditor and Auditor.',
+        badge: w.currentStage,
+        badgeColor: '#0f766e',
+        badgeBg: 'rgba(20,184,166,.12)',
+        link: withFocus('/auditor-coordinator/auditor-assignment', w.clientId),
+        linkLabel: 'Open Auditor Assignment',
+        receivedAt: w.updatedAt,
+        weight: 74,
       });
     }
     if (w.currentStage === 'Review and Approval by Auditor' && !getWorkflowFlags(w.clientId).certificateGeneratedAt) {
@@ -654,8 +695,7 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
 
   // Auditor needs to confirm assigned schedule
   ctx.workflows
-    .filter((w) => w.currentStage === 'Assigned Auditors (Lead auditor, Auditor)' ||
-                   w.currentStage === 'Schedule Approved by Auditee')
+    .filter((w) => w.currentStage === 'Schedule Approved by Auditee')
     .forEach((w) => {
       items.push({
         id: `au-${w.clientId}-confirm`,
@@ -668,14 +708,13 @@ const pendingForAuditor = (ctx: BuildPendingCtx): PendingItem[] => {
         linkLabel: 'Open schedule',
         receivedAt: w.updatedAt,
         weight: 80,
-        // Auditor can only lock the date once the auditee has approved it
-        actions: w.currentStage === 'Schedule Approved by Auditee' ? [{
+        actions: [{
           id: 'confirm-availability',
           label: 'Confirm availability',
           tone: 'primary',
           run: () => auditorConfirmSchedule(w.clientId, 'Auditor'),
           doneMessage: `Availability confirmed for ${clientLabel(w.clientId)}.`,
-        }] : undefined,
+        }],
       });
     });
 

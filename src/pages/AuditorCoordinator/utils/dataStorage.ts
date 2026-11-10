@@ -1,4 +1,5 @@
 import { Auditor, initialAuditors } from '../mockData';
+import { isLiveMode } from '../../../lib/liveAuth';
 
 const AUDITORS_STORAGE_KEY = 'cms_auditors_data';
 
@@ -14,8 +15,8 @@ export const initializeAuditorsData = (): Auditor[] => {
   } catch (error) {
     console.error('Error reading from localStorage:', error);
   }
-  // Fallback to initial mock data
-  return [...initialAuditors];
+  // Fallback to initial mock data (demo mode only; the live site starts empty)
+  return isLiveMode() ? [] : [...initialAuditors];
 };
 
 /**

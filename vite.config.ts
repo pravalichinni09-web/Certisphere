@@ -2,20 +2,26 @@ import { defineConfig, loadEnv, Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 
 /**
- * Runs the Vercel function api/claude.js inside `npm run dev`, so the AI
- * features also work on localhost. Put the key in .env.local as
- *   ANTHROPIC_API_KEY=sk-ant-...
- * (no VITE_ prefix, so it is never bundled into the browser code).
+ * Runs the Vercel functions in api/*.js inside `npm run dev`, so AI and live
+ * accounts also work on localhost. Server-only secrets go in .env.local
+ * WITHOUT the VITE_ prefix (never bundled into the browser code):
+ *   ANTHROPIC_API_KEY=...            (AI)
+ *   SUPABASE_SERVICE_ROLE_KEY=...    (account management / registration)
  */
-const localClaudeApi = (env: Record<string, string>): Plugin => ({
-  name: 'local-claude-api',
+const SERVER_ENV = ['ANTHROPIC_API_KEY', 'ANTHROPIC_MODEL', 'SUPABASE_URL', 'SUPABASE_SERVICE_ROLE_KEY', 'VITE_SUPABASE_URL']
+const localApi = (env: Record<string, string>): Plugin => ({
+  name: 'local-vercel-api',
   configureServer(server) {
-    if (env.ANTHROPIC_API_KEY) process.env.ANTHROPIC_API_KEY = env.ANTHROPIC_API_KEY
-    if (env.ANTHROPIC_MODEL) process.env.ANTHROPIC_MODEL = env.ANTHROPIC_MODEL
-    server.middlewares.use('/api/claude', async (req, res) => {
+    SERVER_ENV.forEach((k) => { if (env[k]) process.env[k] = env[k] })
+    server.middlewares.use(async (req, res, next) => {
+      const m = /^\/api\/([a-z0-9-]+)(?:[/?#]|$)/i.exec(req.url || '')
+      if (!m) return next()
       let raw = ''
       for await (const chunk of req) raw += chunk
-      const mod = await server.ssrLoadModule('/api/claude.js')
+      let mod: any
+      try { mod = await server.ssrLoadModule(`/api/${m[1]}.js`) } catch {
+        res.statusCode = 404; res.setHeader('content-type', 'application/json'); res.end(JSON.stringify({ error: 'Not found' })); return
+      }
       const reply = {
         status(code: number) { res.statusCode = code; return reply },
         setHeader(k: string, v: string) { res.setHeader(k, v); return reply },
@@ -24,7 +30,7 @@ const localClaudeApi = (env: Record<string, string>): Plugin => ({
       }
       let body: unknown
       try { body = raw ? JSON.parse(raw) : undefined } catch { body = raw }
-      await mod.default({ method: req.method, headers: req.headers, body }, reply)
+      await mod.default({ method: req.method, headers: req.headers, body, url: req.url }, reply)
     })
   },
 })
@@ -36,7 +42,7 @@ const basePath = process.env.BASE_PATH || '/'
 
 export default defineConfig(({ mode }) => ({
   base: basePath,
-  plugins: [react(), localClaudeApi(loadEnv(mode, process.cwd(), ''))],
+  plugins: [react(), localApi(loadEnv(mode, process.cwd(), ''))],
   server: {
     port: 3000,
     open: true,

@@ -10,6 +10,7 @@ import AuditorApprovals from './AuditorApprovals';
 import GlobalSettings from './GlobalSettings';
 import ClientOnboarding from './ClientOnboarding';
 import GrowthAnalytics from './GrowthAnalytics';
+import UsersAccess from './UsersAccess';
 import '../../styles/Auditor/Layout.css';
 
 interface LayoutProps {
@@ -31,6 +32,7 @@ const ManagementLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/global-settings" element={<GlobalSettings />} />
           <Route path="/growth-analytics" element={<GrowthAnalytics />} />
           <Route path="/client-onboarding" element={<ClientOnboarding />} />
+          <Route path="/users" element={<UsersAccess />} />
           <Route index element={<Navigate to="/management/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/management/dashboard" replace />} />
         </Routes>

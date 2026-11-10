@@ -3,6 +3,7 @@ import { UserPlus, X, CheckCircle2, Building2, Mail, Phone, MapPin, KeyRound, Co
 import { addClient } from '../pages/AuditorCoordinator/utils/clientCredentials';
 import { ensureWorkflow } from '../utils/auditWorkflow';
 import { getAuditTypeNames } from '../utils/auditTypes';
+import { isLiveMode, apiFetch } from '../lib/liveAuth';
 import '../styles/AuditeeRegistration.css';
 
 interface Props {
@@ -32,12 +33,31 @@ const AuditeeRegistration: React.FC<Props> = ({ onClose }) => {
     clientType: defaultAuditType,
   });
   const [error, setError] = useState<string | null>(null);
+  const live = isLiveMode();
+  const [pw, setPw] = useState('');
+  const [pw2, setPw2] = useState('');
+  const [busy, setBusy] = useState(false);
   const [issued, setIssued] = useState<{ username: string; password: string; org: string } | null>(null);
 
   const change = (k: string, v: string) => setForm((p) => ({ ...p, [k]: v }));
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (live) {
+      // Live site: the server creates the client, its workflow and the login together
+      if (!form.organizationName.trim() || !form.contactPerson.trim() || !form.email.trim()) {
+        setError('Organization, contact person, and email are required.');
+        return;
+      }
+      if (pw.length < 8) { setError('Choose a password of at least 8 characters.'); return; }
+      if (pw !== pw2) { setError('The two passwords do not match.'); return; }
+      setBusy(true); setError(null);
+      const res = await apiFetch('/api/register-client', { ...form, password: pw });
+      setBusy(false);
+      if (!res.ok) { setError(res.data?.error || 'Registration failed. Please try again.'); return; }
+      setIssued({ username: res.data.email, password: '', org: form.organizationName });
+      return;
+    }
     if (!form.organizationName.trim() || !form.contactPerson.trim() || !form.email.trim()) {
       setError('Organization, contact person, and email are required.');
       return;
@@ -119,11 +139,24 @@ const AuditeeRegistration: React.FC<Props> = ({ onClose }) => {
                 </div>
               </div>
 
+              {live && (
+                <div className="reg-row">
+                  <div className="reg-field">
+                    <label htmlFor="reg-pw"><KeyRound size={12} /> Choose a password <span className="req">*</span></label>
+                    <input id="reg-pw" type="password" autoComplete="new-password" value={pw} onChange={(e) => setPw(e.target.value)} placeholder="At least 8 characters" />
+                  </div>
+                  <div className="reg-field">
+                    <label htmlFor="reg-pw2">Repeat password <span className="req">*</span></label>
+                    <input id="reg-pw2" type="password" autoComplete="new-password" value={pw2} onChange={(e) => setPw2(e.target.value)} />
+                  </div>
+                </div>
+              )}
+
               {error && <div className="reg-error">{error}</div>}
 
               <div className="reg-actions">
                 <button type="button" className="reg-btn ghost" onClick={onClose}>Cancel</button>
-                <button type="submit" className="reg-btn primary"><UserPlus size={16} /> Submit Registration</button>
+                <button type="submit" className="reg-btn primary" disabled={busy}><UserPlus size={16} /> {busy ? 'Submitting…' : 'Submit Registration'}</button>
               </div>
             </form>
           </>
@@ -133,11 +166,13 @@ const AuditeeRegistration: React.FC<Props> = ({ onClose }) => {
               <div className="reg-head-icon ok"><CheckCircle2 size={22} /></div>
               <div>
                 <h2>Registration Submitted</h2>
-                <p>Welcome, <strong>{issued.org}</strong>! Save your login credentials below — you will use them to sign in as <strong>Auditee</strong>.</p>
+                <p>Welcome, <strong>{issued.org}</strong>! {live
+                  ? <>Your account is ready. Sign in with <strong>{issued.username}</strong> and the password you chose.</>
+                  : <>Save your login credentials below — you will use them to sign in as <strong>Auditee</strong>.</>}</p>
               </div>
             </div>
 
-            <div className="reg-creds">
+            {!live && <div className="reg-creds">
               <div className="reg-cred-row">
                 <div>
                   <div className="reg-cred-label"><KeyRound size={12} /> Username</div>
@@ -152,7 +187,7 @@ const AuditeeRegistration: React.FC<Props> = ({ onClose }) => {
                 </div>
                 <button className="reg-copy" onClick={() => copy(issued.password)} title="Copy"><Copy size={14} /></button>
               </div>
-            </div>
+            </div>}
 
             <div className="reg-info">
               Your registration is at stage <strong>1 — Registration Submitted</strong>. Management will assign an Audit Coordinator next. You can track progress on your dashboard after logging in.
