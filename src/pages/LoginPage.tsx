@@ -40,7 +40,7 @@ const LiveLoginForm: React.FC<{ onLogin: LoginPageProps['onLogin'] }> = ({ onLog
     onLogin(profile.role, profile);
   };
   const submit = (e: FormEvent) => { e.preventDefault(); void signIn(email, password); };
-  const signInDemo = (d: LiveDemoLogin) => { setEmail(d.email); setPassword(d.password); void signIn(d.email, d.password); };
+  const fillDemo = (d: LiveDemoLogin) => { setEmail(d.email); setPassword(d.password); setError(null); };
   const samePw = demo.length > 0 && demo.every((d) => d.password === demo[0].password);
   return (
     <form className="login-form" onSubmit={submit} noValidate>
@@ -63,14 +63,14 @@ const LiveLoginForm: React.FC<{ onLogin: LoginPageProps['onLogin'] }> = ({ onLog
           <div style={{ fontSize: 12, letterSpacing: '.12em', fontWeight: 700, color: '#f6d878', textTransform: 'uppercase', marginBottom: 4 }}>Demo credentials</div>
           <div style={{ fontSize: 12, color: '#d6d3c4', marginBottom: 8 }}>
             {samePw && <>Password for all: <code style={{ color: '#fff', background: 'rgba(255,255,255,.08)', padding: '1px 6px', borderRadius: 4, userSelect: 'all' }}>{demo[0].password}</code> · </>}
-            click a role to sign in
+            click a role to fill in the form, then press Sign in
           </div>
           <div style={{ display: 'grid', gap: 6 }}>
             {demo.map((a) => (
-              <button key={a.email} type="button" disabled={busy} onClick={() => signInDemo(a)}
-                title={`Sign in as ${a.role}`}
+              <button key={a.email} type="button" disabled={busy} onClick={() => fillDemo(a)}
+                title={`Fill in the ${a.role} demo login`}
                 style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', width: '100%', textAlign: 'left', cursor: 'pointer',
-                  padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(246,216,120,.3)', background: 'rgba(0,0,0,.25)', color: '#f5f5f4', fontSize: 12 }}>
+                  padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(246,216,120,.3)', background: email === a.email ? 'rgba(246,216,120,.18)' : 'rgba(0,0,0,.25)', color: '#f5f5f4', fontSize: 12 }}>
                 <strong style={{ color: '#f6d878', whiteSpace: 'nowrap' }}>{a.role}</strong>
                 <span style={{ opacity: .85, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                   {a.email}{!samePw && <> · <code style={{ color: '#fff' }}>{a.password}</code></>}

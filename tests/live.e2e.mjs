@@ -97,9 +97,11 @@ const run = async () => {
   await page.getByRole('button', { name: /^Sign in$/ }).click(); await page.waitForTimeout(1200);
   check('A3', 'Wrong password is rejected with a message', /Incorrect email or password/.test(await page.locator('[role=alert]').innerText().catch(() => '')));
   check('A4', 'Demo credentials panel lists the demo logins from the server', (await page.locator('#live-demo-logins button').count()) === 1 && /Certi@Demo2026/.test(await page.locator('#live-demo-logins').innerText()));
-  await page.locator('#live-demo-logins button', { hasText: 'Management' }).click();
+  await page.locator('#live-demo-logins button', { hasText: 'Management' }).click(); await wait(800);
+  check('A4b', 'Clicking a demo role only fills the form (no sign-in yet)', page.url().includes('/login') && (await page.inputValue('#live-email')) === 'management@certisphere.test' && (await page.inputValue('#live-password')) === 'Certi@Demo2026');
+  await page.getByRole('button', { name: /^Sign in$/ }).click();
   await page.waitForURL(/\/management\//, { timeout: 15000 }).catch(() => {});
-  check('A5', 'Clicking a demo role signs in with the shared demo password', page.url().includes('/management/'), page.url().replace(APP, ''));
+  check('A5', 'Pressing Sign in after picking a demo role signs in', page.url().includes('/management/'), page.url().replace(APP, ''));
   await signOut();
 
   section('Management account & a clean start');
@@ -121,7 +123,8 @@ const run = async () => {
   await page.goto(`${APP}/login`, { waitUntil: 'networkidle' }); await wait(800);
   const demoTxt = await page.locator('#live-demo-logins').innerText().catch(() => '');
   check('B4b', 'Sign-in page shows the edited demo credentials', /Demo@Pass99/.test(demoTxt) && /Lead Auditor/.test(demoTxt) && !/Certi@Demo2026/.test(demoTxt));
-  await page.locator('#live-demo-logins button', { hasText: 'Lead Auditor' }).click();
+  await page.locator('#live-demo-logins button', { hasText: 'Lead Auditor' }).click(); await wait(500);
+  await page.getByRole('button', { name: /^Sign in$/ }).click();
   await page.waitForURL(/\/lead-auditor\//, { timeout: 15000 }).catch(() => {});
   check('B4c', 'Clicking the edited demo login signs in (real password changed too)', page.url().includes('/lead-auditor/'), page.url().replace(APP, ''));
   await signOut();
