@@ -97,3 +97,16 @@ export const apiFetch = async (path: string, body?: unknown, method = 'POST'): P
   try { data = await res.json(); } catch { /* empty */ }
   return { ok: res.ok, status: res.status, data };
 };
+
+/** Demo logins listed on the sign-in page (managed in Users & Access). */
+export interface LiveDemoLogin { email: string; role: string; password: string }
+const ROLE_ORDER = ['Management', 'Audit Coordinator', 'Lead Auditor', 'Auditor', 'Auditee', 'Client Coordinator'];
+export const loadDemoLogins = async (): Promise<LiveDemoLogin[]> => {
+  if (!supabase) return [];
+  try {
+    const { data, error } = await supabase.from('demo_logins').select('email,role,password');
+    if (error || !Array.isArray(data)) return [];
+    return (data as LiveDemoLogin[]).sort((a, b) =>
+      (ROLE_ORDER.indexOf(a.role) - ROLE_ORDER.indexOf(b.role)) || a.email.localeCompare(b.email));
+  } catch { return []; }
+};

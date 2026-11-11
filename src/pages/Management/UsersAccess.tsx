@@ -37,6 +37,8 @@ const small: React.CSSProperties = { ...btn(false), padding: '5px 9px', fontSize
 const UsersAccess: React.FC = () => {
   const live = isLiveMode();
   const [users, setUsers] = useState<Account[]>([]);
+  const [demo, setDemo] = useState<Record<string, string>>({}); // user id → password shown on the sign-in page
+  const [demoPw, setDemoPw] = useState('');
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null);
   const [issued, setIssued] = useState<{ email: string; password: string } | null>(null);
@@ -49,7 +51,14 @@ const UsersAccess: React.FC = () => {
     setLoading(true);
     const r = await apiFetch('/api/users', undefined, 'GET');
     setLoading(false);
-    if (r.ok) setUsers(r.data.users || []);
+    if (r.ok) {
+      setUsers(r.data.users || []);
+      const map: Record<string, string> = {};
+      (r.data.demo || []).forEach((d: { user_id: string; password: string }) => { map[d.user_id] = d.password; });
+      setDemo(map);
+      const first = Object.values(map)[0];
+      if (first) setDemoPw((cur) => cur || first);
+    }
     else setMsg({ ok: false, text: r.data?.error || 'Could not load accounts.' });
   };
   useEffect(() => {
@@ -87,6 +96,29 @@ const UsersAccess: React.FC = () => {
     if (!r.ok) { setMsg({ ok: false, text: r.data?.error || 'Could not reset the password.' }); return; }
     setIssued({ email: u.email, password: r.data.password });
     setMsg({ ok: true, text: `New password set for ${u.email}.` });
+  };
+
+  const setDemoLogin = async (u: Account, show: boolean, password = demoPw) => {
+    setMsg(null);
+    if (show && password.length < 8) { setMsg({ ok: false, text: 'Type a demo password (at least 8 characters) in the "Sign-in page demo credentials" box first.' }); return false; }
+    const r = await apiFetch('/api/users', { action: 'demo-login', id: u.id, show, password });
+    if (!r.ok) { setMsg({ ok: false, text: r.data?.error || 'Could not update the sign-in page.' }); return false; }
+    return true;
+  };
+  const toggleDemo = async (u: Account) => {
+    const show = !(u.id in demo);
+    if (await setDemoLogin(u, show)) {
+      setMsg({ ok: true, text: show ? `${u.email} is now shown on the sign-in page (password: ${demoPw}).` : `${u.email} removed from the sign-in page.` });
+      void load();
+    }
+  };
+  const applyDemoPw = async () => {
+    const ids = Object.keys(demo);
+    if (!ids.length) { setMsg({ ok: false, text: 'No accounts are on the sign-in page yet. Click "Show" on an account first.' }); return; }
+    let done = 0;
+    for (const u of users.filter((x) => x.id in demo)) { if (await setDemoLogin(u, true)) done += 1; else return; }
+    setMsg({ ok: true, text: `Password changed to "${demoPw}" for ${done} demo login${done === 1 ? '' : 's'}. The sign-in page now shows the new password.` });
+    void load();
   };
 
   const copy = (t: string) => { navigator.clipboard?.writeText(t).catch(() => {}); };
@@ -145,15 +177,28 @@ const UsersAccess: React.FC = () => {
             </div>
           )}
 
+          <div id="ua-demo" style={{ ...card, display: 'grid', gap: 10, background: '#fffdf5', borderColor: '#fde68a' }}>
+            <strong style={{ display: 'flex', alignItems: 'center', gap: 6 }}><KeyRound size={16} /> Sign-in page demo credentials</strong>
+            <span style={{ fontSize: 13, color: '#475569' }}>
+              Accounts marked <b>Shown</b> in the "Login page" column are listed on the sign-in page with this password, and clicking one signs in.
+              Changing the password here changes the real password too, so the sign-in page always matches. Anyone who opens the site can use these logins — remove them before real clients go live.
+            </span>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+              <input id="ua-demo-pw" style={{ ...inp, width: 220 }} value={demoPw} onChange={(e) => setDemoPw(e.target.value)} placeholder="Demo password (min 8)" />
+              <button type="button" style={btn()} onClick={() => void applyDemoPw()}><RefreshCw size={14} /> Apply to all shown accounts</button>
+              <span style={{ fontSize: 12, color: '#64748b' }}>{Object.keys(demo).length} shown on the sign-in page</span>
+            </div>
+          </div>
+
           <div style={{ ...card, padding: 0, overflowX: 'auto' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px', borderBottom: '1px solid #e2e8f0' }}>
               <strong>{users.length} account{users.length === 1 ? '' : 's'}</strong>
               <button type="button" style={small} onClick={() => void load()}><RefreshCw size={12} /> {loading ? 'Loading…' : 'Refresh'}</button>
             </div>
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 760 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13, minWidth: 900 }}>
               <thead>
                 <tr style={{ background: '#f8fafc', textAlign: 'left', color: '#475569' }}>
-                  {['Name', 'Email', 'Role', 'Client', 'Status', ''].map((h) => <th key={h} style={{ padding: '10px 12px', fontWeight: 700 }}>{h}</th>)}
+                  {['Name', 'Email', 'Role', 'Client', 'Status', 'Login page', ''].map((h) => <th key={h} style={{ padding: '10px 12px', fontWeight: 700 }}>{h}</th>)}
                 </tr>
               </thead>
               <tbody>
@@ -175,6 +220,12 @@ const UsersAccess: React.FC = () => {
                     <td style={{ padding: '10px 12px' }}>
                       <span style={{ fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 999, background: u.active ? '#dcfce7' : '#fee2e2', color: u.active ? '#166534' : '#991b1b' }}>{u.active ? 'Active' : 'Disabled'}</span>
                     </td>
+                    <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
+                      <button type="button" aria-label={`Login page for ${u.email}`} style={{ ...small, ...(u.id in demo ? { background: '#fef3c7', borderColor: '#f59e0b', color: '#92400e' } : {}) }}
+                        disabled={!u.active} onClick={() => void toggleDemo(u)} title={u.id in demo ? 'Remove from the sign-in page' : 'Show on the sign-in page with the demo password'}>
+                        {u.id in demo ? 'Shown · remove' : 'Show'}
+                      </button>
+                    </td>
                     <td style={{ padding: '10px 12px', whiteSpace: 'nowrap', display: 'flex', gap: 6 }}>
                       <button type="button" style={small} onClick={() => void reset(u)}><KeyRound size={12} /> Reset password</button>
                       <button type="button" style={small} onClick={() => void update(u, { active: !u.active }, `${u.email} ${u.active ? 'disabled' : 'enabled'}.`)}>
@@ -184,7 +235,7 @@ const UsersAccess: React.FC = () => {
                   </tr>
                 ))}
                 {!users.length && !loading && (
-                  <tr><td colSpan={6} style={{ padding: 16, color: '#64748b' }}>No accounts yet.</td></tr>
+                  <tr><td colSpan={7} style={{ padding: 16, color: '#64748b' }}>No accounts yet.</td></tr>
                 )}
               </tbody>
             </table>

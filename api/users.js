@@ -8,6 +8,9 @@
  *        Returns the password once, so it can be handed to the person.
  *   POST { action: 'update', id, role?, clientId?, fullName?, active? }   (Management)
  *   POST { action: 'reset-password', id }                                 (Management)
+ *   POST { action: 'demo-login', id, show, password? }                    (Management)
+ *        show=true  → sets the account's password and lists it on the sign-in page
+ *        show=false → removes it from the sign-in page
  */
 import {
   adminClient, callerProfile, readBody, send, tempPassword, isEmail,
@@ -25,7 +28,8 @@ export default async function handler(req, res) {
     if (me.role !== 'Management') return send(res, 403, { error: 'Only Management can view all accounts.' });
     const { data, error } = await admin.from('profiles').select('*').order('created_at', { ascending: true });
     if (error) return send(res, 500, { error: error.message });
-    return send(res, 200, { users: data });
+    const { data: demo } = await admin.from('demo_logins').select('user_id,password');
+    return send(res, 200, { users: data, demo: demo || [] });
   }
   if (req.method !== 'POST') return send(res, 405, { error: 'Method not allowed' });
 
@@ -76,6 +80,9 @@ export default async function handler(req, res) {
     const { data, error } = await admin.from('profiles').update(patch).eq('id', body.id).select().maybeSingle();
     if (error) return send(res, 400, { error: error.message });
     if (!data) return send(res, 404, { error: 'Account not found.' });
+    // keep the sign-in page's demo list in step with the account
+    if (data.active === false) await admin.from('demo_logins').delete().eq('user_id', data.id);
+    else if (patch.role) await admin.from('demo_logins').update({ role: data.role, updated_at: patch.updated_at }).eq('user_id', data.id);
     return send(res, 200, { user: data });
   }
 
@@ -83,7 +90,29 @@ export default async function handler(req, res) {
     const password = tempPassword();
     const { error } = await admin.auth.admin.updateUserById(body.id, { password });
     if (error) return send(res, 400, { error: error.message });
+    await admin.from('demo_logins').delete().eq('user_id', body.id); // old demo password no longer works
     return send(res, 200, { password });
+  }
+
+  if (body.action === 'demo-login') {
+    if (!body.show) {
+      const { error } = await admin.from('demo_logins').delete().eq('user_id', body.id);
+      if (error) return send(res, 400, { error: error.message });
+      return send(res, 200, { ok: true });
+    }
+    const password = String(body.password || '');
+    if (password.length < 8) return send(res, 400, { error: 'Demo password must be at least 8 characters.' });
+    const { data: prof, error: gErr } = await admin.from('profiles').select('id,email,role,active').eq('id', body.id).maybeSingle();
+    if (gErr) return send(res, 400, { error: gErr.message });
+    if (!prof) return send(res, 404, { error: 'Account not found.' });
+    if (!prof.active) return send(res, 400, { error: 'Enable this account before showing it on the sign-in page.' });
+    const { error: aErr } = await admin.auth.admin.updateUserById(prof.id, { password });
+    if (aErr) return send(res, 400, { error: aErr.message });
+    const { error: dErr } = await admin.from('demo_logins').upsert(
+      { user_id: prof.id, email: prof.email, role: prof.role, password, updated_at: new Date().toISOString() },
+      { onConflict: 'user_id' });
+    if (dErr) return send(res, 400, { error: dErr.message });
+    return send(res, 200, { ok: true });
   }
 
   return send(res, 400, { error: 'Unknown action.' });

@@ -19,6 +19,7 @@ export const SERVICE_KEY = makeJwt({ role: 'service_role', iss: 'fake-supabase',
 const users = new Map();      // id -> { id, email, password }
 const profiles = new Map();   // id -> profile row
 const appData = new Map();    // `${store}|${row_key}` -> row
+const demoLogins = new Map();
 const STAFF = ['Management', 'Audit Coordinator', 'Lead Auditor', 'Auditor'];
 const CLIENT = ['Auditee', 'Client Coordinator'];
 const SHARED_REF = new Set(['cms_audit_types', 'cms_audit_scopes', 'cms_global_config_v1', 'cms_departments_v1', 'cms_audit_checklists']);
@@ -98,11 +99,12 @@ const server = http.createServer(async (req, res) => {
   const who = caller(req);
 
   /* ---- test control ---- */
-  if (p === '/__reset') { users.clear(); profiles.clear(); appData.clear(); return send(res, 200, { ok: true }); }
+  if (p === '/__reset') { users.clear(); profiles.clear(); appData.clear(); demoLogins.clear(); return send(res, 200, { ok: true }); }
   if (p === '/__seed-admin') {
     const u = { id: crypto.randomUUID(), email: body.email, password: body.password, created_at: new Date().toISOString() };
     users.set(u.id, u);
     profiles.set(u.id, { id: u.id, email: u.email, full_name: body.fullName || 'Admin', role: 'Management', client_id: null, active: true, created_at: u.created_at, updated_at: u.created_at });
+    if (body.demo) demoLogins.set(u.id, { user_id: u.id, email: u.email, role: 'Management', password: body.password });
     return send(res, 200, { id: u.id });
   }
   if (p === '/__dump') return send(res, 200, { profiles: [...profiles.values()], app_data: [...appData.values()] });
@@ -146,13 +148,20 @@ const server = http.createServer(async (req, res) => {
   }
 
   /* ---- REST ---- */
-  const rest = /^\/rest\/v1\/(app_data|profiles)$/.exec(p);
+  const rest = /^\/rest\/v1\/(app_data|profiles|demo_logins)$/.exec(p);
   if (rest) {
     const table = rest[1];
     const params = url.searchParams;
     const match = parseFilters(params);
     const prefer = String(req.headers.prefer || '');
 
+    if (table === 'demo_logins') {
+      if (req.method === 'GET') return send(res, 200, [...demoLogins.values()].filter(match).map((r) => pick(r, params.get('select'))));
+      if (who.kind !== 'service') return send(res, 403, { code: '42501', message: 'permission denied for table demo_logins' });
+      if (req.method === 'POST') { (Array.isArray(body) ? body : [body]).forEach((r) => demoLogins.set(r.user_id, { ...demoLogins.get(r.user_id), ...r })); return send(res, 201); }
+      if (req.method === 'PATCH') { const rows = [...demoLogins.values()].filter(match); rows.forEach((r) => Object.assign(r, body)); return send(res, 200, rows); }
+      if (req.method === 'DELETE') { [...demoLogins.entries()].filter(([, r]) => match(r)).forEach(([k]) => demoLogins.delete(k)); return send(res, 204); }
+    }
     if (table === 'profiles') {
       if (req.method === 'GET') {
         let rows = [...profiles.values()].filter((r) => canReadProfile(who, r) && match(r));

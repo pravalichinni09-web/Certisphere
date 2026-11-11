@@ -9,7 +9,7 @@ import LoginForm from '../components/LoginForm';
 import DemoAccountModal, { DemoAccount } from '../components/DemoAccountModal';
 import { showWelcomeToast } from '../components/WelcomeToast';
 import { findCredentialByLogin, ensureCredentialsForClients, readCredentials } from './AuditorCoordinator/utils/clientCredentials';
-import { isLiveMode, liveSignIn, LiveProfile } from '../lib/liveAuth';
+import { isLiveMode, liveSignIn, LiveProfile, loadDemoLogins, LiveDemoLogin } from '../lib/liveAuth';
 import AuditeeRegistration from '../components/AuditeeRegistration';
 import AuditorRegistration from '../components/AuditorRegistration';
 import { readGlobalConfig } from '../utils/globalConfig';
@@ -29,15 +29,19 @@ const LiveLoginForm: React.FC<{ onLogin: LoginPageProps['onLogin'] }> = ({ onLog
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (!email.trim() || !password) { setError('Enter your email and password.'); return; }
+  const [demo, setDemo] = useState<LiveDemoLogin[]>([]);
+  useEffect(() => { void loadDemoLogins().then(setDemo); }, []);
+  const signIn = async (em: string, pw: string) => {
+    if (!em.trim() || !pw) { setError('Enter your email and password.'); return; }
     setBusy(true); setError(null);
-    const { profile, error: err } = await liveSignIn(email, password);
+    const { profile, error: err } = await liveSignIn(em, pw);
     setBusy(false);
     if (!profile) { setError(err); return; }
     onLogin(profile.role, profile);
   };
+  const submit = (e: FormEvent) => { e.preventDefault(); void signIn(email, password); };
+  const signInDemo = (d: LiveDemoLogin) => { setEmail(d.email); setPassword(d.password); void signIn(d.email, d.password); };
+  const samePw = demo.length > 0 && demo.every((d) => d.password === demo[0].password);
   return (
     <form className="login-form" onSubmit={submit} noValidate>
       <h2 className="form-title">Sign in</h2>
@@ -54,6 +58,28 @@ const LiveLoginForm: React.FC<{ onLogin: LoginPageProps['onLogin'] }> = ({ onLog
       {error && <div role="alert" style={{ color: '#fecaca', background: 'rgba(185,28,28,.25)', border: '1px solid rgba(248,113,113,.5)', borderRadius: 8, padding: '8px 10px', fontSize: 13, margin: '4px 0 10px' }}>{error}</div>}
       <button type="submit" className="login-button" disabled={busy}>{busy ? 'Signing in…' : 'Sign in'}</button>
       <a href="/reset-password" style={{ display: 'block', marginTop: 12, fontSize: 13, color: '#f6d878', textAlign: 'center' }}>Forgot your password?</a>
+      {demo.length > 0 && (
+        <div id="live-demo-logins" style={{ marginTop: 18, borderTop: '1px solid rgba(246,216,120,.25)', paddingTop: 14 }}>
+          <div style={{ fontSize: 12, letterSpacing: '.12em', fontWeight: 700, color: '#f6d878', textTransform: 'uppercase', marginBottom: 4 }}>Demo credentials</div>
+          <div style={{ fontSize: 12, color: '#d6d3c4', marginBottom: 8 }}>
+            {samePw && <>Password for all: <code style={{ color: '#fff', background: 'rgba(255,255,255,.08)', padding: '1px 6px', borderRadius: 4, userSelect: 'all' }}>{demo[0].password}</code> · </>}
+            click a role to sign in
+          </div>
+          <div style={{ display: 'grid', gap: 6 }}>
+            {demo.map((a) => (
+              <button key={a.email} type="button" disabled={busy} onClick={() => signInDemo(a)}
+                title={`Sign in as ${a.role}`}
+                style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'center', width: '100%', textAlign: 'left', cursor: 'pointer',
+                  padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(246,216,120,.3)', background: 'rgba(0,0,0,.25)', color: '#f5f5f4', fontSize: 12 }}>
+                <strong style={{ color: '#f6d878', whiteSpace: 'nowrap' }}>{a.role}</strong>
+                <span style={{ opacity: .85, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                  {a.email}{!samePw && <> · <code style={{ color: '#fff' }}>{a.password}</code></>}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </form>
   );
 };

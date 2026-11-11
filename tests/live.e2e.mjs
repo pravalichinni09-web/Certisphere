@@ -79,6 +79,7 @@ const run = async () => {
   for (let i = 0; i < 60; i++) { await wait(1000); try { if ((await fetch(`${APP}/login`)).ok) break; } catch { /* starting */ } }
   await fetch(`${SB}/__reset`);
   await fetch(`${SB}/__seed-admin`, { method: 'POST', body: JSON.stringify({ email: 'admin@qmics.test', password: 'Admin@12345', fullName: 'QMICS Admin' }) });
+  await fetch(`${SB}/__seed-admin`, { method: 'POST', body: JSON.stringify({ email: 'management@certisphere.test', password: 'Certi@Demo2026', fullName: 'Demo Management', demo: true }) });
 
   const browser = await chromium.launch({ headless: !process.env.HEADED });
   const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
@@ -91,10 +92,15 @@ const run = async () => {
   await page.goto(`${APP}/login`, { waitUntil: 'networkidle' });
   const body = await page.locator('body').innerText();
   check('A1', 'Live sign-in form shown (email + password)', await page.locator('#live-email').isVisible() && await page.locator('#live-password').isVisible());
-  check('A2', 'No demo role buttons or demo passwords on the live site', !/Demo accounts|SHOW DEMO LOGIN|AuditCoord@123/i.test(body));
+  check('A2', 'Old demo-mode role buttons and passwords are not on the live site', !/Demo accounts|SHOW DEMO LOGIN|AuditCoord@123/i.test(body));
   await page.fill('#live-email', 'admin@qmics.test'); await page.fill('#live-password', 'wrong-password');
   await page.getByRole('button', { name: /^Sign in$/ }).click(); await page.waitForTimeout(1200);
   check('A3', 'Wrong password is rejected with a message', /Incorrect email or password/.test(await page.locator('[role=alert]').innerText().catch(() => '')));
+  check('A4', 'Demo credentials panel lists the demo logins from the server', (await page.locator('#live-demo-logins button').count()) === 1 && /Certi@Demo2026/.test(await page.locator('#live-demo-logins').innerText()));
+  await page.locator('#live-demo-logins button', { hasText: 'Management' }).click();
+  await page.waitForURL(/\/management\//, { timeout: 15000 }).catch(() => {});
+  check('A5', 'Clicking a demo role signs in with the shared demo password', page.url().includes('/management/'), page.url().replace(APP, ''));
+  await signOut();
 
   section('Management account & a clean start');
   await signIn('admin@qmics.test', 'Admin@12345');
@@ -106,6 +112,18 @@ const run = async () => {
   const pwLead = await createUser('leo@qmics.test', 'Leo Ashford', 'Lead Auditor');
   const pwAud = await createUser('aaron@qmics.test', 'Aaron Diaz', 'Auditor');
   check('B4', 'Management creates Coordinator, Lead Auditor and Auditor accounts', [pwCoord, pwLead, pwAud].every((p) => p.length >= 12), `${(await dump()).profiles.length} accounts`);
+  // Users & Access → sign-in page demo credentials
+  await page.fill('#ua-demo-pw', 'Demo@Pass99');
+  await page.getByRole('button', { name: 'Login page for leo@qmics.test' }).click(); await wait(1200);
+  await page.getByRole('button', { name: /Apply to all shown accounts/ }).click(); await wait(1500);
+  check('B4a', 'Management puts accounts on the sign-in page and changes the demo password', /Password changed to "Demo@Pass99" for 2 demo logins/.test(await page.locator('[role=status]').innerText().catch(() => '')));
+  await signOut();
+  await page.goto(`${APP}/login`, { waitUntil: 'networkidle' }); await wait(800);
+  const demoTxt = await page.locator('#live-demo-logins').innerText().catch(() => '');
+  check('B4b', 'Sign-in page shows the edited demo credentials', /Demo@Pass99/.test(demoTxt) && /Lead Auditor/.test(demoTxt) && !/Certi@Demo2026/.test(demoTxt));
+  await page.locator('#live-demo-logins button', { hasText: 'Lead Auditor' }).click();
+  await page.waitForURL(/\/lead-auditor\//, { timeout: 15000 }).catch(() => {});
+  check('B4c', 'Clicking the edited demo login signs in (real password changed too)', page.url().includes('/lead-auditor/'), page.url().replace(APP, ''));
   await signOut();
   check('B5', 'Sign-out wipes this browser\'s copy of the data', (await localStore('cms_client_registrations')) === null);
 
