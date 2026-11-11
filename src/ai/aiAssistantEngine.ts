@@ -6,6 +6,8 @@
  * standards, auditing concepts, and the live data stored in localStorage.
  */
 
+import { matchCertiSphere } from './certisphereGuide';
+
 export type AssistantBlockKind = 'text' | 'list' | 'cards' | 'navigate' | 'kpi';
 
 export interface AssistantBlock {
@@ -179,6 +181,7 @@ export const suggestionsForRole = (role: string): string[] => {
   switch (role) {
     case 'Audit Coordinator':
       return [
+        'What should I do next?', 'What is late?',
         'What is required to conduct an audit?',
         'How do I create an audit scope?',
         'Stages of a certification audit',
@@ -188,6 +191,7 @@ export const suggestionsForRole = (role: string): string[] => {
       ];
     case 'Lead Auditor':
       return [
+        'What should I do next?',
         'What is required to conduct an audit?',
         'Show my upcoming audits',
         'How do I submit an audit report?',
@@ -196,6 +200,7 @@ export const suggestionsForRole = (role: string): string[] => {
       ];
     case 'Auditor':
       return [
+        'What should I do next?',
         'How do I conduct an audit?',
         'What is audit evidence?',
         'Open my schedule confirmations',
@@ -203,6 +208,7 @@ export const suggestionsForRole = (role: string): string[] => {
       ];
     case 'Auditee':
       return [
+        'What is my audit status?',
         'What is an audit?',
         'How do I submit a report?',
         'What is corrective action?',
@@ -210,6 +216,7 @@ export const suggestionsForRole = (role: string): string[] => {
       ];
     case 'Management':
       return [
+        'Give me a pipeline report', 'What is late?',
         'How does the certification flow work?',
         'List supported standards',
         'What is accreditation?',
@@ -264,7 +271,7 @@ export const ask = (rawInput: string, ctx: AssistantContext): AssistantResponse 
   if (hasAny(input, 'who are you', 'what are you', 'what can you do', 'help me', 'capabilities', 'features')) {
     return {
       blocks: [
-        { kind: 'text', text: 'I am your **CMS Assistant**. I can help with:' },
+        { kind: 'text', text: 'I am **QCSAI**, the CertiSphere assistant. I can help with:' },
         {
           kind: 'list',
           items: [
@@ -274,6 +281,9 @@ export const ask = (rawInput: string, ctx: AssistantContext): AssistantResponse 
             '**How-to** — "How do I create an audit scope?", "How do I submit a report?"',
             '**Navigation** — "Open audit schedules", "Take me to dashboard"',
             '**Live data** — "How many auditors?", "Show pending applications"',
+            '**Your work** — "What should I do next?", "What is late?", "Give me a pipeline report"',
+            '**Clients** — "Who are the new clients onboarding?", "Where is <client>?", "and who is its lead auditor?"',
+            '**Quality check** — "Check my corrective action: <text>"',
           ],
         },
       ],
@@ -375,6 +385,14 @@ export const ask = (rawInput: string, ctx: AssistantContext): AssistantResponse 
     }
   }
 
+  /* ------------------------ CertiSphere workflow, tasks, how-to ------ */
+  const guideResp = matchCertiSphere(input, ctx);
+  if (guideResp) return guideResp;
+
+  /* ------------------------ Clients & their workflow stage ---------- */
+  const clientResp = matchClients(input, ctx);
+  if (clientResp) return clientResp;
+
   /* ------------------------ How-to guides ---------------------------- */
   const howto = matchHowTo(input);
   if (howto) return howto;
@@ -420,6 +438,102 @@ export const ask = (rawInput: string, ctx: AssistantContext): AssistantResponse 
 /* --------------------------------------------------------------------- */
 /*  Live data lookups                                                    */
 /* --------------------------------------------------------------------- */
+
+/* --------------------------------------------------------------------- */
+/*  Clients — who is onboarding, latest registrations, where a client is  */
+/* --------------------------------------------------------------------- */
+const STAGE_FLOW = [
+  'Pre-Registration', 'Registration Submitted', 'Coordinator Assigned', 'Requirements Reviewed',
+  'Schedule Proposed', 'Assigned Auditors (Lead auditor, Auditor)', 'Schedule Approved by Auditee',
+  'Schedule Approved by Auditor', 'Audit In Progress', 'Audit Completed', 'Audit findings',
+  'Action items released to Auditor', 'Review and Approval by Auditor', 'Certification released',
+];
+const ONBOARDING_LAST = STAGE_FLOW.indexOf('Requirements Reviewed'); // before scheduling starts
+const NEXT_STEP: Record<string, string> = {
+  'Pre-Registration': 'client completes registration',
+  'Registration Submitted': 'Management assigns an Audit Coordinator',
+  'Coordinator Assigned': 'Coordinator reviews the requirements',
+  'Requirements Reviewed': 'Coordinator proposes the audit schedule',
+  'Schedule Proposed': 'Auditee approves the date; Coordinator assigns the audit team',
+  'Assigned Auditors (Lead auditor, Auditor)': 'Auditee approves the audit date',
+  'Schedule Approved by Auditee': 'Lead Auditor confirms the team and Auditor confirms availability',
+  'Schedule Approved by Auditor': 'Auditor starts the audit on the audit date',
+  'Audit In Progress': 'Auditor records findings and closes the audit',
+  'Audit Completed': 'Auditor releases the findings to the auditee',
+  'Audit findings': 'Auditee submits corrective actions',
+  'Action items released to Auditor': 'Auditor reviews, then Lead Auditor accepts the corrective actions',
+  'Review and Approval by Auditor': 'Coordinator generates the certificate, Management approves & releases it',
+  'Certification released': 'Coordinator delivers the certificate',
+};
+
+const clientRows = () => {
+  const regs = safeJSON<any[]>('cms_client_registrations', []);
+  const wf = safeJSON<any[]>('cms_audit_workflow', []);
+  return regs.map((c: any) => {
+    const id = Number(c.id);
+    const w = wf.find((x: any) => Number(x.clientId) === id);
+    const stage: string = w?.currentStage || (c.status === 'Pending' ? 'Registration Submitted' : c.status || 'Registration Submitted');
+    const when = c.registrationDate || c.createdAt || w?.createdAt || '';
+    return { id, name: c.organizationName || c.name || `Client #${id}`, stage, stageIdx: STAGE_FLOW.indexOf(stage), when, standard: c.standard || '', reg: c.registrationNumber || '', contact: c.contactPerson || '' };
+  }).sort((a, b) => String(b.when).localeCompare(String(a.when)));
+};
+const fmtDate = (s: string) => { const d = new Date(s); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); };
+const clientCard = (c: ReturnType<typeof clientRows>[number]) => ({
+  title: c.name,
+  subtitle: c.stageIdx >= 0 ? `Step ${c.stageIdx + 1}/14 · ${c.stage}` : `Status: ${c.stage}`,
+  meta: [c.reg, c.standard, c.when && `registered ${fmtDate(c.when)}`, NEXT_STEP[c.stage] && `next: ${NEXT_STEP[c.stage]}`].filter(Boolean).join(' • '),
+});
+
+function matchClients(input: string, ctx: AssistantContext): AssistantResponse | null {
+  const rows = clientRows();
+  const aboutClients = hasAny(input, 'client', 'organization', 'organisation', 'company', 'companies', 'customer', 'onboard', 'registration', 'registered');
+  const onboardingPath = ctx.role === 'Management' ? '/management/client-onboarding' : ctx.role === 'Audit Coordinator' ? '/auditor-coordinator/client-registration' : '';
+  const nav = onboardingPath ? [{ kind: 'navigate' as const, nav: [{ label: ctx.role === 'Management' ? 'Client Onboarding' : 'Client Registration', path: onboardingPath }] }] : [];
+
+  // "where is Sunrise Textiles" / "status of Lotus Agro"
+  const named = rows.find((c) => c.name.length > 3 && /\b(where|status|stage|progress|about|step|track)\b/.test(input) && input.includes(c.name.toLowerCase().replace(/\s+(pvt\.?|private)?\s*(ltd\.?|limited)?$/, '').trim()));
+  if (named) {
+    return {
+      blocks: [
+        { kind: 'text', text: named.stageIdx < 0 ? `**${named.name}** — status: **${named.stage}** (not in the audit workflow yet).` : `**${named.name}** is at **step ${named.stageIdx + 1} of 14 — ${named.stage}**.${NEXT_STEP[named.stage] ? ` Next: ${NEXT_STEP[named.stage]}.` : ''}` },
+        { kind: 'cards', cards: [clientCard(named)] },
+        ...nav,
+      ],
+      suggestions: ['Who are the new clients onboarding?', 'How many clients?'],
+    };
+  }
+
+  if (!aboutClients) return null;
+  if (has(input, 'pending')) return null; // "pending clients" handled in matchData
+  const wantsOnboarding = hasAny(input, 'onboard', 'new client', 'new clients', 'newly', 'recent', 'latest', 'just registered', 'joined');
+  const wantsList = hasAny(input, 'who', 'which', 'list', 'show', 'all', 'names', 'what are');
+  if (!wantsOnboarding && !wantsList) return null;
+  if (/^(how|can|should|why)\b/.test(input) && !wantsOnboarding) return null; // "how do I list clients" → how-to guide
+  if (hasAny(input, 'how many', 'count', 'total', 'number of') && !wantsOnboarding) return null; // KPI handled in matchData
+
+  if (!rows.length) {
+    return { blocks: [{ kind: 'text', text: 'No clients are registered yet. New clients appear here as soon as they register (sign-in page → "New client? Register here") or an enquiry is converted.' }, ...nav] };
+  }
+
+  const list = wantsOnboarding ? rows.filter((c) => c.stageIdx >= 0 && c.stageIdx <= ONBOARDING_LAST) : rows;
+  if (!list.length) {
+    return {
+      blocks: [{ kind: 'text', text: `No clients are in onboarding right now — all ${rows.length} client(s) have moved past requirements review into scheduling or audit.` }, ...nav],
+      suggestions: ['List all clients'],
+    };
+  }
+  return {
+    blocks: [
+      { kind: 'text', text: wantsOnboarding
+        ? `**${list.length} client(s) onboarding** (registered, not yet scheduled) — newest first:`
+        : `**${list.length} client(s)** — newest first:` },
+      { kind: 'cards', cards: list.slice(0, 10).map(clientCard) },
+      ...(list.length > 10 ? [{ kind: 'text' as const, text: `…and ${list.length - 10} more.` }] : []),
+      ...nav,
+    ],
+    suggestions: wantsOnboarding ? ['List all clients', 'How many clients?'] : ['Who are the new clients onboarding?', 'How many clients?'],
+  };
+}
 
 function matchData(input: string, _ctx: AssistantContext): AssistantResponse | null {
   const d = data();

@@ -10,6 +10,7 @@ import {
   RefreshCw, Copy, ChevronDown, ChevronUp, ShieldCheck,
 } from 'lucide-react';
 import { isClaudeConfigured, complete } from '../../ai/claudeClient';
+import { myClientContext } from '../../ai/workflowAI';
 
 /* ─── Helpers ────────────────────────────────────────────────────── */
 const safe = (k: string) => {
@@ -35,6 +36,17 @@ function readClientContext() {
     ? Math.round((actions.filter(a => a.status === 'Approved').length / actions.length) * 100)
     : null;
 
+  const mine = myClientContext();
+  if (mine) {
+    const acts = mine.actions;
+    return {
+      openActions: acts.filter(a => a.status === 'Open'), majors: acts.filter(a => a.severity === 'Major NC'),
+      standard: mine.standard, industry: mine.industry, clientName: mine.clientName,
+      nextAudit: mine.auditDate || null,
+      compliance: acts.length ? Math.round((acts.filter(a => a.status === 'Approved').length / acts.length) * 100) : null,
+      actions: acts as any[], schedules: mine.schedules as any[],
+    };
+  }
   return { openActions, majors, standard, industry, clientName, nextAudit, compliance, actions, schedules };
 }
 

@@ -38,6 +38,8 @@ import {
   noteWorkflow,
   WorkflowFlags,
 } from '../services/workflowHandoff';
+import { AISuggestionBox, CaQualityBadge } from './AIAssist';
+import { stepSuggestion, draftCorrectiveAction, candidateNames } from '../ai/workflowAI';
 
 export type WorkflowStepKey =
   | 'mgmt-assign'
@@ -104,23 +106,8 @@ const writeFindings = (id: number, list: Finding[]) => {
   all[String(id)] = list;
   try { localStorage.setItem('cms_audit_findings_v1', JSON.stringify(all)); } catch { /* ignore */ }
 };
-const coordinators = (): string[] => {
-  const set = new Set<string>(['Praveen Gangarapu', 'Cora Dinh']);
-  readWorkflows().forEach((w) => { if (w.assignedCoordinator) set.add(w.assignedCoordinator); });
-  return Array.from(set);
-};
-const auditorNames = (wantLead: boolean): string[] => {
-  const people = [
-    ...safeJSON<any[]>('cms_auditors_data', []),
-    ...safeJSON<any[]>('cms_auditors', []),
-  ];
-  const names = people
-    .filter((p) => p && p.name && (!p.status || p.status === 'Active'))
-    .filter((p) => (wantLead ? /lead/i.test(String(p.role || '')) : true))
-    .map((p) => String(p.name));
-  const fallback = wantLead ? ['Leo Ashford', 'Rajesh Kumar'] : ['Aaron Diaz', 'Anita Verma'];
-  return Array.from(new Set([...names, ...fallback]));
-};
+const coordinators = (): string[] => candidateNames('Audit Coordinator');
+const auditorNames = (wantLead: boolean): string[] => candidateNames(wantLead ? 'Lead Auditor' : 'Auditor');
 const fmt = (iso?: string) => (iso ? new Date(iso).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }) : '—');
 const stageNo = (s: WorkflowStage) => STAGE_ORDER.indexOf(s) + 1;
 
@@ -398,6 +385,18 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
     run(w, a, value);
   };
 
+  const APPLY_ACTION: Partial<Record<WorkflowStepKey, string>> = { 'mgmt-assign': 'assign', 'auditor-review': 'return', 'lead-accept': 'return' };
+  const applyAI = (w: WorkflowRecord, v: Record<string, string>) => {
+    setMsg(null);
+    if (v.lead || v.auditor) {
+      setEdits((e) => ({ ...e, [`${w.clientId}|lead`]: v.lead ?? e[`${w.clientId}|lead`] ?? '', [`${w.clientId}|auditor`]: v.auditor ?? e[`${w.clientId}|auditor`] ?? '' }));
+      setActive(`${w.clientId}:team`); setValue('');
+      return;
+    }
+    const act = APPLY_ACTION[step];
+    if (act && v.value !== undefined) { setActive(`${w.clientId}:${act}`); setValue(v.value); }
+  };
+
   /* styles (theme-neutral, readable on the app's light screens) */
   const card: React.CSSProperties = { background: '#ffffff', border: '1px solid #c7d2fe', borderRadius: 12, marginBottom: 18, boxShadow: '0 1px 3px rgba(15,23,42,.06)', overflow: 'hidden', color: '#0f172a' };
   const btn = (tone?: string): React.CSSProperties => ({
@@ -461,6 +460,9 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                   {cfg.readOnly && <span style={{ fontSize: 12, color: '#64748b' }}>Released {fmt(w.updatedAt)}{flags.deliveredAt ? ` · delivered ${fmt(flags.deliveredAt)}` : ' · not delivered yet'}</span>}
                 </div>
 
+                <AISuggestionBox s={stepSuggestion(step, w)} onApply={(v) => applyAI(w, v)}
+                  claudeAsk={`Advise the ${cfg.role} on the step "${cfg.title}" for client ${clientName(w.clientId)}.`} />
+
                 {cfg.findings && (
                   findings.length === 0 ? (
                     <div style={{ fontSize: 12.5, color: '#64748b' }}>No findings were recorded for this audit.</div>
@@ -469,7 +471,7 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                       {findings.map((f) => (
                         <li key={f.id} style={{ fontSize: 13 }}>
                           <div><strong>{f.severity || 'Finding'}</strong>{f.clause ? ` · clause ${f.clause}` : ''} — {f.description}</div>
-                          {cfg.findings === 'edit' ? (
+                          {cfg.findings === 'edit' ? (<>
                             <textarea
                               id={`ca-${w.clientId}-${f.id}`}
                               aria-label={`Corrective action for ${f.description}`}
@@ -479,9 +481,18 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                               onChange={(e) => setEdits((x) => ({ ...x, [`${w.clientId}|ca-${f.id}`]: e.target.value }))}
                               style={{ ...inp, width: '100%', marginTop: 4, fontFamily: 'inherit' }}
                             />
-                          ) : (
+                            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-start', marginTop: 3 }}>
+                              <button type="button" aria-label={`Draft with AI for ${f.description}`}
+                                onClick={() => setEdits((x) => ({ ...x, [`${w.clientId}|ca-${f.id}`]: (x[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction ?? '').trim() ? (x[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction ?? '') : draftCorrectiveAction(f, clientName(w.clientId)) }))}
+                                style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 8px', borderRadius: 7, border: '1px solid #c4b5fd', background: '#f5f3ff', color: '#5b21b6', cursor: 'pointer' }}>
+                                ✨ Draft with AI
+                              </button>
+                              <CaQualityBadge text={edits[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction} severity={f.severity} showTips />
+                            </div>
+                          </>) : (
                             <div style={{ marginTop: 2, color: f.correctiveAction ? '#0f172a' : '#be123c' }}>
                               <span style={{ color: '#64748b' }}>Corrective action: </span>{f.correctiveAction || 'Not provided'}
+                              <div><CaQualityBadge text={f.correctiveAction} severity={f.severity} showTips /></div>
                             </div>
                           )}
                         </li>

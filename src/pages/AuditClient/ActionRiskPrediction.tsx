@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions, type CorrectiveActionRecord } from '../../services/correctiveActions';
+import { myClientContext } from '../../ai/workflowAI';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface RiskPrediction {
@@ -201,7 +202,7 @@ const ProbGauge: React.FC<{ value: number }> = ({ value }) => {
    ═══════════════════════════════════════════════════════════════════ */
 const ActionRiskPrediction: React.FC = () => {
   const claude = isClaudeConfigured();
-  const actions = useMemo(() => loadCorrectiveActions(), []);
+  const actions = useMemo(() => myClientContext()?.actions as CorrectiveActionRecord[] | undefined ?? loadCorrectiveActions(), []);
   const open    = actions.filter(a => a.status === 'Open' || a.status === 'Submitted');
 
   const [mode, setMode]             = useState<'select' | 'custom'>('select');

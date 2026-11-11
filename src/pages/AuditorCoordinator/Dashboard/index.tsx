@@ -25,6 +25,7 @@ import '../../../styles/AuditorCoordinator/Dashboard.css';
 import { loadProfile, CoordinatorProfile } from '../Profile';
 import { seedDashboardDemoData } from './dashboardSeed';
 import RoleWorkflowOverview from '../../../components/RoleWorkflowOverview';
+import { RoleAIInsights } from '../../../components/AIAssist';
 
 // Seed Dashboard demo data on module load so the very first render reads non-empty
 // localStorage. Idempotent and guarded by a one-time flag.
@@ -276,6 +277,7 @@ const Dashboard: React.FC = () => {
   /* -------------------- Render -------------------- */
   return (
     <div className="dashboard-container coord-dashboard">
+      <RoleAIInsights role="Audit Coordinator" />
       <RoleAIGuide />
       <RoleWorkflowOverview role="Audit Coordinator" />
       {/* HERO */}

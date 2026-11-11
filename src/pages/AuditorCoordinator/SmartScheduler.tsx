@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { getAuditors } from './utils/dataStorage';
+import { workflowSchedulingJobs, staffDirectory } from '../../ai/workflowAI';
 import type { Auditor } from './mockData';
 
 /* ─── Safe localStorage read ────────────────────────────────────── */
@@ -58,7 +59,7 @@ function loadJobs(): AuditJob[] {
   const schedB: any[]     = safe('cms_audit_schedules_v3') || [];
   const all = [...schedA, ...schedB];
 
-  const jobs: AuditJob[] = [];
+  const jobs: AuditJob[] = [...workflowSchedulingJobs()];
 
   // From dispatch records (pending / approved, not yet scheduled)
   dispatches.filter((d: any) => ['Received','Approved','Pending'].includes(d.status)).forEach((d: any) => {
@@ -288,7 +289,13 @@ const SmartScheduler: React.FC = () => {
 
   // Live data
   const liveJobs      = useMemo(() => loadJobs(), []);
-  const liveAuditors  = useMemo(() => getAuditors().filter(a => a.status === 'Active'), []);
+  const liveAuditors  = useMemo(() => {
+    const list = getAuditors().filter(a => a.status === 'Active');
+    if (list.length) return list;
+    // live site: use the real staff directory (Lead Auditors + Auditors)
+    return staffDirectory().filter(p => p.role === 'Lead Auditor' || p.role === 'Auditor')
+      .map((p, i) => ({ id: 900000 + i, name: p.name, email: p.email || '', role: p.role, certifications: [], status: 'Active' as const } as Auditor));
+  }, []);
 
   const [startDate, setStartDate] = useState(() => {
     const d = new Date(); d.setDate(d.getDate() + 7);

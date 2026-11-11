@@ -10,12 +10,14 @@ import {
 } from 'lucide-react';
 import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
+import { myClientContext } from '../../ai/workflowAI';
 
 /* ─── Read live context ──────────────────────────────────────────── */
 const safe = (k: string) => { try { const r = localStorage.getItem(k); return r ? JSON.parse(r) : null; } catch { return null; } };
 
 function readContext() {
-  const actions: any[] = loadCorrectiveActions();
+  const mine = myClientContext();
+  const actions: any[] = mine ? mine.actions : loadCorrectiveActions();
   const schedA: any[]  = Array.isArray(safe('cms_audit_schedules'))    ? safe('cms_audit_schedules')    : [];
   const schedB: any[]  = Array.isArray(safe('cms_audit_schedules_v3')) ? safe('cms_audit_schedules_v3') : [];
   const schedules      = [...schedA, ...schedB];
@@ -30,6 +32,14 @@ function readContext() {
   const approved = actions.filter(a => a.status === 'Approved');
   const compliance = actions.length ? Math.round((approved.length / actions.length) * 100) : 92;
 
+  if (mine) {
+    return {
+      clientName: mine.clientName, standard: mine.standard,
+      auditDate: mine.auditDate || new Date().toISOString().slice(0, 10),
+      auditType: 'Initial certification', scope: mine.scope, auditor: mine.auditor,
+      majors, minors, ofis, openActs, approved, compliance: actions.length ? compliance : 100, actions,
+    };
+  }
   return {
     clientName:  clients[0]?.name   || actions[0]?.clientName || '',
     standard:    latest?.standard   || certs[0]?.standard     || 'ISO 9001:2015',

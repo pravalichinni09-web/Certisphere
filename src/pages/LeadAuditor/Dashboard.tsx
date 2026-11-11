@@ -13,6 +13,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import '../../styles/LeadAuditor/Dashboard.css';
 import RoleWorkflowOverview from '../../components/RoleWorkflowOverview';
+import { RoleAIInsights } from '../../components/AIAssist';
 
 interface AuditSummary {
   id: string;
@@ -57,6 +58,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="lead-dashboard">
+      <RoleAIInsights role="Lead Auditor" />
       <RoleAIGuide />
       <RoleWorkflowOverview role="Lead Auditor" />
       {/* Header Section */}

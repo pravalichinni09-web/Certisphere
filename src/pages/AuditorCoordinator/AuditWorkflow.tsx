@@ -32,6 +32,8 @@ import { Sparkles } from 'lucide-react';
 import { getAuditors } from './utils/dataStorage';
 import type { AuditSchedule } from './mockData';
 import '../../styles/AuditorCoordinator/AuditWorkflow.css';
+import { AISuggestionBox } from '../../components/AIAssist';
+import { requirementsSuggestion, scheduleSuggestion } from '../../ai/workflowAI';
 
 const STANDARDS = [
   'ISO 9001:2015',
@@ -438,6 +440,11 @@ const AuditWorkflowPage: React.FC = () => {
                   <label>Notes</label>
                   <textarea rows={2} value={reqForm.notes} onChange={(e) => setReqForm({ ...reqForm, notes: e.target.value })} placeholder="Any observations or pending items..." />
                 </div>
+                {canReview && (
+                  <AISuggestionBox testId="ai-requirements" s={requirementsSuggestion(selectedClient.id, reqForm.standard)}
+                    onApply={(v) => setReqForm({ ...reqForm, scope: reqForm.scope || v.scope, documents: reqForm.documents || v.documents })}
+                    claudeAsk={`Advise the Audit Coordinator on the requirements review for ${selectedClient.organizationName}.`} />
+                )}
                 <div className="cw-step-foot">
                   {!canReview && selectedWf && (
                     <span className="cw-hint">Locked: this client is past the requirements step (stage “{selectedWf.currentStage}”).</span>
@@ -499,6 +506,10 @@ const AuditWorkflowPage: React.FC = () => {
                 </div>
                 {selectedWf?.schedule?.decisionNote && selectedWf.schedule.decision === 'Declined' && (
                   <div className="cw-decline-note"><AlertCircle size={14} /> Auditee feedback: {selectedWf.schedule.decisionNote}</div>
+                )}
+                {canPropose && (
+                  <AISuggestionBox testId="ai-schedule" s={scheduleSuggestion(selectedClient.id)}
+                    onApply={(v) => setSchForm({ ...schForm, proposedDate: v.proposedDate, leadAuditor: schForm.leadAuditor || v.leadAuditor, auditor: schForm.auditor || v.auditor, notes: schForm.notes || v.notes })} />
                 )}
                 <div className="cw-step-foot">
                   {selectedWf?.requirements && !canPropose && (

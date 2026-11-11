@@ -20,6 +20,7 @@ import './Dashboard.css';
 import { useNavigate } from 'react-router-dom';
 import { Inbox } from 'lucide-react';
 import RoleWorkflowOverview from '../../components/RoleWorkflowOverview';
+import { RoleAIInsights } from '../../components/AIAssist';
 
 // Mock data
 const dashboardData = {
@@ -127,6 +128,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-container">
+      <RoleAIInsights role="Auditee" />
       <RoleAIGuide />
       <RoleWorkflowOverview role="Auditee" />
       {/* Welcome Banner */}

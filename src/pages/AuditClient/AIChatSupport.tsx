@@ -9,6 +9,7 @@ import {
   RefreshCw, Info,
 } from 'lucide-react';
 import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
+import { builtInAnswer } from '../../ai/engineText';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
 interface Msg {
@@ -101,6 +102,8 @@ function faqAnswer(input: string): string {
   const q = input.toLowerCase();
   const match = FAQ.find(f => f.keys.some(k => q.includes(k)));
   if (match) return `${match.answer}\n\n💡 *${match.followUp}*`;
+  const built = builtInAnswer(input, 'Auditee');
+  if (built) return built;
   return "That's a great question. For the most accurate answer specific to your certification, I'd recommend reaching out to your Audit Coordinator directly through the CertiSphere portal. They can provide guidance tailored to your audit scope and timeline.\n\n💡 *Is there anything else about the audit process I can help clarify?*";
 }
 

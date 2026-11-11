@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ClipboardList, Calendar, FileText, CheckCircle2 } from 'lucide-react';
 import AuditorRegistration from '../../components/AuditorRegistration';
 import RoleWorkflowOverview from '../../components/RoleWorkflowOverview';
+import { RoleAIInsights } from '../../components/AIAssist';
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
@@ -11,6 +12,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div style={{ padding: '20px', maxWidth: 1200, margin: '0 auto' }}>
+      <RoleAIInsights role="Auditor" />
       <RoleAIGuide />
       <RoleWorkflowOverview role="Auditor" />
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 16, marginBottom: 24 }}>

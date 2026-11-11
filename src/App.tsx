@@ -7,6 +7,7 @@ import PublicEnquiry from './pages/PublicEnquiry';
 import { supabase } from './lib/supabase';
 import { isLiveMode, currentLiveProfile, liveSignOut, LiveProfile } from './lib/liveAuth';
 import { startCloudSync, stopCloudSync } from './lib/cloudSync';
+import { loadStaffDirectory, clearStaffDirectory } from './lib/staffDirectory';
 import ResetPassword from './pages/ResetPassword';
 import { seedGlobalDemo } from './utils/globalDemoSeeder';
 import { seedInboxDemo } from './utils/inboxSeed';
@@ -90,6 +91,7 @@ function App() {
     applyProfileScope(p);
     const res = await startCloudSync();
     setSyncError(res.ok ? null : `Could not load data from the server: ${res.error}`);
+    void loadStaffDirectory(p.role);
     setLoggedInUser(p.role);
     setIsLoggedIn(true);
     setBooting(false);
@@ -107,7 +109,7 @@ function App() {
     });
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
-        void stopCloudSync();
+        void stopCloudSync(); clearStaffDirectory();
         setIsLoggedIn(false);
         setLoggedInUser('');
       }
@@ -129,7 +131,7 @@ function App() {
   const handleLogout = async () => {
     setIsLoggingOut(true);
     if (LIVE) {
-      await stopCloudSync();   // saves pending changes, then wipes this browser's copy
+      await stopCloudSync(); clearStaffDirectory();   // saves pending changes, then wipes this browser's copy
       await liveSignOut();
     }
     // Clear auth state — the logout splash covers the blank-page flash

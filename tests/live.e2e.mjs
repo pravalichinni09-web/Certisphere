@@ -161,6 +161,8 @@ const run = async () => {
 
   await signIn('cora@qmics.test', pwCoord);
   check('D4', 'Coordinator signs in with the password Management issued', page.url().includes('/auditor-coordinator/'));
+  const dir = await page.evaluate(() => JSON.parse(localStorage.getItem('certi_staff_directory') || '[]'));
+  check('D4a', 'Staff directory (real names for pickers & AI team suggestions) loads for staff', dir.some((p) => p.name === 'Leo Ashford' && p.role === 'Lead Auditor') && !dir.some((p) => /Auditee|Client/.test(p.role)), `${dir.length} staff`);
   const wfLocal = (await localStore('cms_audit_workflow')) || [];
   check('D5', 'Coordinator sees Management\'s change (shared, not per-browser)', wfLocal.some((w) => w.clientId === c1.client_id && w.currentStage === 'Coordinator Assigned'));
   await open('Audit Workflow');

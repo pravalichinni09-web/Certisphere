@@ -2,6 +2,9 @@
 // All roles (Auditee, Auditor, Lead Auditor) read/write the same key so the
 // corrective-action loop flows live between pages without a refresh.
 
+import { isLiveMode } from '../lib/liveAuth';
+import { workflowCorrectiveActions } from '../ai/workflowAI';
+
 export const CORRECTIVE_ACTIONS_KEY = 'cms_corrective_actions_v1';
 export const CORRECTIVE_ACTIONS_EVENT = 'cms-corrective-actions-updated';
 
@@ -172,6 +175,13 @@ const seedRecords = (): CorrectiveActionRecord[] => [
  * Seeds the key with demo data if it is missing, empty, or unreadable.
  */
 export const loadCorrectiveActions = (): CorrectiveActionRecord[] => {
+  const fromWf = workflowCorrectiveActions() as CorrectiveActionRecord[];
+  const stored = loadStoredCorrectiveActions().filter((r) => !String(r.id).startsWith('WF-'));
+  return [...fromWf, ...stored];
+};
+
+/** Records kept in the corrective-action store (demo mode seeds samples). */
+const loadStoredCorrectiveActions = (): CorrectiveActionRecord[] => {
   try {
     const raw = window.localStorage.getItem(CORRECTIVE_ACTIONS_KEY);
     if (raw) {
@@ -187,6 +197,7 @@ export const loadCorrectiveActions = (): CorrectiveActionRecord[] => {
   } catch {
     // Corrupt data — fall through and reseed.
   }
+  if (isLiveMode()) return []; // live site: real data only, never samples
   const seeded = seedRecords();
   try {
     window.localStorage.setItem(CORRECTIVE_ACTIONS_KEY, JSON.stringify(seeded));
@@ -202,7 +213,8 @@ export const loadCorrectiveActions = (): CorrectiveActionRecord[] => {
  */
 export const saveCorrectiveActions = (records: CorrectiveActionRecord[]): void => {
   try {
-    window.localStorage.setItem(CORRECTIVE_ACTIONS_KEY, JSON.stringify(records));
+    // workflow-derived records ("WF-…") live in the workflow itself — never copy them
+    window.localStorage.setItem(CORRECTIVE_ACTIONS_KEY, JSON.stringify(records.filter((r) => !String(r.id).startsWith('WF-'))));
   } catch {
     // Storage unavailable — listeners still get the in-memory update event.
   }
@@ -220,6 +232,18 @@ export const updateCorrectiveAction = (
   const records = loadCorrectiveActions().map(record =>
     record.id === id ? updater(record) : record
   );
+  // A workflow finding ("WF-<clientId>-<findingId>"): write the plan back into the workflow.
+  const m = /^WF-(\d+)-(.+)$/.exec(id);
+  if (m) {
+    const updated = records.find((r) => r.id === id);
+    try {
+      const all = JSON.parse(window.localStorage.getItem('cms_audit_findings_v1') || '{}') || {};
+      const list: any[] = Array.isArray(all[m[1]]) ? all[m[1]] : [];
+      all[m[1]] = list.map((f) => (String(f.id) === m[2] ? { ...f, correctiveAction: updated?.correctivePlan ?? f.correctiveAction } : f));
+      window.localStorage.setItem('cms_audit_findings_v1', JSON.stringify(all));
+      window.dispatchEvent(new CustomEvent('cms-workflow-handoff'));
+    } catch { /* ignore */ }
+  }
   saveCorrectiveActions(records);
   return records;
 };

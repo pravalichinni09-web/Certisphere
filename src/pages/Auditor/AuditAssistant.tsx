@@ -9,6 +9,7 @@ import {
   RefreshCw, Info, Mic, Loader2,
 } from 'lucide-react';
 import { isClaudeConfigured, getApiKey, getModel, anthropicFetch } from '../../ai/claudeClient';
+import { builtInAnswer } from '../../ai/engineText';
 import { loadCorrectiveActions } from '../../services/correctiveActions';
 
 /* ─── Types ──────────────────────────────────────────────────────── */
@@ -401,9 +402,10 @@ const AuditAssistant: React.FC = () => {
       } else {
         await new Promise(r => setTimeout(r, 600));
         const faq = faqAnswer(text);
+        const built = faq ? null : builtInAnswer(text, 'Auditor');
         const answer = faq
           ? `${faq.answer}\n\n💡 *${faq.followUp}*`
-          : `I don't have a specific FAQ answer for that query. For precise guidance on complex audit situations, configure your Claude API key in **AI Settings** — Claude can handle detailed, context-specific questions.\n\nIn the meantime, try asking about: NC classification, evidence requirements, finding statement writing, ISO clause interpretation, or handling auditee disputes.`;
+          : built ? built : `I don't have a specific FAQ answer for that query. For precise guidance on complex audit situations, configure your Claude API key in **AI Settings** — Claude can handle detailed, context-specific questions.\n\nIn the meantime, try asking about: NC classification, evidence requirements, finding statement writing, ISO clause interpretation, or handling auditee disputes.`;
         setMsgs(p => [...p, { role: 'assistant', content: answer, ts: Date.now(), source: 'faq' }]);
       }
     } catch (e: any) {

@@ -19,6 +19,8 @@ export const safeJSON = <T,>(key: string, fallback: T): T => {
   }
 };
 
+import { workflowSchedules, workflowCertificates, workflowCorrectiveActions } from './workflowAI';
+
 /* ---------- Core entity readers (merged across key versions) ---------- */
 /** Always returns an array, even if the stored value is malformed. */
 const getArr = (key: string): any[] => {
@@ -33,15 +35,30 @@ export const getAuditors = (): any[] => {
 export const getSchedules = (): any[] => ([
   ...getArr('cms_audit_schedules'),
   ...getArr('cms_audit_schedules_v3'),
+  ...workflowSchedules(),
 ]);
 export const getDispatches = (): any[] => getArr('cms_application_dispatch_v7');
 export const getEnquiries = (): any[] => getArr('cms_client_enquiries_v1');
 export const getCertificates = (): any[] => ([
   ...getArr('cms_certificates'),
   ...getArr('cms_audit_certifications'),
+  ...workflowCertificates(),
 ]);
-export const getFindings = (): any[] => getArr('cms_audit_findings_v1');
-export const getCorrectiveActions = (): any[] => getArr('cms_corrective_actions_v1');
+/** Audit findings: the workflow stores them per client ({ [clientId]: Finding[] }). */
+export const getFindings = (): any[] => {
+  const v = safeJSON<any>('cms_audit_findings_v1', []);
+  if (Array.isArray(v)) return v.filter((x) => x != null);
+  if (v && typeof v === 'object') {
+    const names = new Map(getClients().map((c: any) => [String(c.id), c.organizationName || c.name]));
+    return Object.entries(v).flatMap(([cid, list]) => (Array.isArray(list) ? list : []).filter(Boolean)
+      .map((f: any) => ({ ...f, clientId: Number(cid), clientName: names.get(cid) || `Client #${cid}`, client: names.get(cid) || `Client #${cid}`, type: f.type || f.severity })));
+  }
+  return [];
+};
+export const getCorrectiveActions = (): any[] => {
+  const stored = getArr('cms_corrective_actions_v1').filter((r: any) => !String(r?.id || '').startsWith('WF-'));
+  return [...stored, ...workflowCorrectiveActions()];
+};
 export const getReports = (): any[] => {
   const v1 = safeJSON<any>('cms_audit_reports_v1', null);
   const legacy = getArr('cms_audit_reports');

@@ -15,7 +15,8 @@
     "lint:fix": "eslint \"src/**/*.{ts,tsx}\" --fix",
     "typecheck": "tsc --noEmit",
     "test:workflow": "node tests/workflow.e2e.mjs",
-    "test:live": "node tests/live.e2e.mjs"
+    "test:live": "node tests/live.e2e.mjs",
+    "test:ai": "node tests/ai.e2e.mjs"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",

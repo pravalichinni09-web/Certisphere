@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { getCertifications, getAuditSchedules, getOrg, getNotifications } from './scope';
 import { useRealtimeScope } from './useRealtimeScope';
 import { LiveBar } from './LiveBar';
+import { RoleAIInsights } from '../../components/AIAssist';
 
 const StatCard: React.FC<{
   icon: React.ReactNode; label: string; value: number | string;
@@ -61,6 +62,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div style={{ padding: 24, maxWidth: 1100 }}>
+      <RoleAIInsights role="Client Coordinator" />
       <RoleAIGuide />
       <h1 style={{ margin: 0, fontSize: 22, fontWeight: 800, color: '#0f172a' }}>
         Welcome, {org?.organizationName || 'Client Coordinator'}

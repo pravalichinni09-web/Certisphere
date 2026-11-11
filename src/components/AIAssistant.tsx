@@ -26,6 +26,7 @@ import {
 import AISettings from './AISettings';
 import { useDraggable } from '../hooks/useDraggable';
 import '../styles/AIAssistant.css';
+import { roleInsights, workflowClients } from '../ai/workflowAI';
 
 interface AIAssistantProps {
   role: string;
@@ -347,7 +348,10 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
       'audits, and certification workflows. You can ALSO answer general-knowledge questions on any topic ' +
       '(science, history, math, coding, language, etc.) — be helpful, concise, and accurate. ' +
       'The user is currently a ' + (role || 'guest') + '. ' +
-      'If a question is about the app and you do not know the specific answer, say so honestly and suggest where the user might look.';
+      'If a question is about the app and you do not know the specific answer, say so honestly and suggest where the user might look.' +
+      '\n\nLive CertiSphere data for this user (do not invent anything beyond it):\n- ' +
+      roleInsights(role || '').map((i) => i.text.replace(/\*/g, '')).join('\n- ') +
+      '\nClients by workflow stage: ' + workflowClients().map((c) => `${c.name} = ${c.wf.currentStage}${c.overdue ? ' (late)' : ''}`).slice(0, 40).join('; ');
 
     // Give Claude the recent conversation so follow-up questions make sense
     // (previously each question was sent alone, producing repetitive answers).

@@ -14,6 +14,7 @@ import RoleWorkflowOverview from '../../components/RoleWorkflowOverview';
 import AIPanel from '../../components/AIPanel';
 import { buildExecutiveBriefing, briefingClaudePrompt, ExecutiveBriefing } from '../../ai/managementInsights';
 import { onCmsChange, claudeComplete, isClaudeConfigured } from '../../ai/liveData';
+import { RoleAIInsights } from '../../components/AIAssist';
 
 const ManagementDashboard: React.FC = () => {
   // --- 0. Executive AI Briefing (live, heuristic; optional Claude polish) ---
@@ -245,6 +246,7 @@ const ManagementDashboard: React.FC = () => {
 
   return (
     <div className="management-dashboard">
+      <RoleAIInsights role="Management" />
       <WorkflowStagePanel step="mgmt-certificate" />
       <RoleAIGuide />
       <AIPanel title="Executive Dashboard AI" subtitle="7 KPI groups — value, target, trend and RAG status from live data" icon={<Gauge size={15} />}>
