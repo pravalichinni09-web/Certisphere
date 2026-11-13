@@ -781,3 +781,16 @@
     animation: none !important;
   }
 }
+
+/* Your own question: always white text on the blue bubble (some page/theme
+   styles set a dark colour on <p>, which made it unreadable). */
+.ai-msg.ai-msg-user .ai-bubble,
+.ai-msg.ai-msg-user .ai-bubble .ai-block-text,
+.ai-msg.ai-msg-user .ai-bubble p,
+[data-theme] .ai-msg.ai-msg-user .ai-bubble,
+[data-theme] .ai-msg.ai-msg-user .ai-bubble .ai-block-text {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  opacity: 1 !important;
+  text-shadow: none !important;
+}
