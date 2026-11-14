@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Edit2, Trash2, Send, CheckCircle, FileText, CheckSquare, Paperclip, HardDrive, Search, Eye, X } from 'lucide-react';
+import { Edit2, Trash2, Send, CheckCircle, FileText, CheckSquare, Paperclip, HardDrive, Search, Eye, X, Plus } from 'lucide-react';
 import StandardPicker from '../../components/StandardPicker';
 import EmailTemplateEditor from '../../components/EmailTemplateEditor';
 import { listEmailTemplates, renderTemplate, EmailTemplate } from '../../utils/emailTemplates';
@@ -656,7 +656,20 @@ const ApplicationDispatch: React.FC = () => {
       )}
 
       {/* Sent Application Form */}
-      {activeTab !== 'enquiry' && showForm && (
+      {/* Sent Application: add one directly (then attach the file in the row) */}
+      {activeTab === 'enquiry' && enquirySubTab === 'sent' && !showForm && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: 12, margin: '14px 0 4px' }}>
+          <button type="button" onClick={() => { resetForm(); setEditingId(null); setShowForm(true); }}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '9px 16px', borderRadius: 8, border: 'none', background: '#2563eb', color: '#fff', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}>
+            <Plus size={15} /> New application
+          </button>
+          <span style={{ fontSize: 13, color: '#64748b' }}>
+            Add the client here (or send from <strong>Enquiries</strong> with the ✈ icon), then click <strong>Upload</strong> in the <strong>Application Attachment</strong> column to attach the file.
+          </span>
+        </div>
+      )}
+
+      {(activeTab !== 'enquiry' || enquirySubTab === 'sent') && showForm && (
         <div className="scope-form">
           <h3>{editingId ? 'Edit Record' : 'Sent Application Details'}</h3>
           
@@ -819,7 +832,9 @@ const ApplicationDispatch: React.FC = () => {
               {filteredDispatches.length === 0 ? (
                   <tr>
                       <td colSpan={activeTab === 'review' ? 7 : ((activeTab === 'enquiry' && enquirySubTab === 'sent') ? 7 : 5)} style={{ textAlign: 'center', padding: '24px', color: '#94a3b8' }}>
-                          No {activeTab} applications found matching "{searchTerm}".
+                          {activeTab === 'enquiry' && enquirySubTab === 'sent' && !searchTerm
+                            ? <>No applications sent yet. Click <strong>New application</strong> above, then use <strong>Upload</strong> in the Application Attachment column.</>
+                            : <>No {activeTab} applications found matching "{searchTerm}".</>}
                       </td>
                   </tr>
               ) : (
