@@ -7,6 +7,7 @@ import ClientEnquiry from './ClientEnquiry';
 import QCSApplicationForm, { QCSFormMode, loadQCSRecord } from '../../components/QCSApplicationForm';
 import '../../styles/AuditorCoordinator/ApplicationDispatch.css';
 import '../../styles/EmailTemplateEditor.css';
+import { isLiveMode } from '../../lib/liveAuth';
 
 interface DispatchRecord {
   id: number;
@@ -210,7 +211,8 @@ const ApplicationDispatch: React.FC = () => {
     } catch (e) {
       console.error('Failed to load dispatches from storage', e);
     }
-    setDispatches(defaultDispatches);
+    // live site: real applications only — never show the sample records
+    setDispatches(isLiveMode() ? [] : defaultDispatches);
   }, []);
 
   useEffect(() => {

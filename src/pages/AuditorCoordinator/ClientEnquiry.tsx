@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { isLiveMode, apiFetch } from '../../lib/liveAuth';
 import {
   MailOpen,
@@ -416,6 +416,15 @@ const ClientEnquiry: React.FC = () => {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'All' | EnquiryStatus>('All');
   const [viewing, setViewing] = useState<Enquiry | null>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
+  /** "Review N new": show only new enquiries, jump to the list, open the newest one. */
+  const reviewNew = () => {
+    setStatusFilter('New');
+    const fresh = rows.filter((r) => r.status === 'New')
+      .sort((a, b) => String(b.receivedAt || '').localeCompare(String(a.receivedAt || '')));
+    window.setTimeout(() => listRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    if (fresh[0]) setViewing(fresh[0]);
+  };
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
@@ -834,7 +843,8 @@ const ClientEnquiry: React.FC = () => {
         </div>
         {counts.New > 0 && (
           <button
-            onClick={() => setStatusFilter('New')}
+            type="button"
+            onClick={reviewNew}
             style={{
               padding: '8px 16px',
               background: '#fff',
@@ -922,6 +932,7 @@ const ClientEnquiry: React.FC = () => {
       </div>
 
       {/* Table */}
+      <div ref={listRef} style={{ scrollMarginTop: 16 }} />
       {filtered.length === 0 ? (
         <div
           style={{
