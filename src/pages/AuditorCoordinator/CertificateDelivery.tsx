@@ -543,7 +543,7 @@ const CertificateDelivery: React.FC = () => {
     doc.text("REGISTERED OFFICE: Rainbow Vistas Phase 2, 604, Green Hills Rd, Block O, Moosapet,", centerX, 277, { align: "center" });
     doc.text("Hyderabad, Telangana 500018, INDIA.", centerX, 280, { align: "center" });
     doc.setFontSize(6.5);
-    doc.text("Email: rk@qmicssolution.com  |  Call: +91 XXXXXXXXXX  |  Website: www.qmics.com", centerX, 283, { align: "center" });
+    doc.text("Email: ramakrishna@qmicssolutions.com  |  Call: +91 XXXXXXXXXX  |  Website: www.qmics.com", centerX, 283, { align: "center" });
 
     // --- QR Code (verification) ---
     try {
