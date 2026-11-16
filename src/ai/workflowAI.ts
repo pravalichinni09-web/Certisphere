@@ -491,3 +491,24 @@ export const scheduleSuggestion = (clientId: number): Suggestion => {
   }
   return { tone: 'warn', headline: 'No free date found in the next 2 months for the available team.', points: [] };
 };
+
+/** Certificate details for a workflow client (for the PDF). Null until a number exists. */
+export const certificateDataFor = (clientId: number) => {
+  const c = workflowClients().find((x) => x.id === Number(clientId));
+  if (!c || !c.flags.certificateNumber) return null;
+  const rel = [...(c.wf.history || [])].reverse().find((h) => h.stage === 'Certification released')?.at
+    || c.flags.certificateGeneratedAt || new Date().toISOString();
+  const d = (iso: string) => new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  const expiry = addDays(rel, 3 * 365 - 1);
+  return {
+    clientId: String(c.id), clientName: c.name,
+    address: c.reg?.address || '',
+    standard: c.wf.requirements?.standards?.[0] || c.standard || 'ISO 9001:2015',
+    scope: c.wf.requirements?.scope || '',
+    certificateNumber: c.flags.certificateNumber,
+    issuedDate: d(rel), expirationDate: d(expiry),
+    surveillance1Due: d(addDays(rel, 365)), surveillance2Due: d(addDays(rel, 730)),
+    recertificationDueDate: d(addDays(expiry, -90)),
+    released: c.wf.currentStage === 'Certification released',
+  };
+};

@@ -9,7 +9,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Workflow, Search, ChevronDown, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { workflowClients, type WfClient } from '../../ai/workflowAI';
+import { workflowClients, certificateDataFor, type WfClient } from '../../ai/workflowAI';
+import { viewCertificatePdf } from '../../lib/certificatePdf';
 import { FLOW } from '../../ai/certisphereGuide';
 
 const fmt = (iso?: string) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); };
@@ -122,7 +123,10 @@ const WorkflowTracker: React.FC<{ title?: string }> = ({ title = 'Workflow Track
                       <div style={{ display: 'grid', gap: 8, alignContent: 'start', fontSize: 12.5 }}>
                         <div><strong>Requirements:</strong> {c.wf.requirements ? `${c.wf.requirements.scope || '—'} · ${(c.wf.requirements.standards || []).join(', ')}` : 'not reviewed yet'}</div>
                         <div><strong>Findings:</strong> {c.findings.length ? c.findings.map((f) => `${f.severity || 'Finding'}${f.clause ? ' ' + f.clause : ''}${f.correctiveAction ? ' ✓' : ''}`).join(' · ') : 'none recorded'}</div>
-                        <div><strong>Certificate:</strong> {c.flags.certificateNumber ? `${c.flags.certificateNumber} (generated ${fmt(c.flags.certificateGeneratedAt)})` : 'not generated'}{c.flags.deliveredAt ? ` · delivered ${fmt(c.flags.deliveredAt)}` : ''}</div>
+                        <div><strong>Certificate:</strong> {c.flags.certificateNumber ? `${c.flags.certificateNumber} (generated ${fmt(c.flags.certificateGeneratedAt)})` : 'not generated'}{c.flags.deliveredAt ? ` · delivered ${fmt(c.flags.deliveredAt)}` : ''}
+                          {c.flags.certificateNumber && (() => { const cd = certificateDataFor(c.id); return cd ? (
+                            <button type="button" onClick={(e) => { e.stopPropagation(); viewCertificatePdf(cd); }} style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>View certificate</button>) : null; })()}
+                        </div>
                         <div><strong>Remaining steps:</strong> {14 - c.stageNo}</div>
                       </div>
                     </div>

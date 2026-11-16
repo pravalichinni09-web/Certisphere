@@ -39,7 +39,8 @@ import {
   WorkflowFlags,
 } from '../services/workflowHandoff';
 import { AISuggestionBox, CaQualityBadge } from './AIAssist';
-import { stepSuggestion, draftCorrectiveAction, candidateNames } from '../ai/workflowAI';
+import { stepSuggestion, draftCorrectiveAction, candidateNames, certificateDataFor } from '../ai/workflowAI';
+import { viewCertificatePdf, downloadCertificatePdf } from '../lib/certificatePdf';
 
 export type WorkflowStepKey =
   | 'mgmt-assign'
@@ -457,6 +458,11 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                   {w.schedule?.proposedDate && <span style={{ fontSize: 12, color: '#64748b' }}>Audit date: {w.schedule.proposedDate}{w.schedule.proposedTime ? ` ${w.schedule.proposedTime}` : ''}</span>}
                   {(w.schedule?.leadAuditor || w.schedule?.auditor) && <span style={{ fontSize: 12, color: '#64748b' }}>Team: {[w.schedule?.leadAuditor, w.schedule?.auditor].filter(Boolean).join(', ')}</span>}
                   {flags.certificateNumber && <span style={{ fontSize: 12, color: '#047857', fontWeight: 700 }}>Certificate {flags.certificateNumber}</span>}
+                  {flags.certificateNumber && (() => { const cd = certificateDataFor(w.clientId); return cd ? (
+                    <span style={{ display: 'inline-flex', gap: 6 }}>
+                      <button type="button" onClick={() => viewCertificatePdf(cd)} style={{ fontSize: 12, fontWeight: 700, padding: '3px 9px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>{cd.released ? 'View certificate' : 'Preview certificate'}</button>
+                      <button type="button" onClick={() => downloadCertificatePdf(cd)} style={{ fontSize: 12, fontWeight: 700, padding: '3px 9px', borderRadius: 7, border: '1px solid #cbd5e1', background: '#fff', color: '#334155', cursor: 'pointer' }}>Download PDF</button>
+                    </span>) : null; })()}
                   {cfg.readOnly && <span style={{ fontSize: 12, color: '#64748b' }}>Released {fmt(w.updatedAt)}{flags.deliveredAt ? ` · delivered ${fmt(flags.deliveredAt)}` : ' · not delivered yet'}</span>}
                 </div>
 
