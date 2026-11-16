@@ -840,7 +840,7 @@ const ClientRegistration: React.FC = () => {
                   ))}
                 </div>
                 <div style={{ fontSize: 11, marginTop: 6 }}>
-                  Verify before saving — same {duplicates.map(d => d.field).join(', ')} already on file.
+                  Same {duplicates.map(d => d.field).join(', ')} is already used by the client(s) above. That is fine if intended (for example, one contact email for several companies) — you can still save.
                 </div>
               </div>
             )}

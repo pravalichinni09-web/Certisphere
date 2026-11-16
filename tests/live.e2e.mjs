@@ -114,6 +114,20 @@ const run = async () => {
   const pwLead = await createUser('leo@qmics.test', 'Leo Ashford', 'Lead Auditor');
   const pwAud = await createUser('aaron@qmics.test', 'Aaron Diaz', 'Auditor');
   check('B4', 'Management creates Coordinator, Lead Auditor and Auditor accounts', [pwCoord, pwLead, pwAud].every((p) => p.length >= 12), `${(await dump()).profiles.length} accounts`);
+  // Users & Access → change a login email (pencil next to the email)
+  const changeEmail = async (from, to) => {
+    await page.getByRole('button', { name: `Change email for ${from}` }).click();
+    await page.getByLabel(`New email for ${from}`).fill(to);
+    await page.getByRole('button', { name: 'Save', exact: true }).click(); await wait(1200);
+    return page.locator('[role=status]').innerText().catch(() => '');
+  };
+  const ce1 = await changeEmail('aaron@qmics.test', 'aaron.new@qmics.test');
+  check('B4d', 'Management changes a login email', /aaron.new@qmics.test/.test(ce1) && (await dump()).profiles.some((x) => x.email === 'aaron.new@qmics.test'), ce1);
+  const ce2 = await changeEmail('aaron.new@qmics.test', 'leo@qmics.test');
+  check('B4e', 'An email that is already another login is refused', /already the login of another account/.test(ce2), ce2);
+  await page.getByRole('button', { name: 'Cancel' }).click().catch(() => {});
+  await changeEmail('aaron.new@qmics.test', 'aaron@qmics.test');
+  check('B4f', 'Changed back; password unchanged', (await dump()).profiles.some((x) => x.email === 'aaron@qmics.test'));
   // Users & Access → sign-in page demo credentials
   await page.fill('#ua-demo-pw', 'Demo@Pass99');
   await page.getByRole('button', { name: 'Login page for leo@qmics.test' }).click(); await wait(1200);

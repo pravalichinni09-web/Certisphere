@@ -165,8 +165,11 @@ const EmailJSSettings: React.FC = () => {
   const sendTest = async () => {
     if (!testEmail.trim()) return;
     setTestStatus('sending');
+    // test with the template that is actually set (usually only "Application Form to Client")
+    const isSet = (id: string) => !!id && !id.startsWith('YOUR_');
+    const useApp = isSet(cfg.templates.application) || !isSet(cfg.templates.contact);
     const res = await sendEmail({
-      type: 'contact',
+      type: useApp ? 'application' : 'contact',
       to: testEmail,
       subject: 'CertiSphere — EmailJS Test',
       body: 'This is a test email from CertiSphere. Your EmailJS integration is working correctly.',
@@ -175,6 +178,9 @@ const EmailJSSettings: React.FC = () => {
         from_email: 'noreply@certisphere.com',
         company: 'CertiSphere',
         phone: '',
+        to_email: testEmail.trim(),
+        to_name: testEmail.trim(),
+        subject: 'CertiSphere — EmailJS Test',
         message: 'This is a test email confirming your EmailJS configuration is working.',
       },
     });

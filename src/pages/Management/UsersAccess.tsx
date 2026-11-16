@@ -7,7 +7,7 @@
  * Management — the browser can never assign roles itself.
  */
 import React, { useEffect, useMemo, useState } from 'react';
-import { UserPlus, KeyRound, ShieldCheck, ShieldOff, Copy, RefreshCw, Users } from 'lucide-react';
+import { UserPlus, KeyRound, Pencil, ShieldCheck, ShieldOff, Copy, RefreshCw, Users } from 'lucide-react';
 import { isLiveMode, apiFetch } from '../../lib/liveAuth';
 
 interface Account {
@@ -87,6 +87,19 @@ const UsersAccess: React.FC = () => {
     const r = await apiFetch('/api/users', { action: 'update', id: u.id, ...patch });
     if (!r.ok) { setMsg({ ok: false, text: r.data?.error || 'Could not update the account.' }); return; }
     setMsg({ ok: true, text: done });
+    void load();
+  };
+
+  const [emailEdit, setEmailEdit] = useState<{ id: string; value: string } | null>(null);
+  const changeEmail = async (u: Account) => {
+    if (!emailEdit) return;
+    const email = emailEdit.value.trim().toLowerCase();
+    if (email === u.email.toLowerCase()) { setEmailEdit(null); return; }
+    setMsg(null);
+    const r = await apiFetch('/api/users', { action: 'change-email', id: u.id, email });
+    if (!r.ok) { setMsg({ ok: false, text: r.data?.error || 'Could not change the email.' }); return; }
+    setEmailEdit(null);
+    setMsg({ ok: true, text: `Login email changed: ${u.email} → ${email}. The password stays the same.` });
     void load();
   };
 
@@ -205,7 +218,23 @@ const UsersAccess: React.FC = () => {
                 {users.map((u) => (
                   <tr key={u.id} style={{ borderTop: '1px solid #e2e8f0', opacity: u.active ? 1 : 0.55 }}>
                     <td style={{ padding: '10px 12px', fontWeight: 600 }}>{u.full_name || '—'}</td>
-                    <td style={{ padding: '10px 12px' }}>{u.email}</td>
+                    <td style={{ padding: '10px 12px' }}>
+                      {emailEdit?.id === u.id ? (
+                        <span style={{ display: 'inline-flex', gap: 4, alignItems: 'center' }}>
+                          <input aria-label={`New email for ${u.email}`} type="email" autoFocus style={{ ...inp, padding: '5px 8px', width: 210 }} value={emailEdit.value}
+                            onChange={(e) => setEmailEdit({ id: u.id, value: e.target.value })}
+                            onKeyDown={(e) => { if (e.key === 'Enter') void changeEmail(u); if (e.key === 'Escape') setEmailEdit(null); }} />
+                          <button type="button" style={small} onClick={() => void changeEmail(u)}>Save</button>
+                          <button type="button" style={small} onClick={() => setEmailEdit(null)}>Cancel</button>
+                        </span>
+                      ) : (
+                        <span style={{ display: 'inline-flex', gap: 6, alignItems: 'center' }}>
+                          {u.email}
+                          <button type="button" title="Change login email" aria-label={`Change email for ${u.email}`} onClick={() => setEmailEdit({ id: u.id, value: u.email })}
+                            style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#64748b', padding: 2 }}><Pencil size={13} /></button>
+                        </span>
+                      )}
+                    </td>
                     <td style={{ padding: '10px 12px' }}>
                       <select aria-label={`Role for ${u.email}`} style={{ ...inp, padding: '5px 8px' }} value={u.role}
                         onChange={(e) => {

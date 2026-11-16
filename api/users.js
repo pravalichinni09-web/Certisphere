@@ -86,6 +86,23 @@ export default async function handler(req, res) {
     return send(res, 200, { user: data });
   }
 
+  if (body.action === 'change-email') {
+    const email = String(body.email || '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return send(res, 400, { error: 'Enter a valid email address.' });
+    const { data: taken } = await admin.from('profiles').select('id').ilike('email', email).neq('id', body.id).maybeSingle();
+    if (taken) return send(res, 409, { error: `${email} is already the login of another account. Change or disable that account first.` });
+    const { error: aErr } = await admin.auth.admin.updateUserById(body.id, { email, email_confirm: true });
+    if (aErr) {
+      const exists = /already|registered|exists/i.test(aErr.message || '');
+      return send(res, exists ? 409 : 400, { error: exists ? `${email} is already the login of another account.` : aErr.message });
+    }
+    const now = new Date().toISOString();
+    const { data, error } = await admin.from('profiles').update({ email, updated_at: now }).eq('id', body.id).select().maybeSingle();
+    if (error) return send(res, 400, { error: error.message });
+    await admin.from('demo_logins').update({ email, updated_at: now }).eq('user_id', body.id);
+    return send(res, 200, { user: data });
+  }
+
   if (body.action === 'reset-password') {
     const password = tempPassword();
     const { error } = await admin.auth.admin.updateUserById(body.id, { password });

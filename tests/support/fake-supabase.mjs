@@ -67,9 +67,11 @@ const parseFilters = (params) => {
   const f = [];
   for (const [k, v] of params) {
     if (['select', 'order', 'offset', 'limit', 'on_conflict', 'columns'].includes(k)) continue;
-    const m = /^(eq|in)\.(.*)$/.exec(v);
+    const m = /^(eq|in|neq|ilike)\.(.*)$/.exec(v);
     if (!m) continue;
     if (m[1] === 'eq') f.push((r) => String(r[k]) === m[2]);
+    else if (m[1] === 'neq') f.push((r) => String(r[k]) !== m[2]);
+    else if (m[1] === 'ilike') f.push((r) => String(r[k]).toLowerCase() === decodeURIComponent(m[2]).toLowerCase());
     else {
       const list = m[2].replace(/^\(|\)$/g, '').split(',').map((x) => x.replace(/^"|"$/g, ''));
       f.push((r) => list.includes(String(r[k])));
@@ -182,6 +184,11 @@ const server = http.createServer(async (req, res) => {
     const u = users.get(adminUser[1]);
     if (!u) return send(res, 404, { msg: 'User not found' });
     if (req.method === 'DELETE') { users.delete(u.id); profiles.delete(u.id); return send(res, 200, {}); }
+    if (body?.email) {
+      const email = String(body.email).toLowerCase();
+      if ([...users.values()].some((x) => x.email === email && x.id !== u.id)) return send(res, 422, { code: 'email_exists', msg: 'A user with this email address has already been registered' });
+      u.email = email;
+    }
     if (body?.password) u.password = body.password;
     return send(res, 200, userJson(u));
   }
