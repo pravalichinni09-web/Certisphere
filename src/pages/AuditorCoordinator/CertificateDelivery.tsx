@@ -5,7 +5,7 @@ import { Send, FileText, CheckCircle, Plus, Eye, Edit, X, Download, Upload, Save
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { qrModules } from '../../utils/qrcode';
-import { preloadCertificateLogo, getCertificateLogo } from '../../lib/certificatePdf';
+import { preloadCertificateLogo, getCertificateLogo, certificateFileName } from '../../lib/certificatePdf';
 void preloadCertificateLogo();
 
 import '../../styles/AuditorCoordinator.css';
@@ -380,6 +380,7 @@ const CertificateDelivery: React.FC = () => {
     
     // Switch to Portrait mode to accommodate extensive details & footer
     const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+    doc.setProperties({ title: clientName, subject: `Certificate ${data.certificateNumber}` });
     const pageWidth = doc.internal.pageSize.getWidth();
     const centerX = pageWidth / 2;
 
@@ -576,7 +577,7 @@ const CertificateDelivery: React.FC = () => {
       console.warn('QR render failed', qrErr);
     }
 
-    doc.save(`${clientName.replace(/\s+/g, '_')}_Certificate_${data.certificateNumber}.pdf`);
+    doc.save(certificateFileName(clientName));
   };
 
   // --- ACTION BUTTON HANDLERS ---

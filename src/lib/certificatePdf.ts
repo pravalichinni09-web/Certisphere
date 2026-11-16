@@ -44,6 +44,7 @@ export const getCertificateLogo = (): string | null => logoDataUrl;
 export const certificatePdf = (data: CertificatePdfData): jsPDF => {
   const clientName = data.clientName || 'Client';
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  doc.setProperties({ title: data.clientName, subject: `Certificate ${data.certificateNumber}` });
   const pageWidth = doc.internal.pageSize.getWidth();
   const centerX = pageWidth / 2;
 
@@ -243,9 +244,13 @@ export const certificatePdf = (data: CertificatePdfData): jsPDF => {
   return doc;
 };
 
+/** File name = the company name exactly as registered (only characters Windows forbids are removed). */
+export const certificateFileName = (clientName: string): string =>
+  `${(clientName || 'Certificate').replace(/[\\/:*?"<>|]+/g, ' ').replace(/\s+/g, ' ').trim() || 'Certificate'}.pdf`;
+
 export const downloadCertificatePdf = async (data: CertificatePdfData): Promise<void> => {
   await loadLogo();
-  certificatePdf(data).save(`${data.clientName.replace(/\s+/g, '_')}_Certificate_${data.certificateNumber}.pdf`);
+  certificatePdf(data).save(certificateFileName(data.clientName));
 };
 
 /** Opens the PDF in a new tab to view / print. */
