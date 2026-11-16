@@ -7,6 +7,7 @@
  */
 import React, { useEffect, useState } from 'react';
 import WorkflowStagePanel from '../../components/WorkflowStagePanel';
+import { isLiveMode } from '../../lib/liveAuth';
 import { Users, CheckCircle2, XCircle, ArrowLeftRight, FileText, Mail, Phone, Globe, Building2, Eye, Search } from 'lucide-react';
 import Tooltip from '../../components/Tooltip';
 import { ensureCredentialsForClients } from '../AuditorCoordinator/utils/clientCredentials';
@@ -63,6 +64,7 @@ const fmt = (iso?: string) => iso ? new Date(iso).toLocaleString(undefined, { da
 const ClientOnboarding: React.FC = () => {
   const [items, setItems] = useState<OnboardingClient[]>(() => {
     const stored = safeJSON<OnboardingClient[]>(KEY, []);
+    if (isLiveMode()) return [];          // live site: no sample clients
     if (stored.length === 0) {
       const s = seed();
       try { localStorage.setItem(KEY, JSON.stringify(s)); } catch { /* ignore */ }
@@ -147,6 +149,22 @@ const ClientOnboarding: React.FC = () => {
     rejected: items.filter(x => x.status === 'Rejected').length,
     sent_back: items.filter(x => x.status === 'Sent Back').length,
   };
+
+  // Live site: the workflow box above IS the approval queue (one row per
+  // registered client, each with its own Assign coordinator). The older demo
+  // approval list below is not used — its data never reached the workflow.
+  if (isLiveMode()) {
+    return (
+      <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
+        <WorkflowStagePanel step="mgmt-assign" />
+        <div style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: '14px 16px', fontSize: 13.5, color: '#334155' }}>
+          Every client that registers (sign-in page → <strong>New client? Register here</strong>, or converted from an enquiry) appears in the box above,
+          one row each, with its own <strong>Assign coordinator</strong> button. To see all clients and where each one is, open{' '}
+          <a href="/management/workflow" style={{ color: '#1d4ed8', fontWeight: 700 }}>Workflow Tracker</a>.
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ padding: 24, maxWidth: 1200, margin: '0 auto' }}>
