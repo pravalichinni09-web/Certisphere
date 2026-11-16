@@ -8,9 +8,9 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Workflow, Search, ChevronDown, ChevronRight, AlertTriangle, CheckCircle2 } from 'lucide-react';
+import { Workflow, Search, ChevronDown, ChevronRight, AlertTriangle, CheckCircle2, Download } from 'lucide-react';
 import { workflowClients, certificateDataFor, type WfClient } from '../../ai/workflowAI';
-import { viewCertificatePdf } from '../../lib/certificatePdf';
+import { viewCertificatePdf, downloadCertificatePdf } from '../../lib/certificatePdf';
 import { FLOW } from '../../ai/certisphereGuide';
 
 const fmt = (iso?: string) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); };
@@ -124,8 +124,9 @@ const WorkflowTracker: React.FC<{ title?: string }> = ({ title = 'Workflow Track
                         <div><strong>Requirements:</strong> {c.wf.requirements ? `${c.wf.requirements.scope || '—'} · ${(c.wf.requirements.standards || []).join(', ')}` : 'not reviewed yet'}</div>
                         <div><strong>Findings:</strong> {c.findings.length ? c.findings.map((f) => `${f.severity || 'Finding'}${f.clause ? ' ' + f.clause : ''}${f.correctiveAction ? ' ✓' : ''}`).join(' · ') : 'none recorded'}</div>
                         <div><strong>Certificate:</strong> {c.flags.certificateNumber ? `${c.flags.certificateNumber} (generated ${fmt(c.flags.certificateGeneratedAt)})` : 'not generated'}{c.flags.deliveredAt ? ` · delivered ${fmt(c.flags.deliveredAt)}` : ''}
-                          {c.flags.certificateNumber && (() => { const cd = certificateDataFor(c.id); return cd ? (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); void viewCertificatePdf(cd); }} style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>View certificate</button>) : null; })()}
+                          {c.flags.certificateNumber && (() => { const cd = certificateDataFor(c.id); return cd ? (<>
+                            <button type="button" onClick={(e) => { e.stopPropagation(); void viewCertificatePdf(cd); }} style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>View certificate</button>
+                            <button type="button" title="Download certificate (PDF)" aria-label="Download certificate" data-testid={`tracker-download-${c.id}`} onClick={(e) => { e.stopPropagation(); void downloadCertificatePdf(cd); }} style={{ marginLeft: 6, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', verticalAlign: 'middle', width: 26, height: 22, borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer', padding: 0 }}><Download size={14} /></button></>) : null; })()}
                         </div>
                         <div><strong>Remaining steps:</strong> {14 - c.stageNo}</div>
                       </div>
