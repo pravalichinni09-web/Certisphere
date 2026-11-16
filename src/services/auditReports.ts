@@ -16,6 +16,7 @@
  * subscribe via `subscribeAuditReports` (covers the custom event AND the
  * cross-tab 'storage' event).
  */
+import { isLiveMode } from '../lib/liveAuth';
 
 export type AuditReportStatus = 'Draft' | 'Submitted' | 'Reviewed' | 'Approved' | 'Rejected';
 export type AuditReportSource = 'Auditor' | 'Auditee' | 'LeadAuditor' | 'Coordinator';
@@ -130,6 +131,7 @@ export const saveAuditReports = (map: AuditReportsMap): void => {
 export const loadAuditReports = (): AuditReportsMap => {
   const map = readRaw();
   if (Object.keys(map).length === 0) {
+    if (isLiveMode()) return map; // live site: real reports only
     const seeded = buildSeedReports();
     localStorage.setItem(AUDIT_REPORTS_KEY, JSON.stringify(seeded));
     return seeded;

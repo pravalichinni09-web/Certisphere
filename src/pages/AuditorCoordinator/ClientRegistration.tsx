@@ -10,6 +10,7 @@ import { validateRegistrations } from '../../ai/coordinatorInsights';
 import type { RegistrationIssue } from '../../ai/coordinatorInsights';
 import { getDispatches, onCmsChange } from '../../ai/liveData';
 import '../../styles/AuditorCoordinator/ClientRegistration.css';
+import { isLiveMode } from '../../lib/liveAuth';
 
 interface ClientData {
   id: number;
@@ -143,9 +144,11 @@ const ClientRegistration: React.FC = () => {
   const loadClients = () => {
     try {
       const localRaw = localStorage.getItem(LOCAL_STORAGE_KEY);
-      let localClients: ClientData[] = localRaw ? JSON.parse(localRaw) : defaultClients;
+      let localClients: ClientData[] = localRaw ? JSON.parse(localRaw) : (isLiveMode() ? [] : defaultClients);
 
-      const dispatchRaw = localStorage.getItem(DISPATCH_STORAGE_KEY);
+      // Live site: clients come only from real registrations (server-created),
+      // never from application dispatch rows.
+      const dispatchRaw = isLiveMode() ? null : localStorage.getItem(DISPATCH_STORAGE_KEY);
       if (dispatchRaw) {
         const dispatchRecords: any[] = JSON.parse(dispatchRaw);
         const receivedApps = dispatchRecords.filter(

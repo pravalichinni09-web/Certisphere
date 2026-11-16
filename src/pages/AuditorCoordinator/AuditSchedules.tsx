@@ -26,6 +26,7 @@ import { getAuditors } from './utils/dataStorage';
 import AIPanel from '../../components/AIPanel';
 import { suggestAuditorsFor, topPickNote } from '../../ai/coordinatorInsights';
 import { onCmsChange } from '../../ai/liveData';
+import { isLiveMode } from '../../lib/liveAuth';
 
 // Interfaces
 interface DispatchRecord {
@@ -543,7 +544,7 @@ const AuditSchedules: React.FC = () => {
   const loadData = () => {
     try {
       // Try to load from localStorage, but default to defaultDispatches
-      let dispatchData: DispatchRecord[] = defaultDispatches;
+      let dispatchData: DispatchRecord[] = isLiveMode() ? [] : defaultDispatches;
       
       const dispatchRaw = localStorage.getItem(DISPATCH_STORAGE_KEY);
       if (dispatchRaw) {
@@ -555,11 +556,11 @@ const AuditSchedules: React.FC = () => {
           }
         } catch (parseError) {
           console.warn('Failed to parse localStorage dispatch data, using defaults');
-          dispatchData = defaultDispatches;
+          dispatchData = isLiveMode() ? [] : defaultDispatches;
         }
       } else {
-        // Initialize localStorage with default data on first load
-        localStorage.setItem(DISPATCH_STORAGE_KEY, JSON.stringify(defaultDispatches));
+        // Demo only: initialise with sample data on first load (never on the live site)
+        if (!isLiveMode()) localStorage.setItem(DISPATCH_STORAGE_KEY, JSON.stringify(defaultDispatches));
       }
       
       // Filter for approved and received applications
@@ -647,7 +648,7 @@ const AuditSchedules: React.FC = () => {
       localStorage.removeItem(SCHEDULES_STORAGE_KEY);
       
       // Reinitialize with defaults
-      localStorage.setItem(DISPATCH_STORAGE_KEY, JSON.stringify(defaultDispatches));
+      localStorage.setItem(DISPATCH_STORAGE_KEY, JSON.stringify(isLiveMode() ? [] : defaultDispatches));
       localStorage.setItem(SCHEDULES_STORAGE_KEY, JSON.stringify([]));
       notifySchedulesUpdated();
       

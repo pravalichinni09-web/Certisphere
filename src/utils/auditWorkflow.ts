@@ -215,13 +215,14 @@ export const recordRequirementsReview = (
   by?: string
 ): WorkflowRecord | null =>
   advance(clientId, 'Requirements Reviewed', (w) => {
+    const first = w.currentStage !== 'Requirements Reviewed';
     w.requirements = { ...payload, reviewedAt: NOW(), reviewedBy: by };
     w.currentStage = 'Requirements Reviewed';
     w.history.push({
       stage: 'Requirements Reviewed',
       at: NOW(),
       by,
-      note: payload.notes,
+      note: first ? payload.notes : `Requirements updated${payload.notes ? ': ' + payload.notes : ''}`,
     });
   });
 

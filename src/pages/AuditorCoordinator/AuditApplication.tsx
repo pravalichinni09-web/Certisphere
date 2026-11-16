@@ -6,6 +6,7 @@ import { saveDraft, readDraft, clearDraft, getDraftSavedAt } from '../../utils/d
 import { validateEmail } from '../../utils/validators';
 import '../../styles/AuditorCoordinator.css';
 import '../../styles/WizardSteps.css';
+import { isLiveMode } from '../../lib/liveAuth';
 
 interface ScopeAttachment {
   name: string;
@@ -80,9 +81,9 @@ const AuditApplication: React.FC = () => {
   const [applications, setApplications] = useState<AuditApplicationItem[]>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      return raw ? JSON.parse(raw) : defaultApps;
+      return raw ? JSON.parse(raw) : (isLiveMode() ? [] : defaultApps);
     } catch {
-      return defaultApps;
+      return isLiveMode() ? [] : defaultApps;
     }
   });
 

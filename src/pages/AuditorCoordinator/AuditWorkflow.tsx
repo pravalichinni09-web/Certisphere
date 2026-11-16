@@ -50,6 +50,7 @@ const AuditWorkflowPage: React.FC = () => {
   const [search, setSearch] = useState('');
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [stepMsg, setStepMsg] = useState<{ step: 1 | 2; ok: boolean; text: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Forms
@@ -139,6 +140,8 @@ const AuditWorkflowPage: React.FC = () => {
   const selectedWf = selectedId !== null ? wfByClient[selectedId] : null;
 
   // Sync forms when selecting a client.
+  useEffect(() => { setStepMsg(null); }, [selectedId]);
+
   useEffect(() => {
     if (!selectedClient || !selectedWf) return;
     setReqForm({
@@ -159,7 +162,7 @@ const AuditWorkflowPage: React.FC = () => {
   const submitRequirements = () => {
     if (!selectedClient) return;
     if (!canReview) { setToast(`Requirements can't be changed at stage "${selectedWf?.currentStage}".`); return; }
-    recordRequirementsReview(
+    const savedReq = recordRequirementsReview(
       selectedClient.id,
       {
         scope: reqForm.scope,
@@ -169,7 +172,9 @@ const AuditWorkflowPage: React.FC = () => {
       },
       'Audit Coordinator'
     );
+    if (!savedReq) { setStepMsg({ step: 1, ok: false, text: 'Not saved — refresh the page and try again.' }); return; }
     setToast('Requirements review saved');
+    setStepMsg({ step: 1, ok: true, text: `Saved at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} — stage is now Requirements Reviewed. Next: propose the date in Step 2 below.` });
     refresh();
   };
 
@@ -179,7 +184,7 @@ const AuditWorkflowPage: React.FC = () => {
       setToast('Please pick a proposed date');
       return;
     }
-    proposeSchedule(
+    const sentSch = proposeSchedule(
       selectedClient.id,
       {
         proposedDate: schForm.proposedDate,
@@ -190,7 +195,9 @@ const AuditWorkflowPage: React.FC = () => {
       },
       'Audit Coordinator'
     );
+    if (!sentSch) { setStepMsg({ step: 2, ok: false, text: 'Not sent — refresh the page and try again.' }); return; }
     setToast('Schedule proposal sent to Auditee');
+    setStepMsg({ step: 2, ok: true, text: `Sent at ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} — stage is now Schedule Proposed. Next: assign the audit team on Auditor Assignment; the Auditee approves the date.` });
     refresh();
   };
 
@@ -449,6 +456,9 @@ const AuditWorkflowPage: React.FC = () => {
                   {!canReview && selectedWf && (
                     <span className="cw-hint">Locked: this client is past the requirements step (stage “{selectedWf.currentStage}”).</span>
                   )}
+                  {stepMsg?.step === 1 && (
+                    <span role="status" style={{ fontSize: 13, fontWeight: 600, color: stepMsg.ok ? '#047857' : '#b91c1c' }}>{stepMsg.ok ? '✓ ' : '✗ '}{stepMsg.text}</span>
+                  )}
                   <button className="cw-btn primary" onClick={submitRequirements} disabled={!canReview}>
                     <CheckCircle2 size={16} /> Save Requirements Review
                   </button>
@@ -514,6 +524,9 @@ const AuditWorkflowPage: React.FC = () => {
                 <div className="cw-step-foot">
                   {selectedWf?.requirements && !canPropose && (
                     <span className="cw-hint">Locked: the schedule is already {selectedWf.currentStage === 'Coordinator Assigned' ? 'not ready' : 'agreed'} (stage “{selectedWf.currentStage}”).</span>
+                  )}
+                  {stepMsg?.step === 2 && (
+                    <span role="status" style={{ fontSize: 13, fontWeight: 600, color: stepMsg.ok ? '#047857' : '#b91c1c' }}>{stepMsg.ok ? '✓ ' : '✗ '}{stepMsg.text}</span>
                   )}
                   <button className="cw-btn primary" onClick={submitProposal} disabled={!canPropose}>
                     <Send size={16} /> {selectedWf?.schedule ? 'Re-propose Schedule' : 'Send Schedule Proposal'}
