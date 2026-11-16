@@ -33,6 +33,8 @@ import {
   polishDraftWithClaude,
   isClaudeConfigured,
 } from '../../ai/coordinatorInsights';
+import SendApplicationDialog, { type ApplicationSendResult } from '../../components/SendApplicationDialog';
+import { openStoredFile, type StoredFile } from '../../lib/fileStore';
 
 /* -----------------------------------------------------------
    Types & storage
@@ -65,6 +67,10 @@ interface Enquiry {
   notes: string;
   convertedClientId?: string;
   convertedAt?: string;
+  /** set when the application form was sent from the Send dialog */
+  applicationSentAt?: string;
+  applicationFile?: StoredFile;
+  applicationSentVia?: 'emailjs' | 'mailapp';
 }
 
 const STORAGE_KEY = 'cms_client_enquiries_v1';
@@ -533,98 +539,47 @@ const ClientEnquiry: React.FC = () => {
     persist(rows.map((r) => (r.id === id ? { ...r, status } : r)));
   };
 
-  /* ----- Send Digital Form: emails a structured application form to the client
-     AND creates a Sent Application record so the workflow continues. ----- */
+  /* ----- Send application: opens the Send dialog (attach form + email). ----- */
+  const [sendingFor, setSendingFor] = useState<Enquiry | null>(null);
   const handleSendDigitalForm = (row: Enquiry) => {
-    const to = row.contactEmail.trim();
-    if (!to) {
-      alert('This enquiry has no email — add one before sending the digital form.');
+    if (!row.contactEmail.trim()) {
+      alert('This enquiry has no email — add one before sending the application form.');
       return;
     }
-    // 1) Open mailto with the structured digital form body
-    const subject = encodeURIComponent(
-      `Application for Certification — ${row.company}`
-    );
-    const body = encodeURIComponent(
-      [
-        `Dear ${row.contactName || 'Client'},`,
-        '',
-        `Thank you for your enquiry on ${formatDate(row.receivedAt)} regarding ${row.company}.`,
-        'Please complete the digital application form below and return it to us. You can also',
-        'fill this form directly in your Auditee portal under "Pending Applications".',
-        '',
-        '────────────────────────────────────────────────',
-        '  APPLICATION FOR CERTIFICATION',
-        '────────────────────────────────────────────────',
-        `  Client Name:        ${row.contactName}`,
-        `  Organisation:       ${row.company}`,
-        `  Contact Number:     ${row.contactPhone || '—'}`,
-        `  Email:              ${row.contactEmail}`,
-        `  Enquiry Date:       ${formatDate(row.receivedAt)}`,
-        `  Application Status: Pending`,
-        `  Application Attached: digital form (fill in your Auditee portal)`,
-        '────────────────────────────────────────────────',
-        '',
-        'Reply with your filled details or submit through the portal.',
-        '',
-        'Best regards,',
-        'Audit Coordinator',
-        'Qmics Certification',
-      ].join('\n')
-    );
-    window.open(`mailto:${to}?subject=${subject}&body=${body}`, '_blank');
+    setSendingFor(row);
+  };
 
-    // 2) Create a Sent Application record so it appears in the Sent tab
+  /** After the email: record the Sent Application (with the same attachment) and update the enquiry. */
+  const onApplicationSent = (row: Enquiry, r: ApplicationSendResult) => {
     try {
       const raw = localStorage.getItem(DISPATCH_KEY);
       const existing: any[] = raw ? JSON.parse(raw) : [];
       const arr = Array.isArray(existing) ? existing : [];
-      const dupExists = arr.some(
-        (d: any) =>
-          d.sourceEnquiryId === row.id ||
-          (d.email === row.contactEmail && d.organization === row.company)
-      );
-      if (!dupExists) {
-        const dispatch = {
-          id: Date.now(),
-          clientName: row.contactName || row.company,
-          organization: row.company,
-          mobile: row.contactPhone,
-          contactName: row.contactName,
-          applicationType: 'Initial Audit',
-          standard: row.standards[0] || '',
-          email: row.contactEmail,
-          dispatchedDate: new Date().toISOString().split('T')[0],
-          status: 'Sent',
-          sourceEnquiryId: row.id,
-          sentAt: new Date().toISOString(),
-          link: 'Digital Application Form',
-        };
-        const next = [dispatch, ...arr];
-        localStorage.setItem(DISPATCH_KEY, JSON.stringify(next));
-      }
-    } catch {
-      /* ignore */
-    }
-
-    // 3) Flip enquiry status to "Contacted" (if still New) and add a note
-    persist(
-      rows.map((r) =>
-        r.id === row.id
-          ? {
-              ...r,
-              status: r.status === 'New' ? 'Contacted' : r.status,
-              notes: (r.notes ? r.notes + ' · ' : '') +
-                'Digital application form sent on ' +
-                new Date().toLocaleDateString(),
-            }
-          : r
-      )
-    );
-    alert(
-      `Digital application form emailed to ${to}.\n\n` +
-      `A Sent Application record has been created. The client will see the form in their Pending Applications inbox.`
-    );
+      const idx = arr.findIndex((d: any) => d.sourceEnquiryId === row.id || (d.email === row.contactEmail && d.organization === row.company));
+      const base = idx >= 0 ? arr[idx] : {
+        id: Date.now(), clientName: row.contactName || row.company, organization: row.company,
+        mobile: row.contactPhone, contactName: row.contactName, applicationType: 'Initial Audit',
+        standard: row.standards[0] || '', email: row.contactEmail, status: 'Sent', sourceEnquiryId: row.id,
+      };
+      const rec = {
+        ...base, email: r.to, dispatchedDate: r.sentAt.slice(0, 10), sentAt: r.sentAt, sentVia: r.via,
+        status: base.status === 'Pending' || !base.status ? 'Sent' : base.status,
+        link: r.file?.name || 'Application form', ...(r.file ? { attachment: r.file } : {}),
+      };
+      const next = idx >= 0 ? arr.map((d: any, i: number) => (i === idx ? rec : d)) : [rec, ...arr];
+      localStorage.setItem(DISPATCH_KEY, JSON.stringify(next));
+    } catch { /* ignore */ }
+    persist(rows.map((x) => (x.id === row.id ? {
+      ...x,
+      status: x.status === 'New' ? 'Contacted' : x.status,
+      applicationSentAt: r.sentAt, applicationFile: r.file || undefined, applicationSentVia: r.via,
+      notes: (x.notes ? x.notes + ' · ' : '') + `Application form sent to ${r.to} on ${new Date(r.sentAt).toLocaleDateString()}${r.via === 'emailjs' ? ' (emailed automatically)' : ' (via email app)'}`,
+    } : x)));
+    setSendingFor(null);
+    try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
+    alert(r.via === 'emailjs'
+      ? `Application form emailed to ${r.to}.\n\nYou'll find it under Sent Application with the attachment.`
+      : `Your email app has opened — press Send there.\n\nThe application is recorded under Sent Application with the attachment.`);
   };
 
   const handleConvert = async (row: Enquiry) => {
@@ -1003,6 +958,17 @@ const ClientEnquiry: React.FC = () => {
                     {r.industry && (
                       <div style={{ fontSize: 11, color: '#64748b' }}>{r.industry}</div>
                     )}
+                    {r.applicationSentAt && (
+                      <div style={{ fontSize: 11, color: '#15803d', marginTop: 2, display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+                        ✓ Application sent {formatDate(r.applicationSentAt)}
+                        {r.applicationFile && (
+                          <button type="button" onClick={() => void openStoredFile(r.applicationFile!)} title="Open the form that was sent"
+                            style={{ border: 'none', background: 'transparent', color: '#1d4ed8', cursor: 'pointer', fontSize: 11, padding: 0, textDecoration: 'underline' }}>
+                            {r.applicationFile.name}
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </td>
                   <td style={td}>
                     <div style={{ fontWeight: 500 }}>{r.contactName || '—'}</div>
@@ -1076,7 +1042,7 @@ const ClientEnquiry: React.FC = () => {
                       </IconBtn>
                       {r.status !== 'Converted' && r.contactEmail && (
                         <IconBtn
-                          title="Send digital application form to this client"
+                          title="Send application form (attach + email) to this client"
                           onClick={() => handleSendDigitalForm(r)}
                           color="#2563eb"
                         >
@@ -1108,6 +1074,14 @@ const ClientEnquiry: React.FC = () => {
       )}
 
       {/* View modal */}
+      {sendingFor && (
+        <SendApplicationDialog
+          input={{ to: sendingFor.contactEmail, contactName: sendingFor.contactName, company: sendingFor.company, standards: sendingFor.standards, enquiryDate: formatDate(sendingFor.receivedAt) }}
+          onClose={() => setSendingFor(null)}
+          onSent={(r) => onApplicationSent(sendingFor, r)}
+        />
+      )}
+
       {viewing && (
         <Modal title={`Enquiry — ${viewing.company}`} onClose={() => setViewing(null)}>
           <ViewRow label="Status" value={viewing.status} />

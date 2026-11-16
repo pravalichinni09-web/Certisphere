@@ -156,6 +156,7 @@ const EmailJSSettings: React.FC = () => {
     localStorage.setItem(EMAILJS_STORAGE.TPL_CERT_ISSUED,   cfg.templates.certIssued);
     localStorage.setItem(EMAILJS_STORAGE.TPL_EXPIRY_ALERT,  cfg.templates.expiryAlert);
     localStorage.setItem(EMAILJS_STORAGE.TPL_WELCOME,       cfg.templates.welcome);
+    localStorage.setItem(EMAILJS_STORAGE.TPL_APPLICATION,   cfg.templates.application);
     localStorage.setItem(EMAILJS_STORAGE.ENABLED, String(cfg.enabled));
     setSaved(true);
     setTimeout(() => setSaved(false), 2500);
@@ -313,6 +314,7 @@ const EmailJSSettings: React.FC = () => {
           { key: 'certIssued',  label: 'Certificate Issued',       guide: 'CERT_ISSUED',  field: 'certIssued'  },
           { key: 'expiryAlert', label: 'Certificate Expiry Alert', guide: 'EXPIRY_ALERT', field: 'expiryAlert' },
           { key: 'welcome',     label: 'Welcome / Onboarding',     guide: 'WELCOME',      field: 'welcome'     },
+          { key: 'application', label: 'Application Form to Client', guide: 'APPLICATION', field: 'application' },
         ] as const).map(t => (
           <div key={t.key} style={{ marginBottom: 14 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 5 }}>

@@ -222,6 +222,20 @@ const run = async () => {
   await page.locator('button').filter({ hasText: /^\s*Client Enquiry/ }).first().click(); await page.waitForTimeout(800);
   const enqRow = page.locator('tr').filter({ hasText: 'Orbit Pharma' }).first();
   check('F3', 'Coordinator sees the visitor\'s enquiry', await enqRow.isVisible());
+  // Send the application form with an attachment (EmailJS not set up → email app + record)
+  page.context().on('page', (pg) => pg.close().catch(() => {}));   // the mailto: window
+  await enqRow.locator('button[title^="Send application form"]').click(); await wait(600);
+  await page.locator('[data-testid=send-app-file]').setInputFiles({ name: 'QCS_Application_Form.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 test application form') });
+  await wait(300);
+  await page.getByRole('button', { name: /Open email & record|Send email/ }).click(); await wait(2500);
+  const disp = (await rowsOf('cms_application_dispatch_v7')).map((r) => r.data).find((d) => d.organization === 'Orbit Pharma');
+  check('F3a', 'Send application uploads the form to private storage and records it under Sent Application',
+    !!disp?.attachment?.path && !disp.attachment.dataUrl && disp.attachment.name === 'QCS_Application_Form.pdf', disp?.attachment?.path || 'no record');
+  const dl = disp?.attachment?.url ? await fetch(disp.attachment.url).then((r) => r.text()).catch(() => '') : '';
+  check('F3b', 'The emailed download link returns the form', dl.includes('test application form'));
+  check('F3c', 'Enquiry shows "Application sent" with the file', /Application sent/.test(await enqRow.innerText()) && (await enqRow.innerText()).includes('QCS_Application_Form.pdf'));
+  const std = await page.evaluate(() => JSON.parse(localStorage.getItem('cms_standard_application_form') || 'null'));
+  check('F3d', 'The form is saved as the standard application form for next time', std?.name === 'QCS_Application_Form.pdf');
   await enqRow.locator('button[title="Convert to client registration"]').click(); await wait(2000);
   const conv = (await dump()).profiles.find((p) => p.email === 'meena@orbit.test');
   check('F4', 'Converting it creates the client\'s real Auditee login', conv?.role === 'Auditee' && dialogs.some((d) => /Password: \S{12}/.test(d)));

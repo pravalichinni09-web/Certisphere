@@ -27,9 +27,20 @@ export const getSystemAuditTypes = (): AuditType[] => {
 /**
  * Get audit type names for dropdown/select elements
  */
+/** Standard certification-body audit types, used until the Coordinator defines
+ *  their own in Audit Types (and on the sign-in page, where visitors can't read them). */
+export const DEFAULT_AUDIT_TYPE_NAMES = [
+  'Initial Certification',
+  'Recertification',
+  'Transfer Audit',
+  'Surveillance Audit 1',
+  'Surveillance Audit 2',
+  'Special Audit',
+];
+
 export const getAuditTypeNames = (): string[] => {
-  const types = getSystemAuditTypes();
-  return types.map(t => t.name);
+  const names = getSystemAuditTypes().map(t => t.name).filter(Boolean);
+  return names.length ? names : DEFAULT_AUDIT_TYPE_NAMES;
 };
 
 /**

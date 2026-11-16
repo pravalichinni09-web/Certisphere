@@ -8,6 +8,7 @@ import QCSApplicationForm, { QCSFormMode, loadQCSRecord } from '../../components
 import '../../styles/AuditorCoordinator/ApplicationDispatch.css';
 import '../../styles/EmailTemplateEditor.css';
 import { isLiveMode } from '../../lib/liveAuth';
+import { storeFile, openStoredFile, type StoredFile } from '../../lib/fileStore';
 
 interface DispatchRecord {
   id: number;
@@ -21,8 +22,8 @@ interface DispatchRecord {
   status: 'Submitted' | 'Pending' | 'Sent' | 'Received' | 'Approved' | 'Rejected' | 'Hold';
   contactName?: string;
   reviewDate?: string;
-  attachment?: { name: string; dataUrl: string; size: number; uploadedAt: string };
-  agreement?: { name: string; dataUrl: string; size: number; uploadedAt: string };
+  attachment?: StoredFile;
+  agreement?: StoredFile;
   rejectNote?: string;
   sendReviewNote?: string;
   link: string;
@@ -215,6 +216,22 @@ const ApplicationDispatch: React.FC = () => {
     setDispatches(isLiveMode() ? [] : defaultDispatches);
   }, []);
 
+  // Applications sent from the Enquiries tab (or by another user) — reload them.
+  useEffect(() => {
+    const reload = () => {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) setDispatches(JSON.parse(raw));
+      } catch { /* ignore */ }
+    };
+    const ev = ['cms-workflow-handoff', 'storage'];
+    ev.forEach((e) => window.addEventListener(e, reload));
+    return () => ev.forEach((e) => window.removeEventListener(e, reload));
+  }, []);
+  useEffect(() => {
+    try { const raw = localStorage.getItem(STORAGE_KEY); if (raw) setDispatches(JSON.parse(raw)); } catch { /* ignore */ }
+  }, [activeTab, enquirySubTab]);
+
   useEffect(() => {
     if (notification) {
       const timer = setTimeout(() => setNotification(null), 3000);
@@ -275,14 +292,6 @@ const ApplicationDispatch: React.FC = () => {
   };
 
   /* ----- File upload handlers (Application Attachment + Agreement) ----- */
-  const fileToDataUrl = (f: File): Promise<string> =>
-    new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = reject;
-      reader.readAsDataURL(f);
-    });
-
   const handleUploadFile = async (
     id: number,
     field: 'attachment' | 'agreement',
@@ -295,21 +304,16 @@ const ApplicationDispatch: React.FC = () => {
       return;
     }
     try {
-      const dataUrl = await fileToDataUrl(file);
-      const meta = {
-        name: file.name,
-        dataUrl,
-        size: file.size,
-        uploadedAt: new Date().toISOString(),
-      };
+      setNotification('Uploading…');
+      const meta = await storeFile(file);
       persist(
         dispatches.map((d) => (d.id === id ? { ...d, [field]: meta } : d))
       );
       setNotification(
         `${field === 'attachment' ? 'Application attachment' : 'Agreement'} uploaded.`
       );
-    } catch {
-      setNotification('Could not read the selected file.');
+    } catch (e) {
+      setNotification((e as Error)?.message || 'Could not upload the selected file.');
     }
   };
 
@@ -1375,9 +1379,10 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({ app, 
     ['Review date', fmtDay(app.reviewDate)],
   ];
 
-  const fileLink = (f?: { name: string; dataUrl: string; size: number }) =>
+  const fileLink = (f?: StoredFile) =>
     f ? (
-      <a href={f.dataUrl} download={f.name} style={{ color: '#0e7490', fontWeight: 600 }}>
+      <a href={f.dataUrl || f.url || '#'} download={f.name} style={{ color: '#0e7490', fontWeight: 600 }}
+        onClick={(e) => { if (!f.dataUrl) { e.preventDefault(); void openStoredFile(f); } }}>
         {f.name} <span style={{ color: '#94a3b8', fontWeight: 400 }}>({Math.max(1, Math.round(f.size / 1024))} KB)</span>
       </a>
     ) : <span style={{ color: '#94a3b8' }}>Not uploaded</span>;
@@ -1450,7 +1455,7 @@ const ApplicationDetailsModal: React.FC<ApplicationDetailsModalProps> = ({ app, 
    Sent Application table for Application Attachment and Agreement.
 ----------------------------------------------------------------- */
 interface FileCellProps {
-  file?: { name: string; dataUrl: string; size: number; uploadedAt: string };
+  file?: StoredFile;
   accept: string;
   label: string;
   onUpload: (file: File) => void;
@@ -1483,10 +1488,11 @@ const FileCell: React.FC<FileCellProps> = ({ file, accept, label, onUpload, onCl
       {file ? (
         <>
           <a
-            href={file.dataUrl}
+            href={file.dataUrl || file.url || '#'}
             download={file.name}
             target="_blank"
             rel="noreferrer"
+            onClick={(e) => { if (!file.dataUrl) { e.preventDefault(); void openStoredFile(file); } }}
             title={`${file.name} · ${formatSize(file.size)}`}
             style={{
               fontSize: 12,

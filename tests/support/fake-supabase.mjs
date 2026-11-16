@@ -20,6 +20,8 @@ const users = new Map();      // id -> { id, email, password }
 const profiles = new Map();   // id -> profile row
 const appData = new Map();    // `${store}|${row_key}` -> row
 const demoLogins = new Map();
+const buckets = new Set();
+const files = new Map();      // `${bucket}/${path}` -> { bytes, type, token }
 const STAFF = ['Management', 'Audit Coordinator', 'Lead Auditor', 'Auditor'];
 const CLIENT = ['Auditee', 'Client Coordinator'];
 const SHARED_REF = new Set(['cms_audit_types', 'cms_audit_scopes', 'cms_global_config_v1', 'cms_departments_v1', 'cms_audit_checklists']);
@@ -91,15 +93,52 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-headers': '*', 'access-control-allow-methods': 'GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS' });
     return res.end();
   }
-  let raw = '';
-  for await (const ch of req) raw += ch;
-  const body = raw ? JSON.parse(raw) : undefined;
+  const chunks = [];
+  for await (const ch of req) chunks.push(Buffer.from(ch));
+  const buf = Buffer.concat(chunks);
   const url = new URL(req.url, `http://localhost:${PORT}`);
   const p = url.pathname;
   const who = caller(req);
 
+  /* ---- storage (service role only, like a private bucket) ---- */
+  if (p.startsWith('/storage/v1/')) {
+    if (p.startsWith('/storage/v1/object/public/') ) return send(res, 400, { error: 'not public' });
+    const dl = /^\/storage\/v1\/object\/sign\/([^/]+)\/(.+)$/.exec(p);
+    if (req.method === 'GET' && dl && url.searchParams.get('token')) {
+      const f = files.get(`${dl[1]}/${decodeURIComponent(dl[2])}`);
+      if (!f || f.token !== url.searchParams.get('token')) return send(res, 404, { error: 'not found' });
+      res.writeHead(200, { 'content-type': f.type, 'access-control-allow-origin': '*' }); return res.end(f.bytes);
+    }
+    if (who.kind !== 'service') return send(res, 403, { error: 'Unauthorized' });
+    const bk = /^\/storage\/v1\/bucket(?:\/([^/]+))?$/.exec(p);
+    if (bk && req.method === 'GET') return buckets.has(bk[1]) ? send(res, 200, { id: bk[1], name: bk[1], public: false }) : send(res, 400, { statusCode: '404', error: 'Bucket not found', message: 'Bucket not found' });
+    if (bk && req.method === 'POST') { const b = JSON.parse(buf.toString() || '{}'); buckets.add(b.id || b.name); return send(res, 200, { name: b.id || b.name }); }
+    if (dl && req.method === 'POST') {
+      const key = `${dl[1]}/${decodeURIComponent(dl[2])}`; const f = files.get(key);
+      if (!f) return send(res, 400, { statusCode: '404', error: 'not_found', message: 'Object not found' });
+      f.token = f.token || crypto.randomUUID();
+      return send(res, 200, { signedURL: `/object/sign/${dl[1]}/${dl[2]}?token=${f.token}` });
+    }
+    const up = /^\/storage\/v1\/object\/([^/]+)\/(.+)$/.exec(p);
+    if (up && req.method === 'POST') {
+      if (!buckets.has(up[1])) return send(res, 400, { error: 'Bucket not found' });
+      let bytes = buf; let type = String(req.headers['content-type'] || 'application/octet-stream');
+      if (type.startsWith('multipart/form-data')) { // supabase-js may send FormData
+        const bnd = '--' + type.split('boundary=')[1]; const txt = buf.toString('latin1');
+        const part = txt.split(bnd).find((x) => /filename=|name=""/.test(x)) || '';
+        const i = part.indexOf('\r\n\r\n'); bytes = Buffer.from(part.slice(i + 4, part.lastIndexOf('\r\n')), 'latin1');
+        type = (/Content-Type: ([^\r\n]+)/i.exec(part) || [])[1] || 'application/octet-stream';
+      }
+      files.set(`${up[1]}/${decodeURIComponent(up[2])}`, { bytes, type });
+      return send(res, 200, { Key: `${up[1]}/${up[2]}` });
+    }
+    return send(res, 404, { error: `fake storage: no route ${req.method} ${p}` });
+  }
+  const raw = buf.toString();
+  const body = raw ? JSON.parse(raw) : undefined;
+
   /* ---- test control ---- */
-  if (p === '/__reset') { users.clear(); profiles.clear(); appData.clear(); demoLogins.clear(); return send(res, 200, { ok: true }); }
+  if (p === '/__reset') { users.clear(); profiles.clear(); appData.clear(); demoLogins.clear(); buckets.clear(); files.clear(); return send(res, 200, { ok: true }); }
   if (p === '/__seed-admin') {
     const u = { id: crypto.randomUUID(), email: body.email, password: body.password, created_at: new Date().toISOString() };
     users.set(u.id, u);

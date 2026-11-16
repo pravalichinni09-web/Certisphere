@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
+  GitBranch,
   Users,
   CheckSquare,
   ListChecks,
@@ -244,6 +245,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
     { path: '/management/audit-assignments', icon: <ClipboardList size={18} />, label: 'Audit Assignments' },
     { path: '/management/auditor-approvals', icon: <ShieldCheck size={18} />, label: 'Auditor Approvals' },
     { path: '/management/client-onboarding', icon: <Users size={18} />, label: 'Client Onboarding' },
+    { path: '/management/workflow', icon: <GitBranch size={18} />, label: 'Workflow Tracker' },
     { path: '/management/users', icon: <UserCheck size={18} />, label: 'Users & Access' },
         { path: '/management/client-credentials', icon: <KeyRound size={18} />, label: 'Client Credentials' },
     { path: '/management/growth-analytics', icon: <TrendingUp size={18} />, label: 'Growth Analytics' },

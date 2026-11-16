@@ -12,6 +12,7 @@ import ClientOnboarding from './ClientOnboarding';
 import GrowthAnalytics from './GrowthAnalytics';
 import UsersAccess from './UsersAccess';
 import '../../styles/Auditor/Layout.css';
+import WorkflowTracker from '../shared/WorkflowTracker';
 
 interface LayoutProps {
   onLogout: () => void;
@@ -32,6 +33,7 @@ const ManagementLayout: React.FC<LayoutProps> = ({ onLogout }) => {
           <Route path="/global-settings" element={<GlobalSettings />} />
           <Route path="/growth-analytics" element={<GrowthAnalytics />} />
           <Route path="/client-onboarding" element={<ClientOnboarding />} />
+          <Route path="/workflow" element={<WorkflowTracker />} />
           <Route path="/users" element={<UsersAccess />} />
           <Route index element={<Navigate to="/management/dashboard" replace />} />
           <Route path="*" element={<Navigate to="/management/dashboard" replace />} />

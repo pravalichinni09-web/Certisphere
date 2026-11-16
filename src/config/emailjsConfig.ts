@@ -26,6 +26,7 @@ export const EMAILJS_STORAGE = {
   TPL_CERT_ISSUED:  'cms_ejs_tpl_cert_issued',
   TPL_EXPIRY_ALERT: 'cms_ejs_tpl_expiry_alert',
   TPL_WELCOME:      'cms_ejs_tpl_welcome',
+  TPL_APPLICATION:  'cms_ejs_tpl_application',
   ENABLED:          'cms_ejs_enabled',
 };
 
@@ -45,6 +46,8 @@ export const EMAILJS_DEFAULTS = {
     EXPIRY_ALERT: 'YOUR_TEMPLATE_EXPIRY_ALERT', // template_expiry01
     /** Welcome email for new auditors / coordinators */
     WELCOME:      'YOUR_TEMPLATE_WELCOME',      // template_welcome01
+    /** Application form sent to a prospective client (with download link) */
+    APPLICATION:  'YOUR_TEMPLATE_APPLICATION',  // template_app01
   },
 };
 
@@ -63,6 +66,7 @@ export const getEmailJSConfig = () => {
       certIssued:  g(EMAILJS_STORAGE.TPL_CERT_ISSUED,   EMAILJS_DEFAULTS.TEMPLATES.CERT_ISSUED),
       expiryAlert: g(EMAILJS_STORAGE.TPL_EXPIRY_ALERT,  EMAILJS_DEFAULTS.TEMPLATES.EXPIRY_ALERT),
       welcome:     g(EMAILJS_STORAGE.TPL_WELCOME,       EMAILJS_DEFAULTS.TEMPLATES.WELCOME),
+      application: g(EMAILJS_STORAGE.TPL_APPLICATION,  EMAILJS_DEFAULTS.TEMPLATES.APPLICATION),
     },
   };
 };
@@ -119,5 +123,16 @@ export const TEMPLATE_VARIABLE_GUIDES: Record<string, { var: string; desc: strin
     { var: '{{temp_password}}', desc: 'Temporary password' },
     { var: '{{role}}',          desc: 'Assigned role' },
     { var: '{{login_url}}',     desc: 'App login URL' },
+  ],
+  APPLICATION: [
+    { var: '{{to_email}}',      desc: 'Client email address (put in "To Email")' },
+    { var: '{{to_name}}',       desc: 'Contact person' },
+    { var: '{{company}}',       desc: 'Organisation name' },
+    { var: '{{subject}}',       desc: 'Subject line (put in "Subject")' },
+    { var: '{{message}}',       desc: 'Full message text written in CertiSphere' },
+    { var: '{{form_name}}',     desc: 'Application form file name' },
+    { var: '{{form_link}}',     desc: 'Download link for the application form (valid 30 days)' },
+    { var: '{{register_link}}', desc: 'Link to register on CertiSphere' },
+    { var: '{{reply_to}}',      desc: 'Coordinator email for replies (put in "Reply To")' },
   ],
 };

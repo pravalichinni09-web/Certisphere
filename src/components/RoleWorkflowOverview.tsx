@@ -36,7 +36,7 @@ const ROLE_STAGES: Record<Role, { stages: WorkflowStage[]; link: string }> = {
       'Review and Approval by Auditor',
       'Certification released',
     ],
-    link: '/management/audit-assignments',
+    link: '/management/workflow',
   },
   'Lead Auditor': {
     stages: [

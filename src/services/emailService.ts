@@ -20,6 +20,7 @@ export type EmailType =
   | 'cert_issued'
   | 'expiry_alert'
   | 'welcome'
+  | 'application'
   | 'general';
 
 export interface EmailMessage {
@@ -55,6 +56,7 @@ const resolveTemplateId = (type: EmailType | undefined): string => {
     case 'cert_issued':  return templates.certIssued;
     case 'expiry_alert': return templates.expiryAlert;
     case 'welcome':      return templates.welcome;
+    case 'application':  return templates.application.startsWith('YOUR_') ? templates.contact : templates.application;
     default:             return templates.contact; // generic fallback
   }
 };
