@@ -125,7 +125,7 @@ const WorkflowTracker: React.FC<{ title?: string }> = ({ title = 'Workflow Track
                         <div><strong>Findings:</strong> {c.findings.length ? c.findings.map((f) => `${f.severity || 'Finding'}${f.clause ? ' ' + f.clause : ''}${f.correctiveAction ? ' ✓' : ''}`).join(' · ') : 'none recorded'}</div>
                         <div><strong>Certificate:</strong> {c.flags.certificateNumber ? `${c.flags.certificateNumber} (generated ${fmt(c.flags.certificateGeneratedAt)})` : 'not generated'}{c.flags.deliveredAt ? ` · delivered ${fmt(c.flags.deliveredAt)}` : ''}
                           {c.flags.certificateNumber && (() => { const cd = certificateDataFor(c.id); return cd ? (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); viewCertificatePdf(cd); }} style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>View certificate</button>) : null; })()}
+                            <button type="button" onClick={(e) => { e.stopPropagation(); void viewCertificatePdf(cd); }} style={{ marginLeft: 8, fontSize: 12, fontWeight: 700, padding: '2px 8px', borderRadius: 7, border: '1px solid #16a34a', background: '#f0fdf4', color: '#166534', cursor: 'pointer' }}>View certificate</button>) : null; })()}
                         </div>
                         <div><strong>Remaining steps:</strong> {14 - c.stageNo}</div>
                       </div>

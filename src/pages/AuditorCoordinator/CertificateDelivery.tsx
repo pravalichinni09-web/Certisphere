@@ -5,6 +5,8 @@ import { Send, FileText, CheckCircle, Plus, Eye, Edit, X, Download, Upload, Save
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import { qrModules } from '../../utils/qrcode';
+import { preloadCertificateLogo, getCertificateLogo } from '../../lib/certificatePdf';
+void preloadCertificateLogo();
 
 import '../../styles/AuditorCoordinator.css';
 import { clients as mockClients, certificates as initialCertificatesMock } from './mockData';
@@ -397,24 +399,11 @@ const CertificateDelivery: React.FC = () => {
     doc.text("ASCB", 32.5, 30, { align: "center" });
     doc.text("Accreditation", 32.5, 34, { align: "center" });
 
-    // QMICS Logo (Right) - Load image synchronously
-    try {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', '/images/qmics-logo.png', false); // false = synchronous
-      xhr.responseType = 'arraybuffer';
-      xhr.send();
-      
-      if (xhr.status === 200) {
-        const bytes = new Uint8Array(xhr.response);
-        let binary = '';
-        for (let i = 0; i < bytes.byteLength; i++) {
-          binary += String.fromCharCode(bytes[i]);
-        }
-        const imgData = 'data:image/png;base64,' + btoa(binary);
-        doc.addImage(imgData, 'PNG', 165, 18, 25, 25);
-      }
-    } catch (error) {
-      // Fallback to text if image fails to load
+    // QMICS Logo (Right) — preloaded on page open
+    const logo = getCertificateLogo();
+    if (logo) {
+      doc.addImage(logo, 'PNG', 164, 17, 27, 26.3);
+    } else {
       doc.rect(165, 18, 25, 25);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(22, 101, 52);

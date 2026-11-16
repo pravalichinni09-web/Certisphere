@@ -23,6 +23,24 @@ export interface CertificatePdfData {
 const buildVerificationUrl = (cert: { certificateNumber: string; clientId: string }): string =>
   `https://verify.qmics.com/cert/${encodeURIComponent(cert.certificateNumber)}?c=${encodeURIComponent(cert.clientId)}`;
 
+/* The QMICS logo, fetched once (public/images/qmics-logo.png). */
+let logoDataUrl: string | null = null;
+const loadLogo = async (): Promise<void> => {
+  if (logoDataUrl) return;
+  try {
+    const res = await fetch('/images/qmics-logo.png');
+    const type = res.headers.get('content-type') || '';
+    if (!res.ok || !type.startsWith('image/')) return;
+    const blob = await res.blob();
+    logoDataUrl = await new Promise<string>((resolve, reject) => {
+      const r = new FileReader(); r.onload = () => resolve(String(r.result)); r.onerror = reject; r.readAsDataURL(blob);
+    });
+  } catch { /* the PDF falls back to a text box */ }
+};
+
+export { loadLogo as preloadCertificateLogo };
+export const getCertificateLogo = (): string | null => logoDataUrl;
+
 export const certificatePdf = (data: CertificatePdfData): jsPDF => {
   const clientName = data.clientName || 'Client';
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -45,24 +63,10 @@ export const certificatePdf = (data: CertificatePdfData): jsPDF => {
   doc.text("ASCB", 32.5, 30, { align: "center" });
   doc.text("Accreditation", 32.5, 34, { align: "center" });
 
-  // QMICS Logo (Right) - Load image synchronously
-  try {
-    const xhr = new XMLHttpRequest();
-    xhr.open('GET', '/images/qmics-logo.png', false); // false = synchronous
-    xhr.responseType = 'arraybuffer';
-    xhr.send();
-    
-    if (xhr.status === 200) {
-      const bytes = new Uint8Array(xhr.response);
-      let binary = '';
-      for (let i = 0; i < bytes.byteLength; i++) {
-        binary += String.fromCharCode(bytes[i]);
-      }
-      const imgData = 'data:image/png;base64,' + btoa(binary);
-      doc.addImage(imgData, 'PNG', 165, 18, 25, 25);
-    }
-  } catch (error) {
-    // Fallback to text if image fails to load
+  // QMICS logo (right) — loaded ahead of time by loadLogo()
+  if (logoDataUrl) {
+    doc.addImage(logoDataUrl, 'PNG', 164, 17, 27, 26.3);
+  } else {
     doc.rect(165, 18, 25, 25);
     doc.setFont("helvetica", "bold");
     doc.setTextColor(22, 101, 52);
@@ -239,12 +243,15 @@ export const certificatePdf = (data: CertificatePdfData): jsPDF => {
   return doc;
 };
 
-export const downloadCertificatePdf = (data: CertificatePdfData): void => {
+export const downloadCertificatePdf = async (data: CertificatePdfData): Promise<void> => {
+  await loadLogo();
   certificatePdf(data).save(`${data.clientName.replace(/\s+/g, '_')}_Certificate_${data.certificateNumber}.pdf`);
 };
 
 /** Opens the PDF in a new tab to view / print. */
-export const viewCertificatePdf = (data: CertificatePdfData): void => {
-  const url = certificatePdf(data).output('bloburl');
-  window.open(String(url), '_blank', 'noopener');
+export const viewCertificatePdf = async (data: CertificatePdfData): Promise<void> => {
+  const win = window.open('', '_blank');           // open now so the popup isn't blocked
+  await loadLogo();
+  const url = String(certificatePdf(data).output('bloburl'));
+  if (win) win.location.href = url; else window.open(url, '_blank');
 };
