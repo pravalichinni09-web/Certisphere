@@ -44,6 +44,41 @@ export const STAGE_SLA: Record<string, number> = {
   'Action items released to Auditor': 7, 'Review and Approval by Auditor': 5, 'Certification released': 7,
 };
 
+/* ---------- application form linked to a client ---------------------- */
+export interface ClientApplication {
+  sentFile?: StoredFileLike; sentAt?: string; sentVia?: string; sentTo?: string;
+  filledFile?: StoredFileLike; filledAt?: string;
+}
+export interface StoredFileLike { name: string; size: number; uploadedAt: string; dataUrl?: string; path?: string; url?: string; urlExpires?: string }
+/** The application form sent to this client (and the filled form they returned), wherever it was recorded. */
+export const applicationOf = (clientId: number): ClientApplication => {
+  const reg = read<any[]>('cms_client_registrations', []).find((r) => Number(r?.id) === clientId) || {};
+  const enq = read<any[]>('cms_client_enquiries_v1', []).find((e) => String(e?.convertedClientId) === String(clientId) || (reg.sourceEnquiryId && e?.id === reg.sourceEnquiryId)) || {};
+  const disp = read<any[]>('cms_application_dispatch_v7', []).find((d) => d && ((enq.id && d.sourceEnquiryId === enq.id) || (reg.sourceEnquiryId && d.sourceEnquiryId === reg.sourceEnquiryId))) || {};
+  return {
+    sentFile: reg.applicationFile || enq.applicationFile || disp.attachment || undefined,
+    sentAt: reg.applicationSentAt || enq.applicationSentAt || disp.sentAt || undefined,
+    sentVia: reg.applicationSentVia || enq.applicationSentVia || disp.sentVia || undefined,
+    sentTo: reg.email || enq.contactEmail || disp.email || undefined,
+    filledFile: reg.filledApplication || undefined,
+    filledAt: reg.filledApplication?.uploadedAt || undefined,
+  };
+};
+/** Attach the sent form or the client's filled form to the client's registration record. */
+export const registrationOf = (clientId: number): any | null =>
+  read<any[]>('cms_client_registrations', []).find((r) => Number(r?.id) === clientId) || null;
+export const setClientApplication = (clientId: number, kind: 'sent' | 'filled', file: StoredFileLike, meta?: { at?: string; via?: string }): boolean => {
+  const regs = read<any[]>('cms_client_registrations', []);
+  const i = regs.findIndex((r) => Number(r?.id) === clientId);
+  if (i < 0) return false;
+  regs[i] = kind === 'sent'
+    ? { ...regs[i], applicationFile: file, applicationSentAt: meta?.at || regs[i].applicationSentAt || file.uploadedAt, ...(meta?.via ? { applicationSentVia: meta.via } : {}) }
+    : { ...regs[i], filledApplication: file };
+  localStorage.setItem('cms_client_registrations', JSON.stringify(regs));
+  try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
+  return true;
+};
+
 export const findingsOf = (clientId: number): WfFinding[] =>
   read<Record<string, WfFinding[]>>('cms_audit_findings_v1', {})[String(clientId)] || [];
 const flagsOf = (clientId: number): WfFlags =>

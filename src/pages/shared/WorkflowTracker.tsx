@@ -12,6 +12,7 @@ import { Workflow, Search, ChevronDown, ChevronRight, AlertTriangle, CheckCircle
 import { workflowClients, certificateDataFor, type WfClient } from '../../ai/workflowAI';
 import { viewCertificatePdf, downloadCertificatePdf } from '../../lib/certificatePdf';
 import { FLOW } from '../../ai/certisphereGuide';
+import ClientApplicationBox from '../../components/ClientApplicationBox';
 
 const fmt = (iso?: string) => { if (!iso) return '—'; const d = new Date(iso); return Number.isNaN(d.getTime()) ? iso : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); };
 const fmtTime = (iso?: string) => { if (!iso) return ''; const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleString(undefined, { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' }); };
@@ -121,6 +122,7 @@ const WorkflowTracker: React.FC<{ title?: string }> = ({ title = 'Workflow Track
                         </ol>
                       </div>
                       <div style={{ display: 'grid', gap: 8, alignContent: 'start', fontSize: 12.5 }}>
+                        <ClientApplicationBox clientId={c.id} />
                         <div><strong>Requirements:</strong> {c.wf.requirements ? `${c.wf.requirements.scope || '—'} · ${(c.wf.requirements.standards || []).join(', ')}` : 'not reviewed yet'}</div>
                         <div><strong>Findings:</strong> {c.findings.length ? c.findings.map((f) => `${f.severity || 'Finding'}${f.clause ? ' ' + f.clause : ''}${f.correctiveAction ? ' ✓' : ''}`).join(' · ') : 'none recorded'}</div>
                         <div><strong>Certificate:</strong> {c.flags.certificateNumber ? `${c.flags.certificateNumber} (generated ${fmt(c.flags.certificateGeneratedAt)})` : 'not generated'}{c.flags.deliveredAt ? ` · delivered ${fmt(c.flags.deliveredAt)}` : ''}

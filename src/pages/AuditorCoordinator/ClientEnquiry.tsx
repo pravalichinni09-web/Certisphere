@@ -620,6 +620,10 @@ const ClientEnquiry: React.FC = () => {
           source: `Enquiry · ${row.source}`,
           sourceEnquiryId: row.id,
           notes: row.message,
+          // the application form sent from this enquiry follows the client into the workflow
+          ...(row.applicationFile ? { applicationFile: row.applicationFile } : {}),
+          ...(row.applicationSentAt ? { applicationSentAt: row.applicationSentAt } : {}),
+          ...((row as any).applicationSentVia ? { applicationSentVia: (row as any).applicationSentVia } : {}),
         };
         localStorage.setItem(REGISTRATION_KEY, JSON.stringify(regs));
       }

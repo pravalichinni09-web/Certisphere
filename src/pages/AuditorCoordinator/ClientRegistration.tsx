@@ -11,6 +11,7 @@ import type { RegistrationIssue } from '../../ai/coordinatorInsights';
 import { getDispatches, onCmsChange } from '../../ai/liveData';
 import '../../styles/AuditorCoordinator/ClientRegistration.css';
 import { isLiveMode } from '../../lib/liveAuth';
+import { ensureWorkflow } from '../../utils/auditWorkflow';
 
 interface ClientData {
   id: number;
@@ -527,7 +528,6 @@ const ClientRegistration: React.FC = () => {
       return;
     }
 
-    const clientEmail = formData.email || 'client@example.com';
     let clientCode = formData.clientCode;
     if (!clientCode) clientCode = allocateClientCode();
 
@@ -535,13 +535,16 @@ const ClientRegistration: React.FC = () => {
       const updated = clients.map(c => c.id === editingId ? { ...c, ...formData, clientCode } as ClientData : c);
       persist(updated);
       setEditingId(null);
-      setNotification(`Client Updated & Email sent to ${clientEmail}`);
+      setNotification(`Client ${clientCode} updated.`);
     } else {
       const numericIds = clients.map(c => Number(c.id)).filter(n => Number.isFinite(n));
       const nextId = Math.max(0, ...numericIds) + 1;
       const newItem: ClientData = { id: nextId, ...formData, clientCode };
       persist([...clients, newItem]);
-      setNotification(`Client ${clientCode} Registered & Email sent to ${clientEmail}`);
+      // start the 14-step workflow so Management sees the client in Client Onboarding
+      ensureWorkflow(nextId, 'Audit Coordinator');
+      try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
+      setNotification(`Client ${clientCode} registered (workflow step 1/14). Next: Management assigns a coordinator in Client Onboarding.`);
     }
     resetForm();
   };

@@ -269,6 +269,46 @@ const run = async () => {
   await enqRow.locator('button[title="Convert to client registration"]').click(); await wait(2000);
   const conv = (await dump()).profiles.find((p) => p.email === 'meena@orbit.test');
   check('F4', 'Converting it creates the client\'s real Auditee login', conv?.role === 'Auditee' && dialogs.some((d) => /Password: \S{12}/.test(d)));
+  // The application form follows the client into the workflow
+  const orbitId = conv?.client_id;
+  await page.goto(`${APP}/auditor-coordinator/dashboard`, { waitUntil: 'networkidle' }).catch(() => {});
+  await signOut();
+  await signIn('admin@qmics.test', 'Admin@12345');
+  await page.goto(`${APP}/management/workflow`, { waitUntil: 'networkidle' }); await wait(1200);
+  await page.locator(`[data-testid=tracker-row-${orbitId}]`).click(); await wait(500);
+  const appBox = page.locator(`[data-testid=client-app-${orbitId}]`);
+  check('F4a', 'Workflow Tracker shows the application form sent to the client', (await appBox.innerText().catch(() => '')).includes('QCS_Application_Form.pdf'), (await appBox.innerText().catch(() => '')).replace(/\s+/g, ' '));
+  await page.locator(`[data-testid=client-app-filled-${orbitId}]`).setInputFiles({ name: 'Orbit_filled_application.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 filled by client') });
+  await wait(2000);
+  const regOrbit = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => Number(r.id) === Number(orbitId));
+  check('F4b', 'Management uploads the filled application returned by the client', regOrbit?.filledApplication?.name === 'Orbit_filled_application.pdf' && !!regOrbit.filledApplication.path && (await appBox.innerText()).includes('Orbit_filled_application.pdf'));
+  await signOut();
+  // Manual registration by the coordinator starts the workflow (no enquiry needed)
+  await signIn('cora@qmics.test', pwCoord);
+  await page.goto(`${APP}/auditor-coordinator/client-registration`, { waitUntil: 'networkidle' }); await wait(1000);
+  await page.getByRole('button', { name: /Client Registration/ }).first().click(); await wait(500);
+  await page.fill('input[name=organizationName]', 'Connect Solutions');
+  await page.fill('input[name=contactPerson]', 'Sir');
+  await page.fill('input[name=email]', 'rk@qmics.test');
+  await page.fill('input[name=registrationNumber]', 'REG-CS-01');
+  await page.selectOption('select[name=clientType]', 'Initial Certification');
+  await page.locator('.standard-picker-trigger').click(); await page.locator('.standard-picker-option').first().click();
+  await page.locator('button.submit-btn').click(); await wait(1500);
+  const note = await page.locator('body').innerText();
+  const csReg = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
+  const csWf = csReg && (await rowsOf('cms_audit_workflow')).map((r) => r.data).find((w) => Number(w.clientId) === Number(csReg.id));
+  check('F5a', 'Manual Client Registration starts the workflow (step 1/14) and no longer claims an email was sent',
+    !!csWf && csWf.currentStage === 'Registration Submitted' && /workflow step 1\/14/.test(note) && !/Email sent to/.test(note), csWf?.currentStage || 'no workflow');
+  await signOut();
+  await signIn('admin@qmics.test', 'Admin@12345');
+  await page.goto(`${APP}/management/client-onboarding`, { waitUntil: 'networkidle' }); await wait(1200);
+  const onb = page.locator(`[data-wf-row="${csReg?.id}"]`);
+  check('F5b', 'Management sees the manually registered client in Client Onboarding with its Application box', await onb.isVisible() && (await onb.innerText()).includes('Filled application from client'));
+  await page.evaluate(() => { window.open = () => null; });
+  await onb.locator(`[data-testid=client-app-send-${csReg?.id}]`).click(); await wait(500);
+  await page.getByRole('button', { name: /Open email & record|Send email/ }).click(); await wait(2000);
+  const csReg2 = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
+  check('F5c', '"Send form by email" works for a registered client and records the form sent', csReg2?.applicationFile?.name === 'QCS_Application_Form.pdf' && !!csReg2.applicationSentAt, csReg2?.applicationFile?.name || 'none');
   await signOut();
 
   await signIn('admin@qmics.test', 'Admin@12345');

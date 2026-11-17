@@ -41,6 +41,7 @@ import {
 import { AISuggestionBox, CaQualityBadge } from './AIAssist';
 import { stepSuggestion, draftCorrectiveAction, candidateNames, certificateDataFor } from '../ai/workflowAI';
 import { viewCertificatePdf, downloadCertificatePdf } from '../lib/certificatePdf';
+import ClientApplicationBox from './ClientApplicationBox';
 
 export type WorkflowStepKey =
   | 'mgmt-assign'
@@ -465,6 +466,8 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                     </span>) : null; })()}
                   {cfg.readOnly && <span style={{ fontSize: 12, color: '#64748b' }}>Released {fmt(w.updatedAt)}{flags.deliveredAt ? ` · delivered ${fmt(flags.deliveredAt)}` : ' · not delivered yet'}</span>}
                 </div>
+
+                {(step === 'mgmt-assign' || step === 'coord-team') && <ClientApplicationBox clientId={w.clientId} />}
 
                 <AISuggestionBox s={stepSuggestion(step, w)} onApply={(v) => applyAI(w, v)}
                   claudeAsk={`Advise the ${cfg.role} on the step "${cfg.title}" for client ${clientName(w.clientId)}.`} />
