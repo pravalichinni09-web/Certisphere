@@ -128,6 +128,15 @@ const run = async () => {
   await page.getByRole('button', { name: 'Cancel' }).click().catch(() => {});
   await changeEmail('aaron.new@qmics.test', 'aaron@qmics.test');
   check('B4f', 'Changed back; password unchanged', (await dump()).profiles.some((x) => x.email === 'aaron@qmics.test'));
+  // plain-text settings (EmailJS keys) must survive sign-out / sign-in
+  await page.evaluate(() => { localStorage.setItem('cms_ejs_service_id', 'service_keep01'); localStorage.setItem('cms_ejs_tpl_application', 'template_keep02'); });
+  await wait(1500);
+  const ejsRow = (await dump()).app_data.find((r) => r.store === 'cms_ejs_service_id');
+  await signOut();
+  await signIn('admin@qmics.test', 'Admin@12345'); await wait(1500);
+  const raw = await page.evaluate(() => [localStorage.getItem('cms_ejs_service_id'), localStorage.getItem('cms_ejs_tpl_application')]);
+  check('B4g', 'Email Configuration keys stay saved after sign-out and sign-in', raw[0] === 'service_keep01' && raw[1] === 'template_keep02' && ejsRow?.data?.__raw === 'service_keep01', JSON.stringify(raw));
+  await page.goto(`${APP}/management/users`, { waitUntil: 'networkidle' }); await page.waitForTimeout(1200);
   // Users & Access → sign-in page demo credentials
   await page.fill('#ua-demo-pw', 'Demo@Pass99');
   await page.getByRole('button', { name: 'Login page for leo@qmics.test' }).click(); await wait(1200);

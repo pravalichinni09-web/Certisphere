@@ -91,14 +91,20 @@ const nativeSet = Storage.prototype.setItem;
 const nativeRemove = Storage.prototype.removeItem;
 
 const sig = (r: Row) => JSON.stringify([r.kind, r.pos, r.client_id, r.data]);
+// Plain-text settings (e.g. EmailJS keys "service_xyz") are not JSON: keep them as { __raw: text }
+// in Supabase and write them back as the same plain text.
+const isRaw = (v: unknown): v is { __raw: string } =>
+  !!v && typeof v === 'object' && !Array.isArray(v) && Object.keys(v as object).length === 1 && typeof (v as any).__raw === 'string';
 const readLocal = (key: string): unknown => {
-  try { const raw = localStorage.getItem(key); return raw === null ? undefined : JSON.parse(raw); } catch { return undefined; }
+  const raw = localStorage.getItem(key);
+  if (raw === null) return undefined;
+  try { return JSON.parse(raw); } catch { return { __raw: raw }; }
 };
 const writeLocal = (key: string, value: unknown) => {
   applyingRemote = true;
   try {
     if (value === undefined) nativeRemove.call(localStorage, key);
-    else nativeSet.call(localStorage, key, JSON.stringify(value));
+    else nativeSet.call(localStorage, key, isRaw(value) ? value.__raw : JSON.stringify(value));
   } finally { applyingRemote = false; }
 };
 const announce = (key: string) => {
