@@ -450,7 +450,7 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
             const flags = getWorkflowFlags(w.clientId);
             const findings = cfg.findings ? readFindings(w.clientId) : [];
             return (
-              <div key={w.clientId} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: 12, display: 'grid', gap: 8, background: '#f8fafc' }}>
+              <div key={w.clientId} data-wf-row={w.clientId} style={{ border: '1px solid #e2e8f0', borderRadius: 10, padding: 12, display: 'grid', gap: 8, background: '#f8fafc' }}>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px 14px', alignItems: 'baseline' }}>
                   <strong style={{ fontSize: 14 }}>{clientName(w.clientId)}</strong>
                   <span style={{ fontSize: 12, color: '#64748b' }}>Stage {stageNo(w.currentStage)} · {w.currentStage}</span>

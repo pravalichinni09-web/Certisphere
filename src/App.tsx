@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { CURRENT_USER_KEY } from './utils/auditWorkflow';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import LoginPage from './pages/LoginPage';
@@ -67,6 +68,7 @@ const LIVE = isLiveMode();
 /** Client users see only their own client: point the client screens at it. */
 const applyProfileScope = (p: LiveProfile) => {
   try {
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ name: p.fullName, role: p.role }));
     if (p.clientId !== null) {
       localStorage.setItem('cms_active_client_id', String(p.clientId));
       localStorage.setItem('cms_active_org_id', String(p.clientId));
@@ -110,6 +112,7 @@ function App() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_OUT') {
         void stopCloudSync(); clearStaffDirectory();
+        try { localStorage.removeItem(CURRENT_USER_KEY); } catch { /* ignore */ }
         setIsLoggedIn(false);
         setLoggedInUser('');
       }

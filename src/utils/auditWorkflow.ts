@@ -164,12 +164,26 @@ export const ensureWorkflow = (
   const created: WorkflowRecord = {
     clientId,
     currentStage: 'Registration Submitted',
-    history: [{ stage: 'Registration Submitted', at: NOW(), by }],
+    history: [{ stage: 'Registration Submitted', at: NOW(), by: actorLabel(by) }],
     createdAt: NOW(),
     updatedAt: NOW(),
   };
   writeWorkflows([...all, created]);
   return created;
+};
+
+// Who is signed in (live mode) — set at sign-in, used to put names in the history.
+export const CURRENT_USER_KEY = 'certi_current_user';
+const ROLE_LABELS = ['Management', 'Audit Coordinator', 'Lead Auditor', 'Auditor', 'Auditee', 'Client Coordinator', 'Coordinator', 'Client'];
+/** "Auditor" → "Pravalika (Auditor)" when Pravalika is signed in; names already given are kept. */
+export const actorLabel = (by?: string): string | undefined => {
+  let u: { name?: string; role?: string } | null = null;
+  try { u = JSON.parse(localStorage.getItem(CURRENT_USER_KEY) || 'null'); } catch { u = null; }
+  if (!u?.name) return by;
+  const base = (by || u.role || '').trim();
+  if (!base) return u.name;
+  if (base.toLowerCase().includes(u.name.toLowerCase())) return base;
+  return ROLE_LABELS.some((r) => r.toLowerCase() === base.toLowerCase()) ? `${u.name} (${base})` : base;
 };
 
 const advance = (
@@ -185,8 +199,10 @@ const advance = (
     console.warn(`[workflow] Blocked: client ${clientId} cannot move from "${all[idx].currentStage}" to "${target}".`);
     return null;
   }
-  const next = { ...all[idx], updatedAt: NOW() };
+  const before = (all[idx].history || []).length;
+  const next = { ...all[idx], history: [...(all[idx].history || [])], updatedAt: NOW() };
   mutate(next);
+  for (let i = before; i < (next.history || []).length; i++) next.history[i] = { ...next.history[i], by: actorLabel(next.history[i].by) };
   all[idx] = next;
   writeWorkflows(all);
   return next;

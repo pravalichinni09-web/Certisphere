@@ -97,9 +97,8 @@ const open = async (menuLabel) => {
 };
 
 const panel = (title) => page.locator(`section[aria-label="Workflow step: ${title}"]`);
-const row = (title) => panel(title).locator('div')
-  .filter({ has: page.locator('strong', { hasText: CLIENT }) })
-  .filter({ has: page.locator('button') }).last();
+const row = (title) => panel(title).locator('[data-wf-row]')
+  .filter({ has: page.locator('strong', { hasText: CLIENT }) }).last();
 const panelMessage = async (title) =>
   (await panel(title).locator('[role=status]').innerText().catch(() => '')).replace(/\s+/g, ' ');
 // Is the client listed as waiting in this panel? (checks the client rows only,
