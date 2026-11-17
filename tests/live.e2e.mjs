@@ -250,12 +250,19 @@ const run = async () => {
   await enqRow.locator('button[title^="Send application form"]').click(); await wait(600);
   await page.locator('[data-testid=send-app-file]').setInputFiles({ name: 'QCS_Application_Form.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 test application form') });
   await wait(300);
+  await page.evaluate(() => { window.__opened = []; window.open = (u) => { window.__opened.push(String(u)); return null; }; });
   await page.getByRole('button', { name: /Open email & record|Send email/ }).click(); await wait(2500);
+  const mailto = decodeURIComponent((await page.evaluate(() => window.__opened[0] || '')).replace(/\+/g, ' '));
+  const shortLink = (/https?:\/\/\S+\/api\/dl\?\S+/.exec(mailto) || [''])[0];
   const disp = (await rowsOf('cms_application_dispatch_v7')).map((r) => r.data).find((d) => d.organization === 'Orbit Pharma');
   check('F3a', 'Send application uploads the form to private storage and records it under Sent Application',
     !!disp?.attachment?.path && !disp.attachment.dataUrl && disp.attachment.name === 'QCS_Application_Form.pdf', disp?.attachment?.path || 'no record');
   const dl = disp?.attachment?.url ? await fetch(disp.attachment.url).then((r) => r.text()).catch(() => '') : '';
   check('F3b', 'The emailed download link returns the form', dl.includes('test application form'));
+  const viaShort = shortLink ? await fetch(shortLink).then((r) => r.text()).catch(() => '') : '';
+  check('F3b2', 'The email has a short download link (/api/dl) that opens the form', shortLink.length > 0 && shortLink.length < 200 && viaShort.includes('test application form'), `${shortLink.length} chars`);
+  const forged = shortLink ? await fetch(shortLink.replace(/s=[^&]+/, 's=AAAAAAAAAAAAAAAAAAAAAA')).then((r) => r.status).catch(() => 0) : 0;
+  check('F3b3', 'A changed / forged download link is refused', forged === 403, String(forged));
   check('F3c', 'Enquiry shows "Application sent" with the file', /Application sent/.test(await enqRow.innerText()) && (await enqRow.innerText()).includes('QCS_Application_Form.pdf'));
   const std = await page.evaluate(() => JSON.parse(localStorage.getItem('cms_standard_application_form') || 'null'));
   check('F3d', 'The form is saved as the standard application form for next time', std?.name === 'QCS_Application_Form.pdf');

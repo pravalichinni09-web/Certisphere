@@ -59,6 +59,15 @@ export const openStoredFile = async (f: StoredFile): Promise<void> => {
   } else window.open(link, '_blank', 'noopener');
 };
 
+/** Short link for emails (live: https://<site>/api/dl?…, valid 30 days); falls back to fileLink. */
+export const emailLink = async (f: StoredFile): Promise<string | null> => {
+  if (f.path) {
+    const r = await apiFetch('/api/files', { action: 'share', path: f.path });
+    if (r.ok && r.data?.url) return r.data.url;
+  }
+  return fileLink(f);
+};
+
 /** True when the link can be put in an email (a web address, not browser data). */
 export const isShareableLink = (link?: string | null) => !!link && /^https?:\/\//.test(link);
 

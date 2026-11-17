@@ -7,11 +7,13 @@
  *
  *   POST { action: 'upload', name, dataUrl }  → { path, url }   (staff only)
  *   POST { action: 'sign', path, days? }      → { url }         (staff only)
+ *   POST { action: 'share', path, days? }     → { url }  short link for emails (/api/dl…)
  *
  * Download links last 30 days by default (max 90), long enough for a
  * client to open the application form sent to them by email.
  */
 import { adminClient, callerProfile, readBody, send, STAFF_ROLES } from './_lib/supabaseAdmin.js';
+import { makeShareUrl, originOf } from './_lib/shareLink.js';
 
 const BUCKET = 'certisphere-files';
 const MAX_BYTES = 3 * 1024 * 1024;
@@ -53,6 +55,10 @@ export default async function handler(req, res) {
     if (body.action === 'sign') {
       if (!String(body.path || '').startsWith('documents/')) return send(res, 400, { error: 'Unknown file.' });
       return send(res, 200, { url: await signed(admin, String(body.path), body.days) });
+    }
+    if (body.action === 'share') {
+      if (!String(body.path || '').startsWith('documents/')) return send(res, 400, { error: 'Unknown file.' });
+      return send(res, 200, { url: makeShareUrl(originOf(req), String(body.path), body.days) });
     }
     return send(res, 400, { error: 'Unknown action.' });
   } catch (e) {

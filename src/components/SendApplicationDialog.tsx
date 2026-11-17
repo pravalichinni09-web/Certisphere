@@ -12,7 +12,7 @@
  */
 import React, { useEffect, useMemo, useState } from 'react';
 import { X, Send, Paperclip, Upload, CheckCircle2, AlertTriangle, Mail } from 'lucide-react';
-import { storeFile, fileLink, isShareableLink, MAX_FILE_BYTES, readStandardForm, STANDARD_FORM_KEY, type StoredFile } from '../lib/fileStore';
+import { storeFile, emailLink, isShareableLink, MAX_FILE_BYTES, readStandardForm, STANDARD_FORM_KEY, type StoredFile } from '../lib/fileStore';
 import { isEmailJSConfigured } from '../config/emailjsConfig';
 import { sendEmail } from '../services/emailService';
 
@@ -66,14 +66,25 @@ const SendApplicationDialog: React.FC<{
         file = await storeFile(picked);
         if (saveAsStandard) localStorage.setItem(STANDARD_FORM_KEY, JSON.stringify(file));
       }
-      const link = file ? await fileLink(file) : null;
+      const link = file ? await emailLink(file) : null;
       const shareable = isShareableLink(link);
       const registerLink = `${window.location.origin}/login`;
+      // plain text (email app fallback)
       const full = [
         message.trim(),
         '',
         file ? (shareable ? `Application form (${file.name}) — download link, valid 30 days:\n${link}` : `Application form: ${file.name} (attached)`) : '',
         `You can also register on our portal: ${registerLink}`,
+      ].filter(Boolean).join('\n');
+      // HTML for EmailJS: short clickable text instead of long web addresses
+      const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const btn = 'display:inline-block;padding:10px 18px;background:#166534;color:#ffffff;text-decoration:none;border-radius:6px;font-weight:bold';
+      const html = [
+        esc(message.trim()),
+        '',
+        file && shareable ? `<a href="${link}" style="${btn}">Download the Application Form</a>\n<span style="color:#64748b;font-size:12px">${esc(file.name)} · link valid for 30 days</span>` : '',
+        file && !shareable ? `Application form: ${esc(file.name)} (attached)` : '',
+        `You can also register on our portal: <a href="${registerLink}">${esc(window.location.host)}</a>`,
       ].filter(Boolean).join('\n');
       const sentAt = new Date().toISOString();
 
@@ -82,7 +93,7 @@ const SendApplicationDialog: React.FC<{
         const r = await sendEmail({
           type: 'application', to: to.trim(), subject, body: full,
           templateVars: {
-            to_email: to.trim(), to_name: input.contactName || to.trim(), company: input.company, subject, message: full,
+            to_email: to.trim(), to_name: input.contactName || to.trim(), company: input.company, subject, message: html, message_text: full,
             form_name: file?.name || '', form_link: shareable ? String(link) : '', register_link: registerLink,
           },
         });
