@@ -30,19 +30,31 @@ export const DEFAULT_PROFILE: CoordinatorProfile = {
 
 const STORAGE_KEY = 'auditCoordinatorProfile';
 
+/** Live site: the profile belongs to whoever is signed in (name + email from their account). */
+const signedInUser = (): { name?: string; email?: string; role?: string } | null => {
+  try { return JSON.parse(localStorage.getItem('certi_current_user') || 'null'); } catch { return null; }
+};
+const profileKey = () => { const u = signedInUser(); return u?.email ? `${STORAGE_KEY}:${u.email.toLowerCase()}` : STORAGE_KEY; };
+const baseProfile = (): CoordinatorProfile => {
+  const u = signedInUser();
+  if (!u?.name) return DEFAULT_PROFILE;
+  return { ...DEFAULT_PROFILE, name: u.name, email: u.email || '', role: u.role || 'Audit Coordinator', phone: '', employeeId: '', joinedDate: '', photo: '' };
+};
+
 export const loadProfile = (): CoordinatorProfile => {
+  const base = baseProfile();
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return DEFAULT_PROFILE;
+    const raw = localStorage.getItem(profileKey());
+    if (!raw) return base;
     const parsed = JSON.parse(raw);
-    return { ...DEFAULT_PROFILE, ...parsed };
+    return { ...base, ...parsed, ...(signedInUser()?.name ? { name: base.name, email: base.email } : {}) };
   } catch {
-    return DEFAULT_PROFILE;
+    return base;
   }
 };
 
 export const saveProfile = (p: CoordinatorProfile) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+  localStorage.setItem(profileKey(), JSON.stringify(p));
   // Notify other components (sidebar, greeting) in the same tab
   window.dispatchEvent(new CustomEvent('coordinator-profile-updated', { detail: p }));
 };

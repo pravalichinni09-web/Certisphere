@@ -18,6 +18,10 @@ import { sendEmail } from '../services/emailService';
 
 export interface ApplicationSendInput {
   to: string; contactName: string; company: string; standards?: string[]; enquiryDate?: string;
+  /** 'letter' = send the Client Onboarding Letter (file given in presetFile) instead of the application form */
+  mode?: 'application' | 'letter';
+  presetFile?: File;
+  coordinator?: string;
 }
 export interface ApplicationSendResult {
   file: StoredFile | null; via: 'emailjs' | 'mailapp'; sentAt: string; to: string; subject: string;
@@ -30,13 +34,23 @@ const SendApplicationDialog: React.FC<{
   onClose: () => void;
   onSent: (r: ApplicationSendResult) => void;
 }> = ({ input, onClose, onSent }) => {
-  const standard = useMemo(() => readStandardForm(), []);
+  const letter = input.mode === 'letter';
+  const standard = useMemo(() => (letter ? null : readStandardForm()), [letter]);
   const [useStandard, setUseStandard] = useState<boolean>(!!standard);
-  const [picked, setPicked] = useState<File | null>(null);
-  const [saveAsStandard, setSaveAsStandard] = useState<boolean>(!standard);
+  const [picked, setPicked] = useState<File | null>(input.presetFile || null);
+  const [saveAsStandard, setSaveAsStandard] = useState<boolean>(!standard && !letter);
   const [to, setTo] = useState(input.to);
-  const [subject, setSubject] = useState(`Application for Certification — ${input.company}`);
-  const [message, setMessage] = useState(() => [
+  const [subject, setSubject] = useState(letter ? `Welcome to QMICS Certification — ${input.company}` : `Application for Certification — ${input.company}`);
+  const [message, setMessage] = useState(() => letter ? [
+    `Dear ${input.contactName || 'Sir/Madam'},`,
+    '',
+    `Welcome to QMICS Certification. We are pleased to confirm the registration of ${input.company} for ${input.standards?.length ? input.standards.join(', ') : 'certification'}.`,
+    'Please find your Client Onboarding Letter below. It contains your client code, your Audit Coordinator and the next steps.',
+    '',
+    'Best regards,',
+    input.coordinator ? `${input.coordinator}, Audit Coordinator` : 'Audit Coordinator',
+    'QMICS Certification',
+  ].join('\n') : [
     `Dear ${input.contactName || 'Sir/Madam'},`,
     '',
     `Thank you for your enquiry${input.enquiryDate ? ` on ${input.enquiryDate}` : ''} regarding ${input.standards?.length ? input.standards.join(', ') : 'certification'} for ${input.company}.`,
@@ -73,7 +87,7 @@ const SendApplicationDialog: React.FC<{
       const full = [
         message.trim(),
         '',
-        file ? (shareable ? `Application form (${file.name}) — download link, valid 30 days:\n${link}` : `Application form: ${file.name} (attached)`) : '',
+        file ? (shareable ? `${letter ? 'Onboarding letter' : 'Application form'} (${file.name}) — download link, valid 30 days:\n${link}` : `Application form: ${file.name} (attached)`) : '',
         `You can also register on our portal: ${registerLink}`,
       ].filter(Boolean).join('\n');
       // HTML for EmailJS: short clickable text instead of long web addresses
@@ -82,7 +96,7 @@ const SendApplicationDialog: React.FC<{
       const html = [
         esc(message.trim()),
         '',
-        file && shareable ? `<a href="${link}" style="${btn}">Download the Application Form</a>\n<span style="color:#64748b;font-size:12px">${esc(file.name)} · link valid for 30 days</span>` : '',
+        file && shareable ? `<a href="${link}" style="${btn}">${letter ? 'Download your Onboarding Letter' : 'Download the Application Form'}</a>\n<span style="color:#64748b;font-size:12px">${esc(file.name)} · link valid for 30 days</span>` : '',
         file && !shareable ? `Application form: ${esc(file.name)} (attached)` : '',
         `You can also register on our portal: <a href="${registerLink}">${esc(window.location.host)}</a>`,
       ].filter(Boolean).join('\n');
@@ -114,18 +128,25 @@ const SendApplicationDialog: React.FC<{
   const lbl: React.CSSProperties = { display: 'grid', gap: 4, fontSize: 12, fontWeight: 600, color: '#334155' };
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Send application form" onClick={() => !busy && onClose()}
+    <div role="dialog" aria-modal="true" aria-label={letter ? "Send onboarding letter" : "Send application form"} onClick={() => !busy && onClose()}
       style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,.55)', zIndex: 9000, display: 'grid', placeItems: 'center', padding: 16 }}>
       <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(640px, 100%)', maxHeight: '92vh', overflowY: 'auto', background: '#fff', borderRadius: 14, boxShadow: '0 20px 50px rgba(0,0,0,.3)', color: '#0f172a' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 18px', borderBottom: '1px solid #e2e8f0' }}>
           <Send size={18} color="#2563eb" />
-          <strong style={{ flex: 1, fontSize: 16 }}>Send application form — {input.company}</strong>
+          <strong style={{ flex: 1, fontSize: 16 }}>{letter ? 'Send onboarding letter' : 'Send application form'} — {input.company}</strong>
           <button type="button" aria-label="Close" onClick={onClose} disabled={busy} style={{ border: 'none', background: 'transparent', cursor: 'pointer', color: '#64748b' }}><X size={18} /></button>
         </div>
 
         <div style={{ padding: 18, display: 'grid', gap: 14 }}>
           {/* 1. attachment */}
-          <div style={box}>
+          {letter && (
+            <div style={box}>
+              <strong style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}><Paperclip size={14} /> 1. Onboarding letter</strong>
+              {picked ? <span style={{ fontSize: 13 }} data-testid="send-letter-file"><CheckCircle2 size={13} color="#16a34a" style={{ verticalAlign: '-2px' }} /> {picked.name} · {fmtSize(picked.size)} <span style={{ color: '#64748b' }}>(filled in automatically for this client)</span></span>
+                : <span style={{ fontSize: 13, color: '#b91c1c' }}>The letter could not be prepared.</span>}
+            </div>
+          )}
+          {!letter && <div style={box}>
             <strong style={{ fontSize: 13, display: 'flex', alignItems: 'center', gap: 6 }}><Paperclip size={14} /> 1. Application form</strong>
             {standard && (
               <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 13, cursor: 'pointer' }}>
@@ -151,7 +172,7 @@ const SendApplicationDialog: React.FC<{
                 </label>
               </div>
             )}
-          </div>
+          </div>}
 
           {/* 2. email */}
           <div style={box}>
@@ -159,7 +180,7 @@ const SendApplicationDialog: React.FC<{
             <label style={lbl}>To<input style={inp} value={to} onChange={(e) => setTo(e.target.value)} type="email" /></label>
             <label style={lbl}>Subject<input style={inp} value={subject} onChange={(e) => setSubject(e.target.value)} /></label>
             <label style={lbl}>Message<textarea style={{ ...inp, minHeight: 170 }} value={message} onChange={(e) => setMessage(e.target.value)} /></label>
-            <span style={{ fontSize: 12, color: '#64748b' }}>A download link to the form and a link to register on CertiSphere are added at the end automatically.</span>
+            <span style={{ fontSize: 12, color: '#64748b' }}>A download link to the {letter ? 'letter' : 'form'} and a link to register on CertiSphere are added at the end automatically.</span>
           </div>
 
           <div style={{ display: 'flex', gap: 8, alignItems: 'flex-start', fontSize: 12.5, padding: '8px 10px', borderRadius: 8, background: ejs ? '#ecfdf5' : '#fffbeb', color: ejs ? '#065f46' : '#92400e' }}>

@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       if (!m) return send(res, 400, { error: 'No file received.' });
       const bytes = Buffer.from(m[3], m[2] ? 'base64' : 'utf8');
       if (bytes.length > MAX_BYTES) return send(res, 413, { error: 'File is too large (max 3 MB).' });
-      const safe = String(body.name || 'file').replace(/[^\w.\- ()]+/g, '_').slice(-120) || 'file';
+      const safe = String(body.name || 'file').replace(/[^\w.\-()]+/g, '_').slice(-120) || 'file';
       const path = `documents/${new Date().toISOString().slice(0, 10)}/${Date.now()}-${safe}`;
       await ensureBucket(admin);
       const { error } = await admin.storage.from(BUCKET).upload(path, bytes, { contentType: m[1] || 'application/octet-stream', upsert: false });

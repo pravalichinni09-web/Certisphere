@@ -79,6 +79,38 @@ export const setClientApplication = (clientId: number, kind: 'sent' | 'filled', 
   return true;
 };
 
+/** Remember that the onboarding letter was emailed to this client. */
+export const markOnboardingLetterSent = (clientId: number, file: StoredFileLike | null, at: string, via: string): void => {
+  const regs = read<any[]>('cms_client_registrations', []);
+  const i = regs.findIndex((r) => Number(r?.id) === clientId);
+  if (i < 0) return;
+  regs[i] = { ...regs[i], onboardingLetterSentAt: at, onboardingLetterVia: via, ...(file ? { onboardingLetterFile: file } : {}) };
+  localStorage.setItem('cms_client_registrations', JSON.stringify(regs));
+  try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
+};
+/** Everything the Client Onboarding Letter needs, read from the client's own records. */
+export const onboardingLetterDataFor = (clientId: number) => {
+  const reg = registrationOf(clientId);
+  if (!reg) return null;
+  const wf = readWorkflows().find((w) => w.clientId === clientId);
+  const app = applicationOf(clientId);
+  return {
+    clientId,
+    organizationName: String(reg.organizationName || `Client #${clientId}`),
+    contactPerson: reg.contactPerson || undefined,
+    email: reg.email || undefined,
+    address: reg.address || undefined,
+    clientCode: reg.clientCode || undefined,
+    standard: String(reg.standard || (reg.standards || [])[0] || wf?.requirements?.standards?.[0] || 'ISO 9001:2015'),
+    auditType: reg.clientType || undefined,
+    scope: wf?.requirements?.scope || reg.scope || undefined,
+    registrationDate: reg.registrationDate || wf?.createdAt || undefined,
+    coordinator: wf?.assignedCoordinator || undefined,
+    applicationReceived: !!app.filledFile,
+    letterDate: new Date().toISOString(),
+  };
+};
+
 export const findingsOf = (clientId: number): WfFinding[] =>
   read<Record<string, WfFinding[]>>('cms_audit_findings_v1', {})[String(clientId)] || [];
 const flagsOf = (clientId: number): WfFlags =>
@@ -131,7 +163,9 @@ export const staffNames = (role: 'Lead Auditor' | 'Auditor' | 'Audit Coordinator
 export const candidateNames = (kind: 'Audit Coordinator' | 'Lead Auditor' | 'Auditor'): string[] => {
   const live = read<StaffEntry[]>(STAFF_CACHE_KEY, []);
   if (kind === 'Audit Coordinator') {
-    const set = new Set<string>(live.length ? live.filter((p) => p.role === kind).map((p) => p.name) : ['Praveen Gangarapu', 'Cora Dinh']);
+    // live site: only real, active Audit Coordinator accounts (Users & Access)
+    if (live.length) return Array.from(new Set(live.filter((p) => p.role === kind).map((p) => p.name)));
+    const set = new Set<string>(['Praveen Gangarapu', 'Cora Dinh']);   // demo site names
     readWorkflows().forEach((w) => { if (w.assignedCoordinator) set.add(w.assignedCoordinator); });
     return Array.from(set);
   }

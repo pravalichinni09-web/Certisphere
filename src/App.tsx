@@ -68,7 +68,7 @@ const LIVE = isLiveMode();
 /** Client users see only their own client: point the client screens at it. */
 const applyProfileScope = (p: LiveProfile) => {
   try {
-    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ name: p.fullName, role: p.role }));
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify({ name: p.fullName, role: p.role, email: p.email }));
     if (p.clientId !== null) {
       localStorage.setItem('cms_active_client_id', String(p.clientId));
       localStorage.setItem('cms_active_org_id', String(p.clientId));

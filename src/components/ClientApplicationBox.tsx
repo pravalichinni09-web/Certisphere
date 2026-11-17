@@ -5,9 +5,10 @@
  * Files go to private storage on the live site (see lib/fileStore).
  */
 import React, { useRef, useState } from 'react';
-import { Paperclip, Upload, FileCheck2, Send } from 'lucide-react';
+import { Paperclip, Upload, FileCheck2, Send, Mail, Eye, Download } from 'lucide-react';
+import { onboardingLetterFile, viewOnboardingLetter, downloadOnboardingLetter } from '../lib/onboardingLetterPdf';
 import SendApplicationDialog from './SendApplicationDialog';
-import { applicationOf, setClientApplication, registrationOf } from '../ai/workflowAI';
+import { applicationOf, setClientApplication, registrationOf, onboardingLetterDataFor, markOnboardingLetterSent } from '../ai/workflowAI';
 import { storeFile, openStoredFile, MAX_FILE_BYTES, type StoredFile } from '../lib/fileStore';
 
 const fmt = (iso?: string) => { if (!iso) return ''; const d = new Date(iso); return Number.isNaN(d.getTime()) ? '' : d.toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: 'numeric' }); };
@@ -21,6 +22,13 @@ const ClientApplicationBox: React.FC<{ clientId: number; canEdit?: boolean; comp
   const app = applicationOf(clientId);
   const [sending, setSending] = useState(false);
   const reg = registrationOf(clientId);
+  const [letterFile, setLetterFile] = useState<File | null>(null);
+  const letterData = onboardingLetterDataFor(clientId);
+  const openLetterEmail = async () => {
+    if (!letterData) return;
+    setErr(null);
+    try { setLetterFile(await onboardingLetterFile(letterData)); } catch (e) { setErr((e as Error)?.message || 'Could not prepare the letter.'); }
+  };
 
   const upload = async (kind: 'sent' | 'filled', f?: File | null) => {
     if (!f) return;
@@ -55,7 +63,23 @@ const ClientApplicationBox: React.FC<{ clientId: number; canEdit?: boolean; comp
         {canEdit && <button type="button" style={btn} disabled={!!busy} onClick={() => filledInput.current?.click()}><Upload size={12} /> {busy === 'filled' ? 'Uploading…' : app.filledFile ? 'Replace' : 'Upload'}</button>}
         <input ref={filledInput} type="file" hidden accept=".pdf,.doc,.docx,.xls,.xlsx,.odt,.jpg,.jpeg,.png" data-testid={`client-app-filled-${clientId}`} onChange={(e) => { void upload('filled', e.target.files?.[0]); e.target.value = ''; }} />
       </div>
+      {letterData && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }} data-testid={`client-letter-${clientId}`}>
+          <Mail size={13} color="#475569" /><strong>Onboarding letter:</strong>
+          <span style={{ color: '#64748b' }}>{reg?.onboardingLetterSentAt ? `emailed ${fmt(reg.onboardingLetterSentAt)}` : 'not sent yet'}</span>
+          <button type="button" style={btn} onClick={() => void viewOnboardingLetter(letterData)}><Eye size={12} /> View</button>
+          <button type="button" style={btn} title="Download the onboarding letter (PDF)" onClick={() => void downloadOnboardingLetter(letterData)}><Download size={12} /></button>
+          {canEdit && <button type="button" style={{ ...btn, borderColor: '#2563eb', color: '#1d4ed8' }} onClick={() => void openLetterEmail()} data-testid={`client-letter-send-${clientId}`}><Send size={12} /> {reg?.onboardingLetterSentAt ? 'Email again' : 'Email letter'}</button>}
+        </div>
+      )}
       {err && <div role="alert" style={{ color: '#b91c1c', fontWeight: 600 }}>{err}</div>}
+      {letterFile && letterData && reg && (
+        <SendApplicationDialog
+          input={{ mode: 'letter', presetFile: letterFile, to: reg.email || '', contactName: reg.contactPerson || '', company: letterData.organizationName, standards: [letterData.standard], coordinator: letterData.coordinator }}
+          onClose={() => setLetterFile(null)}
+          onSent={(r) => { markOnboardingLetterSent(clientId, r.file, r.sentAt, r.via); setLetterFile(null); setTick((t) => t + 1); }}
+        />
+      )}
       {sending && reg && (
         <SendApplicationDialog
           input={{ to: reg.email || '', contactName: reg.contactPerson || '', company: reg.organizationName || `Client #${clientId}`, standards: reg.standards || (reg.standard ? [reg.standard] : []) }}

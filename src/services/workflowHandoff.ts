@@ -28,6 +28,7 @@ import {
   canMoveTo,
   getWorkflow,
 } from '../utils/auditWorkflow';
+import { candidateNames } from '../ai/workflowAI';
 
 /* ---------- Roles --------------------------------------------------------- */
 
@@ -112,6 +113,8 @@ const withFocus = (path: string, id: string | number): string =>
 
 /** Coordinators that Management can assign a new client to. */
 const coordinatorOptions = (): string[] => {
+  const real = candidateNames('Audit Coordinator');
+  if (localStorage.getItem('certi_staff_directory')) return real;   // live site: real accounts only
   const names = new Set<string>(['Praveen Gangarapu', 'Cora Dinh']);
   try {
     readWorkflows().forEach((w) => { if (w.assignedCoordinator) names.add(w.assignedCoordinator); });

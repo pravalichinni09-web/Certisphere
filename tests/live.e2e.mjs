@@ -304,11 +304,27 @@ const run = async () => {
   await page.goto(`${APP}/management/client-onboarding`, { waitUntil: 'networkidle' }); await wait(1200);
   const onb = page.locator(`[data-wf-row="${csReg?.id}"]`);
   check('F5b', 'Management sees the manually registered client in Client Onboarding with its Application box', await onb.isVisible() && (await onb.innerText()).includes('Filled application from client'));
+  await onb.getByRole('button', { name: 'Assign coordinator' }).first().click(); await wait(400);
+  const coordOpts = await onb.locator('select option').allInnerTexts().catch(() => []);
+  await onb.getByRole('button', { name: /Cancel/ }).first().click().catch(() => {});
+  check('F5b2', 'Coordinator dropdown lists only real Audit Coordinator accounts (no built-in names)', coordOpts.some((o) => o.includes('Cora Dinh')) && !coordOpts.some((o) => /Praveen/.test(o)), coordOpts.join(' | '));
   await page.evaluate(() => { window.open = () => null; });
   await onb.locator(`[data-testid=client-app-send-${csReg?.id}]`).click(); await wait(500);
   await page.getByRole('button', { name: /Open email & record|Send email/ }).click(); await wait(2000);
   const csReg2 = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
   check('F5c', '"Send form by email" works for a registered client and records the form sent', csReg2?.applicationFile?.name === 'QCS_Application_Form.pdf' && !!csReg2.applicationSentAt, csReg2?.applicationFile?.name || 'none');
+  // Client Onboarding Letter: filled in automatically, emailed, recorded
+  await page.evaluate(() => { window.__opened = []; window.open = (u) => { window.__opened.push(String(u)); return null; }; });
+  await onb.locator(`[data-testid=client-letter-send-${csReg?.id}]`).click(); await wait(1500);
+  const letterName = await page.locator('[data-testid=send-letter-file]').innerText().catch(() => '');
+  check('F5d', 'Onboarding letter is generated for the client and attached automatically', letterName.includes('Connect Solutions - Onboarding Letter.pdf'), letterName);
+  await page.getByRole('button', { name: /Open email & record|Send email/ }).click(); await wait(2500);
+  const letterMail = decodeURIComponent((await page.evaluate(() => window.__opened.find((u) => u.startsWith('mailto:')) || '')).replace(/\+/g, ' '));
+  const letterLink = (/https?:\/\/\S+\/api\/dl\?\S+/.exec(letterMail) || [''])[0];
+  const pdfHead = letterLink ? await fetch(letterLink).then((r) => r.text()).catch(() => '') : '';
+  const csReg3 = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
+  check('F5e', 'Letter email has a working download link and the send is recorded', /Welcome to QMICS Certification/.test(letterMail) && pdfHead.startsWith('%PDF') && !!csReg3?.onboardingLetterSentAt && (await onb.innerText()).includes('emailed'),
+    JSON.stringify({ subj: /Welcome to QMICS Certification/.test(letterMail), pdf: pdfHead.slice(0, 160), link: letterLink, sent: !!csReg3?.onboardingLetterSentAt, shown: (await onb.innerText()).includes('emailed'), mail: letterMail.slice(0, 120) }));
   await signOut();
 
   await signIn('admin@qmics.test', 'Admin@12345');
