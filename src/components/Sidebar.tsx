@@ -39,7 +39,6 @@ import {
   LayoutList,
   CalendarDays,
 } from 'lucide-react';
-import { loadProfile, CoordinatorProfile } from '../pages/AuditorCoordinator/Profile';
 import { readGlobalConfig, flagOf, onGlobalConfigChange, GlobalConfig } from '../utils/globalConfig';
 import '../styles/Sidebar.css';
 import CertiSphereLogo from './CertiSphereLogo';
@@ -123,20 +122,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
   const isManagement = role === 'Management';
   const useVerticalSidebar = isCoordinator || isLeadAuditor || isAuditor || isAuditee || isManagement || isClientCoordinator;
 
-  // Coordinator profile (for avatar / name in sidebar header)
-  const [coordProfile, setCoordProfile] = useState<CoordinatorProfile | null>(
-    isCoordinator ? loadProfile() : null
-  );
-
-  useEffect(() => {
-    if (!isCoordinator) return;
-    const handler = (e: Event) => {
-      const detail = (e as CustomEvent<CoordinatorProfile>).detail;
-      if (detail) setCoordProfile(detail);
-    };
-    window.addEventListener('coordinator-profile-updated', handler);
-    return () => window.removeEventListener('coordinator-profile-updated', handler);
-  }, [isCoordinator]);
 
   // Grouped sections for the Audit Coordinator role
   const coordinatorSections: MenuSection[] = [
@@ -364,12 +349,6 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
     setIsOpen(false);
   };
 
-  const coordInitials = (coordProfile?.name || 'A C')
-    .split(' ')
-    .map((s) => s.charAt(0))
-    .join('')
-    .slice(0, 2)
-    .toUpperCase();
 
   // ---------- Vertical sidebar (all roles) ----------
   if (useVerticalSidebar) {
@@ -403,26 +382,7 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
             </div>
           </div>
 
-          {isCoordinator && coordProfile && (
-            <NavLink
-              to="/auditor-coordinator/profile"
-              className="sidebar-profile-card"
-              onClick={() => setIsOpen(false)}
-              title="View profile"
-            >
-              <div className="sidebar-profile-avatar">
-                {coordProfile.photo ? (
-                  <img src={coordProfile.photo} alt={coordProfile.name} />
-                ) : (
-                  <span>{coordInitials}</span>
-                )}
-              </div>
-              <div className="sidebar-profile-meta">
-                <span className="sidebar-profile-name">{coordProfile.name || 'Audit Coordinator'}</span>
-                <span className="sidebar-profile-role">View profile</span>
-              </div>
-            </NavLink>
-          )}
+          {/* Profile card removed — the profile is under Configuration → My Profile */}
 
           {/* Global Search Button */}
           <div className="sidebar-search-container" style={{ padding: '0 14px', margin: '8px 0 14px' }}>
