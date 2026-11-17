@@ -3,7 +3,6 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Sidebar from '../../components/Sidebar';
 import NotificationsBell from '../../components/NotificationsBell';
 import BackButton from '../../components/BackButton';
-import CoordinatorGreeting from '../../components/CoordinatorGreeting';
 import Dashboard from './Dashboard';
 import AuditorProfiles from './AuditorProfiles.tsx';
 import AuditorRequests from './AuditorRequests';
@@ -40,7 +39,6 @@ const AuditorCoordinatorLayout: React.FC<LayoutProps> = ({ onLogout }) => {
     <div className="coordinator-layout">
       <Sidebar role="Audit Coordinator" onLogout={onLogout} />
       <NotificationsBell role="Audit Coordinator" />
-      <CoordinatorGreeting />
       <div className="coordinator-content">
         <BackButton />
         <Routes>
