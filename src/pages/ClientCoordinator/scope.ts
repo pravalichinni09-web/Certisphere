@@ -1,3 +1,4 @@
+import { isLiveMode } from '../../lib/liveAuth';
 /**
  * Client Coordinator — real-time, org-scoped data layer.
  *
@@ -497,6 +498,7 @@ const _syntheticCertifications = (orgId: number): Certification[] => {
   const KEY = `cms_org_certs_v1_${orgId}`;
   const cached = safe<Certification[]>(KEY, []);
   if (cached.length > 0) return cached;
+  if (isLiveMode()) return [];   // live site: never invent records for a real client
 
   const standards = ['ISO 9001:2015','ISO 14001:2015','ISO 27001:2022','ISO 45001:2018','ISO 22000:2018','ISO 13485:2016','ISO 50001:2018'];
   const today = Date.now();
@@ -532,6 +534,7 @@ const _syntheticSchedules = (orgId: number): AuditScheduleRow[] => {
   const KEY = `cms_org_schedules_v1_${orgId}`;
   const cached = safe<AuditScheduleRow[]>(KEY, []);
   if (cached.length > 0) return cached;
+  if (isLiveMode()) return [];   // live site: never invent records for a real client
 
   const types = ['Surveillance 1', 'Surveillance 2', 'Recertification', 'Initial Certification', 'Transfer'];
   const auditors = ['Anita Verma', 'Rajesh Kumar', 'Sandeep Joshi', 'Priya Reddy', 'Vikram Singh'];
@@ -553,6 +556,7 @@ const _syntheticReports = (orgId: number): AuditReportRow[] => {
   const KEY = `cms_org_reports_v1_${orgId}`;
   const cached = safe<AuditReportRow[]>(KEY, []);
   if (cached.length > 0) return cached;
+  if (isLiveMode()) return [];   // live site: never invent records for a real client
 
   const standards = ['ISO 9001:2015','ISO 14001:2015','ISO 27001:2022','ISO 45001:2018','ISO 22000:2018'];
   const auditors  = ['Anita Verma', 'Rajesh Kumar', 'Sandeep Joshi', 'Priya Reddy'];

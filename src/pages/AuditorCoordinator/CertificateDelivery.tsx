@@ -10,6 +10,7 @@ void preloadCertificateLogo();
 
 import '../../styles/AuditorCoordinator.css';
 import { clients as mockClients, certificates as initialCertificatesMock } from './mockData';
+import { isLiveMode } from '../../lib/liveAuth';
 
 /** Live client list — registered clients first (cms_client_registrations), mock as fallback. */
 const readLiveClients = (): any[] => {
@@ -215,7 +216,7 @@ const CertificateDelivery: React.FC = () => {
       const parsed = raw ? JSON.parse(raw) : null;
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     } catch { /* ignore */ }
-    return enhancedInitialCertificates;
+    return isLiveMode() ? [] : enhancedInitialCertificates;   // live site: no sample certificates
   });
   const [survCertificates, setSurvCertificates] = useState<CertificateData[]>(() => {
     try {
@@ -223,7 +224,7 @@ const CertificateDelivery: React.FC = () => {
       const parsed = raw ? JSON.parse(raw) : null;
       if (Array.isArray(parsed) && parsed.length > 0) return parsed;
     } catch { /* ignore */ }
-    return initialSurveillanceCertificates;
+    return isLiveMode() ? [] : initialSurveillanceCertificates;
   });
   // Persist both certificate lists — issued/approved certificates must survive refresh.
   useEffect(() => {
