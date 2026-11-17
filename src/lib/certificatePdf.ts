@@ -4,6 +4,7 @@
  * the workflow (Certifications View, Certificate Delivery, Management, tracker).
  */
 import jsPDF from 'jspdf';
+import { showPdf } from './pdfViewer';
 import { qrModules } from '../utils/qrcode';
 
 export interface CertificatePdfData {
@@ -255,8 +256,6 @@ export const downloadCertificatePdf = async (data: CertificatePdfData): Promise<
 
 /** Opens the PDF in a new tab to view / print. */
 export const viewCertificatePdf = async (data: CertificatePdfData): Promise<void> => {
-  const win = window.open('', '_blank');           // open now so the popup isn't blocked
   await loadLogo();
-  const url = String(certificatePdf(data).output('bloburl'));
-  if (win) win.location.href = url; else window.open(url, '_blank');
+  showPdf(certificatePdf(data).output('blob'), certificateFileName(data.clientName), `${data.clientName} – Certificate ${data.certificateNumber}`);
 };

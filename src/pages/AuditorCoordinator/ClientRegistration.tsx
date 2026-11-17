@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { loadProfile } from './Profile';
 import { Plus, Eye, Edit2, Download, Trash2, CheckCircle, Upload, Mail, Search, ImageIcon, AlertTriangle, Sparkles, X } from 'lucide-react';
 import StandardPicker from '../../components/StandardPicker';
 import { ensureCredentialsForClients } from './utils/clientCredentials';
@@ -364,7 +365,7 @@ const ClientRegistration: React.FC = () => {
         industry: (client as any).industry || 'Other',
         standard: client.standard,
         status: 'Pending Review',
-        forwardedBy: 'Praveen Gangarapu (Coordinator)',
+        forwardedBy: `${loadProfile().name || 'Audit Coordinator'} (Coordinator)`,
         forwardedAt: new Date().toISOString(),
         coordinatorNote: `Application reviewed by Coordinator. ${client.clientType} for ${client.standard}.`,
       });

@@ -325,6 +325,11 @@ const run = async () => {
   const csReg3 = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
   check('F5e', 'Letter email has a working download link and the send is recorded', /Welcome to QMICS Certification/.test(letterMail) && pdfHead.startsWith('%PDF') && !!csReg3?.onboardingLetterSentAt && (await onb.innerText()).includes('emailed'),
     JSON.stringify({ subj: /Welcome to QMICS Certification/.test(letterMail), pdf: pdfHead.slice(0, 160), link: letterLink, sent: !!csReg3?.onboardingLetterSentAt, shown: (await onb.innerText()).includes('emailed'), mail: letterMail.slice(0, 120) }));
+  await onb.locator(`[data-testid=client-letter-${csReg?.id}]`).getByRole('button', { name: 'View' }).click(); await wait(1500);
+  const viewerOpen = await page.locator('#cs-pdf-viewer iframe').isVisible().catch(() => false);
+  const [dlEvt] = await Promise.all([page.waitForEvent('download', { timeout: 5000 }).catch(() => null), page.locator('[data-testid=pdf-viewer-download]').click().catch(() => {})]);
+  check('F5f', 'View opens the letter inside the page (no pop-up tab) and Download saves it', viewerOpen && dlEvt?.suggestedFilename() === 'Connect Solutions - Onboarding Letter.pdf', dlEvt?.suggestedFilename() || 'no download');
+  await page.getByRole('button', { name: 'Close' }).click().catch(() => {});
   await signOut();
 
   await signIn('admin@qmics.test', 'Admin@12345');

@@ -5,6 +5,7 @@
  */
 import jsPDF from 'jspdf';
 import { preloadCertificateLogo, getCertificateLogo } from './certificatePdf';
+import { showPdf } from './pdfViewer';
 
 export interface OnboardingLetterData {
   clientId: number;
@@ -90,7 +91,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
     ['Type of audit', d.auditType || 'Initial Certification'],
     ['Scope of certification', d.scope || 'To be confirmed during the application review'],
     ['Registration date', fmtDate(d.registrationDate)],
-    ['Your Audit Coordinator', d.coordinator || 'Will be assigned shortly'],
+    ['Point of contact', 'Audit Coordinator, QMICS Certification'],
   ];
   const c1 = 52, rowPad = 2.4;
   rows.forEach(([k, v], i) => {
@@ -112,7 +113,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
       ? 'Application for Certification: received – thank you.'
       : 'Please fill in, sign and return the Application for Certification (QMICS/F-01), if not already sent.',
     'Application review: we confirm the scope, sites and audit duration and share the quotation / agreement.',
-    `Audit planning: ${d.coordinator || 'your Audit Coordinator'} will propose the audit dates and audit team for your confirmation.`,
+    'Audit planning: the Audit Coordinator will propose the audit dates and audit team for your confirmation.',
     'Audit: the audit team visits your site; any findings are shared with you for corrective action.',
     'Certification: after the corrective actions are accepted, the certificate is issued and delivered to you.',
   ];
@@ -123,7 +124,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
     y += l.length * 4.9 + 1.6;
   });
   y += 3;
-  para(`For any questions, please contact ${d.coordinator ? `${d.coordinator} (Audit Coordinator) or ` : ''}us at rk@qmicssolutions.com / +91 98494 99111. We look forward to working with you.`, 6);
+  para('For any questions, please contact the Audit Coordinator at rk@qmicssolutions.com / +91 98494 99111. We look forward to working with you.', 6);
 
   // ── signature ──
   doc.text('Warm regards,', M, y); y += 5;
@@ -144,10 +145,8 @@ export const downloadOnboardingLetter = async (d: OnboardingLetterData): Promise
   onboardingLetterPdf(d).save(onboardingLetterFileName(d.organizationName));
 };
 export const viewOnboardingLetter = async (d: OnboardingLetterData): Promise<void> => {
-  const win = window.open('', '_blank');
   await preloadCertificateLogo();
-  const url = String(onboardingLetterPdf(d).output('bloburl'));
-  if (win) win.location.href = url; else window.open(url, '_blank');
+  showPdf(onboardingLetterPdf(d).output('blob'), onboardingLetterFileName(d.organizationName), `${d.organizationName} – Onboarding Letter`);
 };
 /** The letter as a File, ready to attach to an email. */
 export const onboardingLetterFile = async (d: OnboardingLetterData): Promise<File> => {

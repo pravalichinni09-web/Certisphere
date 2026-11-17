@@ -45,10 +45,10 @@ const SendApplicationDialog: React.FC<{
     `Dear ${input.contactName || 'Sir/Madam'},`,
     '',
     `Welcome to QMICS Certification. We are pleased to confirm the registration of ${input.company} for ${input.standards?.length ? input.standards.join(', ') : 'certification'}.`,
-    'Please find your Client Onboarding Letter below. It contains your client code, your Audit Coordinator and the next steps.',
+    'Please find your Client Onboarding Letter below. It contains your client code, your registration details and the next steps.',
     '',
     'Best regards,',
-    input.coordinator ? `${input.coordinator}, Audit Coordinator` : 'Audit Coordinator',
+    'Audit Coordinator',
     'QMICS Certification',
   ].join('\n') : [
     `Dear ${input.contactName || 'Sir/Madam'},`,

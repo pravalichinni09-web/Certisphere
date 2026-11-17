@@ -5,6 +5,7 @@
  *  Demo mode: kept in the browser as a data URL (as before).
  */
 import { isLiveMode, apiFetch } from './liveAuth';
+import { showPdf } from './pdfViewer';
 
 export interface StoredFile {
   name: string;
@@ -53,10 +54,21 @@ export const fileLink = async (f: StoredFile): Promise<string | null> => {
 export const openStoredFile = async (f: StoredFile): Promise<void> => {
   const link = await fileLink(f);
   if (!link) { alert('This file is not available.'); return; }
-  if (link.startsWith('data:')) {
+  const isPdf = /\.pdf$/i.test(f.name);
+  try {
+    // PDFs open inside the page (works where pop-up tabs are blocked); other files download
+    const blob = await (await fetch(link)).blob();
+    if (isPdf) { showPdf(blob.type === 'application/pdf' ? blob : new Blob([blob], { type: 'application/pdf' }), f.name); return; }
+    const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = link; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
-  } else window.open(link, '_blank', 'noopener');
+    a.href = url; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch {
+    if (link.startsWith('data:')) {
+      const a = document.createElement('a');
+      a.href = link; a.download = f.name; document.body.appendChild(a); a.click(); a.remove();
+    } else window.open(link, '_blank', 'noopener');
+  }
 };
 
 /** Short link for emails (live: https://<site>/api/dl?…, valid 30 days); falls back to fileLink. */

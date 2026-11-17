@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { loadProfile } from './Profile';
 import { isLiveMode } from '../../lib/liveAuth';
 import { useFocusParam } from '../../hooks/useFocusParam';
 import {
@@ -400,7 +401,7 @@ const AuditorRequests: React.FC = () => {
     );
     if (note === null) return;
     setStatus(r.id, 'Under Review', {
-      reviewedByCoordinator: { by: 'Praveen Gangarapu', at: new Date().toISOString(), note: note || undefined },
+      reviewedByCoordinator: { by: loadProfile().name || 'Audit Coordinator', at: new Date().toISOString(), note: note || undefined },
     });
   };
 
