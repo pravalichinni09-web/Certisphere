@@ -22,7 +22,7 @@ export interface CertificatePdfData {
 }
 
 const buildVerificationUrl = (cert: { certificateNumber: string; clientId: string }): string =>
-  `https://verify.qmics.com/cert/${encodeURIComponent(cert.certificateNumber)}?c=${encodeURIComponent(cert.clientId)}`;
+  `${(typeof window !== 'undefined' && /^https?:/.test(window.location.origin)) ? window.location.origin : 'https://certisphere.vercel.app'}/verify/${encodeURIComponent(cert.certificateNumber)}`;
 
 /* The QMICS logo, fetched once (public/images/qmics-logo.png). */
 let logoDataUrl: string | null = null;
@@ -223,7 +223,8 @@ export const certificatePdf = (data: CertificatePdfData): jsPDF => {
     const cell = qrSizeMm / size;
     // White background under the QR
     doc.setFillColor(255, 255, 255);
-    doc.rect(qrX - 1, qrY - 1, qrSizeMm + 2, qrSizeMm + 2, 'F');
+    const qz = cell * 4; // quiet zone: 4 modules of white around the code, needed by scanners
+    doc.rect(qrX - qz, qrY - qz, qrSizeMm + 2 * qz, qrSizeMm + 2 * qz, 'F');
     doc.setFillColor(0, 0, 0);
     for (let yy = 0; yy < size; yy++) {
       for (let xx = 0; xx < size; xx++) {

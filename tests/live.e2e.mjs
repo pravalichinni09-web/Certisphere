@@ -297,8 +297,8 @@ const run = async () => {
   const note = await page.locator('body').innerText();
   const csReg = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');
   const csWf = csReg && (await rowsOf('cms_audit_workflow')).map((r) => r.data).find((w) => Number(w.clientId) === Number(csReg.id));
-  check('F5a', 'Manual Client Registration starts the workflow (step 1/14) and no longer claims an email was sent',
-    !!csWf && csWf.currentStage === 'Registration Submitted' && /workflow step 1\/14/.test(note) && !/Email sent to/.test(note), csWf?.currentStage || 'no workflow');
+  check('F5a', 'Manual Client Registration starts the workflow (stage 2/14) and no longer claims an email was sent',
+    !!csWf && csWf.currentStage === 'Registration Submitted' && /workflow stage 2\/14/.test(note) && !/Email sent to/.test(note), csWf?.currentStage || 'no workflow');
   await signOut();
   await signIn('admin@qmics.test', 'Admin@12345');
   await page.goto(`${APP}/management/client-onboarding`, { waitUntil: 'networkidle' }); await wait(1200);
@@ -340,6 +340,20 @@ const run = async () => {
   await page.fill('#live-email', 'aaron@qmics.test'); await page.fill('#live-password', pwAud);
   await page.getByRole('button', { name: /^Sign in$/ }).click(); await page.waitForTimeout(1500);
   check('F5', 'A disabled account cannot sign in', /disabled/i.test(await page.locator('[role=alert]').innerText().catch(() => '')) && page.url().includes('/login'));
+
+  section('Certificate QR verification (public)');
+  const svc = { apikey: SERVICE_KEY, authorization: `Bearer ${SERVICE_KEY}`, 'content-type': 'application/json', prefer: 'resolution=merge-duplicates' };
+  const vid = 977;
+  await fetch(`${SB}/rest/v1/app_data?on_conflict=store,row_key`, { method: 'POST', headers: svc, body: JSON.stringify([
+    { store: 'cms_client_registrations', row_key: String(vid), kind: 'array', pos: 90, client_id: vid, data: { id: vid, organizationName: 'Verify Test Ltd', standard: 'ISO 9001:2015', email: 'secret@verify.test' } },
+    { store: 'cms_audit_workflow', row_key: String(vid), kind: 'array', pos: 90, client_id: vid, data: { clientId: vid, currentStage: 'Certification released', requirements: { scope: 'Testing services', standards: ['ISO 9001:2015'] }, history: [{ stage: 'Certification released', at: new Date().toISOString(), by: 'Management' }] } },
+    { store: 'cms_workflow_flags_v1', row_key: String(vid), kind: 'map', pos: 0, client_id: vid, data: { certificateNumber: 'CS-2026-0977', certificateGeneratedAt: new Date().toISOString() } },
+  ]) });
+  await page.goto(`${APP}/verify/CS-2026-0977`, { waitUntil: 'networkidle' }); await wait(1200);
+  const vText = await page.locator('body').innerText();
+  check('Q1', 'Scanning the certificate QR opens a public page that confirms a valid certificate', /Valid certificate/.test(vText) && vText.includes('Verify Test Ltd') && vText.includes('ISO 9001:2015') && !vText.includes('secret@verify.test'), vText.replace(/\s+/g, ' ').slice(0, 160));
+  await page.goto(`${APP}/verify/CS-2026-9999`, { waitUntil: 'networkidle' }); await wait(1200);
+  check('Q2', 'A made-up certificate number is shown as not found', /Certificate not found/.test(await page.locator('body').innerText()));
 
   check('Z1', 'No JavaScript errors', pageErrors.length === 0, pageErrors.slice(0, 2).join(' | '));
   await browser.close();

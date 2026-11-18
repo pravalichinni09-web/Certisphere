@@ -545,7 +545,7 @@ const ClientRegistration: React.FC = () => {
       // start the 14-step workflow so Management sees the client in Client Onboarding
       ensureWorkflow(nextId, 'Audit Coordinator');
       try { window.dispatchEvent(new CustomEvent('cms-workflow-handoff')); } catch { /* ignore */ }
-      setNotification(`Client ${clientCode} registered (workflow step 1/14). Next: Management assigns a coordinator in Client Onboarding.`);
+      setNotification(`Client ${clientCode} registered (workflow stage 2/14 · Registration Submitted). Next: Management assigns a coordinator in Client Onboarding.`);
     }
     resetForm();
   };

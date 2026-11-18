@@ -5,6 +5,7 @@ import './App.css';
 import LoginPage from './pages/LoginPage';
 import Home from './pages/Home';
 import PublicEnquiry from './pages/PublicEnquiry';
+import VerifyCertificate from './pages/VerifyCertificate';
 import { supabase } from './lib/supabase';
 import { isLiveMode, currentLiveProfile, liveSignOut, LiveProfile } from './lib/liveAuth';
 import { startCloudSync, stopCloudSync } from './lib/cloudSync';
@@ -266,6 +267,8 @@ function App() {
       <Routes>
         {/* Public enquiry route — accessible without login */}
         <Route path="/enquiry" element={<PublicEnquiry />} />
+        {/* Public certificate check — opened by the QR code on each certificate */}
+        <Route path="/verify/:certNo" element={<VerifyCertificate />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
         {/* Home → Login (public funnel) */}
