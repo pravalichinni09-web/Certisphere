@@ -53,10 +53,10 @@ const SendApplicationDialog: React.FC<{
   ].join('\n') : [
     `Dear ${input.contactName || 'Sir/Madam'},`,
     '',
-    `Thank you for your enquiry${input.enquiryDate ? ` on ${input.enquiryDate}` : ''} regarding ${input.standards?.length ? input.standards.join(', ') : 'certification'} for ${input.company}.`,
-    'Please download the attached Application for Certification, fill it in completely, sign it and send it back to us by replying to this email.',
+    `With reference to your mail${input.enquiryDate ? ` dated ${input.enquiryDate}` : ''} regarding ${input.standards?.length ? input.standards.join(', ') : 'certification'} for ${input.company}, herewith we are sending the Application Form for Certification.`,
+    'Please fill in the application form, sign it and return it back to us by replying to this email.',
     '',
-    'Once we receive it, we will review your application and share the quotation and next steps.',
+    'Once we receive your filled application, we will review it and confirm your onboarding with QMICS.',
     '',
     'Best regards,',
     'Audit Coordinator',

@@ -69,7 +69,14 @@ const ClientApplicationBox: React.FC<{ clientId: number; canEdit?: boolean; comp
           <span style={{ color: '#64748b' }}>{reg?.onboardingLetterSentAt ? `emailed ${fmt(reg.onboardingLetterSentAt)}` : 'not sent yet'}</span>
           <button type="button" style={btn} onClick={() => void viewOnboardingLetter(letterData)}><Eye size={12} /> View</button>
           <button type="button" style={btn} title="Download the onboarding letter (PDF)" onClick={() => void downloadOnboardingLetter(letterData)}><Download size={12} /></button>
-          {canEdit && <button type="button" style={{ ...btn, borderColor: '#2563eb', color: '#1d4ed8' }} onClick={() => void openLetterEmail()} data-testid={`client-letter-send-${clientId}`}><Send size={12} /> {reg?.onboardingLetterSentAt ? 'Email again' : 'Email letter'}</button>}
+          {canEdit && <button type="button" style={{ ...btn, borderColor: '#2563eb', color: '#1d4ed8', ...(app.filledFile ? {} : { opacity: 0.5, cursor: 'not-allowed' }) }}
+            disabled={!app.filledFile} title={app.filledFile ? 'Email the onboarding letter to the client' : 'Send after the client\'s filled application is received'}
+            onClick={() => void openLetterEmail()} data-testid={`client-letter-send-${clientId}`}><Send size={12} /> {reg?.onboardingLetterSentAt ? 'Email again' : 'Email letter'}</button>}
+        </div>
+      )}
+      {!app.filledFile && (
+        <div style={{ fontSize: 12, color: '#92400e', background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 7, padding: '5px 8px' }} data-testid={`client-app-order-${clientId}`}>
+          Process: 1) send the application form → 2) client fills, signs and returns it → 3) upload it above → 4) onboard the client and email the onboarding letter.
         </div>
       )}
       {err && <div role="alert" style={{ color: '#b91c1c', fontWeight: 600 }}>{err}</div>}

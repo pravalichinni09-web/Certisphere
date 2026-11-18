@@ -34,7 +34,7 @@ export default async function handler(req, res) {
       organization: reg2.organizationName || c.clientName || `Client #${c.clientId}`,
       standard: c.standard || reg2.standard || '', scope: c.scope || '',
       issuedDate: c.issuedDate || null, expiryDate: c.expirationDate || null,
-      certificationBody: 'QMICS Solutions and Compliances Pvt. Ltd.',
+      certificationBody: 'QMICS Solutions Pvt. Ltd.',
     });
   }
 
@@ -59,6 +59,6 @@ export default async function handler(req, res) {
     scope: wf.requirements?.scope || '',
     issuedDate: released ? issued : null,
     expiryDate: released ? expiry : null,
-    certificationBody: 'QMICS Solutions and Compliances Pvt. Ltd.',
+    certificationBody: 'QMICS Solutions Pvt. Ltd.',
   });
 }

@@ -315,6 +315,10 @@ const run = async () => {
   check('F5c', '"Send form by email" works for a registered client and records the form sent', csReg2?.applicationFile?.name === 'QCS_Application_Form.pdf' && !!csReg2.applicationSentAt, csReg2?.applicationFile?.name || 'none');
   // Client Onboarding Letter: filled in automatically, emailed, recorded
   await page.evaluate(() => { window.__opened = []; window.open = (u) => { window.__opened.push(String(u)); return null; }; });
+  check('F5c2', 'Onboarding letter cannot be emailed before the filled application is received (sir\'s order)',
+    await onb.locator(`[data-testid=client-letter-send-${csReg?.id}]`).isDisabled() && await onb.locator(`[data-testid=client-app-order-${csReg?.id}]`).isVisible());
+  await onb.locator(`[data-testid=client-app-filled-${csReg?.id}]`).setInputFiles({ name: 'Connect_filled_application.pdf', mimeType: 'application/pdf', buffer: Buffer.from('%PDF-1.4 filled') });
+  await wait(2000);
   await onb.locator(`[data-testid=client-letter-send-${csReg?.id}]`).click(); await wait(1500);
   const letterName = await page.locator('[data-testid=send-letter-file]').innerText().catch(() => '');
   check('F5d', 'Onboarding letter is generated for the client and attached automatically', letterName.includes('Connect Solutions - Onboarding Letter.pdf'), letterName);

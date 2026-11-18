@@ -41,7 +41,7 @@ const VerifyCertificate: React.FC = () => {
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '18px 20px', borderBottom: '3px solid #14532d' }}>
           <img src="/images/qmics-logo.png" alt="QMICS" style={{ width: 48, height: 48, objectFit: 'contain' }} />
           <div>
-            <div style={{ fontWeight: 800, color: '#14532d', fontSize: 15 }}>QMICS SOLUTIONS AND COMPLIANCES PVT. LTD.</div>
+            <div style={{ fontWeight: 800, color: '#14532d', fontSize: 15 }}>QMICS SOLUTIONS PVT. LTD.</div>
             <div style={{ color: '#64748b', fontSize: 12.5 }}>Certificate verification</div>
           </div>
         </div>

@@ -23,7 +23,7 @@ export interface OnboardingLetterData {
   letterDate?: string;
 }
 
-const COMPANY = 'QMICS SOLUTIONS AND COMPLIANCES PVT. LTD.';
+const COMPANY = 'QMICS SOLUTIONS PVT. LTD.';
 const CONTACT = 'Hyderabad, Telangana, India  |  rk@qmicssolutions.com  |  +91 98494 99111  |  qmicscertifications.com';
 const GREEN: [number, number, number] = [20, 83, 45];
 const GREEN2: [number, number, number] = [22, 101, 52];
@@ -47,8 +47,8 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
   doc.setFillColor(...GREEN); doc.rect(0, 0, W, 3, 'F');
   const logo = getCertificateLogo();
   if (logo) doc.addImage(logo, 'PNG', M, 9, 22, 21.4, undefined, 'FAST');
-  doc.setTextColor(...GREEN); doc.setFont('helvetica', 'bold'); doc.setFontSize(13.5);
-  doc.text(COMPANY, M + 27, 17);
+  doc.setTextColor(...GREEN); doc.setFont('times', 'bold'); doc.setFontSize(17);
+  doc.text(COMPANY, M + 27, 17.5);
   doc.setTextColor(...GREY); doc.setFont('helvetica', 'normal'); doc.setFontSize(8.2);
   doc.text('Management Systems Certification', M + 27, 22.5);
   doc.text(CONTACT, M + 27, 27);
@@ -72,18 +72,32 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
   if (d.email) { doc.text(d.email, M, y); y += 5; }
   y += 4;
 
+  // ── headings: Times Bold, white on a QMICS-green band ──
+  const band = (text: string, size = 11.5) => {
+    doc.setFont('times', 'bold'); doc.setFontSize(size);
+    const lines = doc.splitTextToSize(text, W - 2 * M - 8);
+    const h = lines.length * size * 0.42 + 3.6;
+    // Classic heading: green Times Bold between two thin gold rules
+    doc.setDrawColor(201, 151, 0); doc.setLineWidth(0.5);
+    doc.line(M, y, W - M, y); doc.line(M, y + h, W - M, y + h);
+    doc.setLineWidth(0.2);
+    doc.setTextColor(...GREEN); doc.text(lines, M + 1, y + size * 0.36 + 1.8);
+    doc.setTextColor(15, 23, 42); doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
+    y += h + 3;
+  };
+
   // ── subject ──
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5);
-  const subj = doc.splitTextToSize(`Subject: Welcome to QMICS Certification – ${d.standard}${d.auditType ? ` (${d.auditType})` : ''}`, W - 2 * M);
-  doc.text(subj, M, y); y += subj.length * 5.2 + 3;
+  band(`Subject: Welcome to QMICS Certification – ${d.standard}${d.auditType ? ` (${d.auditType})` : ''}`, 12);
 
   // ── body ──
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
   const para = (t: string, gap = 3) => { const l = doc.splitTextToSize(t, W - 2 * M); doc.text(l, M, y); y += l.length * 4.9 + gap; };
+  y += 3;
   para(`Dear ${d.contactPerson || 'Sir/Madam'},`);
-  para(`Thank you for choosing QMICS Solutions and Compliances Pvt. Ltd. as your certification body. We are pleased to confirm that ${d.organizationName} has been registered with us for ${d.standard} certification. Your registration details are given below.`);
+  para(`Thank you for choosing QMICS Solutions Pvt. Ltd. as your certification body. We are pleased to confirm that ${d.organizationName} has been registered with us for ${d.standard} certification. Your registration details are given below.`);
 
   // ── details table ──
+  band('Registration details');
   const rows: [string, string][] = [
     ['Client code', d.clientCode || `#${d.clientId}`],
     ['Organisation', d.organizationName],
@@ -93,7 +107,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
     ['Registration date', fmtDate(d.registrationDate)],
     ['Point of contact', 'Audit Coordinator, QMICS Certification'],
   ];
-  const c1 = 52, rowPad = 2.4;
+  const c1 = 52, rowPad = 1.9;
   rows.forEach(([k, v], i) => {
     const lines = doc.splitTextToSize(v, W - 2 * M - c1 - 4);
     const h = Math.max(1, lines.length) * 4.8 + rowPad * 2 - 1;
@@ -106,7 +120,8 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
   y += 6;
 
   // ── next steps ──
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(10.5); doc.setTextColor(...GREEN); doc.text('Next steps', M, y); y += 6;
+  band('Next steps');
+  y += 1;
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10); doc.setTextColor(15, 23, 42);
   const steps = [
     d.applicationReceived
@@ -128,7 +143,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
 
   // ── signature ──
   doc.text('Warm regards,', M, y); y += 5;
-  doc.setFont('helvetica', 'bold'); doc.text('For QMICS Solutions and Compliances Pvt. Ltd.', M, y); y += 16;
+  doc.setFont('helvetica', 'bold'); doc.text('For QMICS Solutions Pvt. Ltd.', M, y); y += 13;
   doc.setDrawColor(148, 163, 184); doc.setLineWidth(0.3); doc.line(M, y, M + 55, y); y += 4.5;
   doc.setFont('helvetica', 'normal'); doc.setTextColor(...GREY); doc.text('Authorised Signatory', M, y);
 

@@ -415,20 +415,38 @@ const CertificateDelivery: React.FC = () => {
     }
 
     // --- Header ---
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(16);
-    doc.setTextColor(22, 101, 52);
-    doc.text("QMICS SOLUTIONS AND COMPLIANCES PVT. LTD.", centerX, 25, { align: "center" });
+    // Company name in the heading style (Times Bold, QMICS green) with a green rule under it
+    // QMICS name = the most prominent heading: largest size, green, with a gold double underline
+    doc.setFont("times", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(20, 83, 45);
+    doc.text("QMICS SOLUTIONS PVT. LTD.", centerX, 27, { align: "center" });
+    const qw = doc.getTextWidth("QMICS SOLUTIONS PVT. LTD.");
+    doc.setDrawColor(201, 151, 0); doc.setLineWidth(0.7);
+    doc.line(centerX - qw / 2, 29.2, centerX + qw / 2, 29.2);
+    doc.setLineWidth(0.3);
+    doc.line(centerX - qw / 2, 30.4, centerX + qw / 2, 30.4);
+    doc.setLineWidth(0.2);
     
-    doc.setFontSize(12);
+    doc.setFontSize(10);
     doc.setTextColor(50);
-    doc.text("MANAGEMENT SYSTEMS CERTIFICATION", centerX, 33, { align: "center" });
+    doc.setFont("helvetica", "bold");
+    doc.text("MANAGEMENT SYSTEMS CERTIFICATION", centerX, 36.5, { align: "center" });
 
     // Title
-    doc.setFont("times", "bolditalic");
-    doc.setFontSize(24);
-    doc.setTextColor(0);
-    doc.text("Certificate of Registration", centerX, 55, { align: "center" });
+    // Headings: Times Bold, white on a QMICS-green band
+    const headingBand = (text: string, y: number, size: number, padX: number, h: number) => {
+      // Classic certificate heading: green Times Bold between two thin gold rules
+      doc.setFont("times", "bold"); doc.setFontSize(size);
+      const w = doc.getTextWidth(text) + padX * 2;
+      doc.setDrawColor(201, 151, 0); doc.setLineWidth(0.5);
+      doc.line(centerX - w / 2, y - h * 0.68, centerX + w / 2, y - h * 0.68);
+      doc.line(centerX - w / 2, y - h * 0.68 + h, centerX + w / 2, y - h * 0.68 + h);
+      doc.setLineWidth(0.2);
+      doc.setTextColor(20, 83, 45); doc.text(text, centerX, y, { align: "center" });
+      doc.setTextColor(0);
+    };
+    headingBand("CERTIFICATE OF REGISTRATION", 55, 15, 8, 9);
 
     // --- Body ---
     doc.setFont("helvetica", "normal");
@@ -436,10 +454,13 @@ const CertificateDelivery: React.FC = () => {
     doc.text("Awarded to:", centerX, 70, { align: "center" });
 
     // Client Name
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    // Company name: large and bold (shrinks only if a long name would not fit the width)
+    doc.setFont("times", "bold");
     doc.setTextColor(0);
-    doc.text(clientName.toUpperCase(), centerX, 80, { align: "center" });
+    let nameSize = 17;
+    doc.setFontSize(nameSize);
+    while (nameSize > 14 && doc.getTextWidth(clientName.toUpperCase()) > 165) { nameSize -= 1; doc.setFontSize(nameSize); }
+    doc.text(clientName.toUpperCase(), centerX, 81, { align: "center" });
 
     // Address
     doc.setFont("helvetica", "normal");
@@ -449,10 +470,7 @@ const CertificateDelivery: React.FC = () => {
     doc.text(addressLines, centerX, 90, { align: "center" });
 
     // Standard
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.setTextColor(22, 101, 52);
-    doc.text(data.standard.toUpperCase(), centerX, 115, { align: "center" });
+    headingBand(data.standard.toUpperCase(), 115, 12, 6, 7.5);
 
     // Compliance Declaration
     doc.setFont("helvetica", "normal");
@@ -463,8 +481,8 @@ const CertificateDelivery: React.FC = () => {
     doc.text(complianceLines, centerX, 125, { align: "center", lineHeightFactor: 1.5 });
 
     // Scope
-    doc.setFont("helvetica", "bold");
-    doc.text("Scope of Certification:", centerX, 145, { align: "center" });
+    headingBand("SCOPE OF CERTIFICATION", 145, 10, 5, 6.5);
+    doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     const scopeLines = doc.splitTextToSize(data.scope || 'N/A', 160);
     doc.text(scopeLines, centerX, 153, { align: "center", lineHeightFactor: 1.5 });
@@ -530,7 +548,7 @@ const CertificateDelivery: React.FC = () => {
     // Disclaimer Paragraph
     doc.setFontSize(6.5);
     doc.setTextColor(80);
-    const disclaimer = "Validity of this Certificate is subject to Surveillance Audits to be conducted before scheduled due dates of surveillance audits as mentioned on the certificate, failing which the certificate will stand to be withdrawn and need to be treated as an initial certification process to reactivate its continuity on the register of ASCBE and QMICS. This Certificate is valid when confirmed by data listed on the \"International Register of Quality Assessed Organizations\" www.irqao.com. The authenticity & validity of this certificate may be re-affirmed by referring to our company website www.qmics.com. Lack of fulfillment of conditions as set out on the 'Certification Contract' (Annex 13) may render this certificate invalid. Any alteration, forgery or falsification of the content or appearance of this document is unlawful and offenders may be prosecuted to the fullest extent of law. This certificate remains the property of QMICS and to be returned on request.";
+    const disclaimer = "Validity of this Certificate is subject to Surveillance Audits to be conducted before scheduled due dates of surveillance audits as mentioned on the certificate, failing which the certificate will stand to be withdrawn and need to be treated as an initial certification process to reactivate its continuity on the register of ASCBE and QMICS. This Certificate is valid when confirmed by data listed on the \"International Register of Quality Assessed Organizations\" www.irqao.com. The authenticity & validity of this certificate may be re-affirmed by scanning the QR code on this certificate or at our company website qmicscertifications.com. Lack of fulfillment of conditions as set out on the 'Certification Contract' (Annex 13) may render this certificate invalid. Any alteration, forgery or falsification of the content or appearance of this document is unlawful and offenders may be prosecuted to the fullest extent of law. This certificate remains the property of QMICS and to be returned on request.";
     const disclaimerLines = doc.splitTextToSize(disclaimer, 180);
     doc.text(disclaimerLines, centerX, 255, { align: "center", lineHeightFactor: 1.2 });
 
@@ -538,13 +556,13 @@ const CertificateDelivery: React.FC = () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(0);
-    doc.text("QMICS SOLUTIONS AND COMPLIANCES PVT. LTD.", centerX, 273, { align: "center" });
+    doc.text("QMICS SOLUTIONS PVT. LTD.", centerX, 273, { align: "center" });
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.text("REGISTERED OFFICE: Rainbow Vistas Phase 2, 604, Green Hills Rd, Block O, Moosapet,", centerX, 277, { align: "center" });
     doc.text("Hyderabad, Telangana 500018, INDIA.", centerX, 280, { align: "center" });
     doc.setFontSize(6.5);
-    doc.text("Email: ramakrishna@qmicssolutions.com  |  Call: +91 XXXXXXXXXX  |  Website: www.qmics.com", centerX, 283, { align: "center" });
+    doc.text("Email: ramakrishna@qmicssolutions.com  |  Call: +91 XXXXXXXXXX  |  Website: qmicscertifications.com", centerX, 283, { align: "center" });
 
     // --- QR Code (verification) ---
     try {
