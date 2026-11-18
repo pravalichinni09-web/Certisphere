@@ -354,6 +354,12 @@ const run = async () => {
   check('Q1', 'Scanning the certificate QR opens a public page that confirms a valid certificate', /Valid certificate/.test(vText) && vText.includes('Verify Test Ltd') && vText.includes('ISO 9001:2015') && !vText.includes('secret@verify.test'), vText.replace(/\s+/g, ' ').slice(0, 160));
   await page.goto(`${APP}/verify/CS-2026-9999`, { waitUntil: 'networkidle' }); await wait(1200);
   check('Q2', 'A made-up certificate number is shown as not found', /Certificate not found/.test(await page.locator('body').innerText()));
+  await fetch(`${SB}/rest/v1/app_data?on_conflict=store,row_key`, { method: 'POST', headers: svc, body: JSON.stringify([
+    { store: 'cms_certificate_delivery_v1', row_key: 'cd-1', kind: 'array', pos: 0, client_id: null, data: { id: 'cd-1', clientId: String(vid), certificateNumber: 'QMICS-ISS-0042', standard: 'ISO 27001:2022', scope: 'IT services', issuedDate: '2026-11-01', expirationDate: '2029-10-31' } },
+  ]) });
+  await page.goto(`${APP}/verify/QMICS-ISS-0042`, { waitUntil: 'networkidle' }); await wait(1200);
+  const v3 = await page.locator('body').innerText();
+  check('Q3', 'Certificates issued from Certificate Delivery verify too', /Valid certificate/.test(v3) && v3.includes('Verify Test Ltd') && v3.includes('ISO 27001:2022'), v3.replace(/\s+/g, ' ').slice(60, 200));
 
   check('Z1', 'No JavaScript errors', pageErrors.length === 0, pageErrors.slice(0, 2).join(' | '));
   await browser.close();

@@ -18,7 +18,25 @@ export default async function handler(req, res) {
   const { data: flags, error } = await admin.from('app_data').select('row_key,data').eq('store', 'cms_workflow_flags_v1');
   if (error) return send(res, 500, { error: 'Verification is not available right now.' });
   const hit = (flags || []).find((r) => String(r.data?.certificateNumber || '').toLowerCase() === n.toLowerCase());
-  if (!hit) return send(res, 404, { valid: false, certificateNumber: n, error: 'No certificate with this number was issued by QMICS.' });
+  if (!hit) {
+    // Certificates issued from Certificate Delivery (Issue Certificate) are kept in their own lists
+    const { data: issuedRows } = await admin.from('app_data').select('data')
+      .in('store', ['cms_certificate_delivery_v1', 'cms_certificate_delivery_surv_v1']);
+    const c = (issuedRows || []).map((r) => r.data).find((d) => String(d?.certificateNumber || '').toLowerCase() === n.toLowerCase());
+    if (!c) return send(res, 404, { valid: false, certificateNumber: n, error: 'No certificate with this number was issued by QMICS.' });
+    const { data: regRows2 } = await admin.from('app_data').select('data').eq('store', 'cms_client_registrations').eq('row_key', String(c.clientId));
+    const reg2 = regRows2?.[0]?.data || {};
+    const exp = Date.parse(c.expirationDate || '');
+    const status2 = Number.isFinite(exp) && exp < Date.now() ? 'Expired' : 'Valid';
+    return send(res, 200, {
+      valid: status2 === 'Valid', status: status2,
+      certificateNumber: c.certificateNumber,
+      organization: reg2.organizationName || c.clientName || `Client #${c.clientId}`,
+      standard: c.standard || reg2.standard || '', scope: c.scope || '',
+      issuedDate: c.issuedDate || null, expiryDate: c.expirationDate || null,
+      certificationBody: 'QMICS Solutions and Compliances Pvt. Ltd.',
+    });
+  }
 
   const clientId = String(hit.row_key);
   const [{ data: wfRows }, { data: regRows }] = await Promise.all([
