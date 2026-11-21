@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { STANDARD_VALUES } from '../utils/standards';
 import { useNavigate } from 'react-router-dom';
 import {
   Send,
@@ -22,16 +23,7 @@ import {
 
 const STORAGE_KEY = 'cms_client_enquiries_v1';
 
-const STANDARDS_OPTIONS = [
-  'ISO 9001:2015',
-  'ISO 14001:2015',
-  'ISO 45001:2018',
-  'ISO 27001:2022',
-  'ISO 22000:2018',
-  'ISO 13485:2016',
-  'ISO 50001:2018',
-  'ISO 42001:2023',
-];
+const STANDARDS_OPTIONS = STANDARD_VALUES;
 
 const INDUSTRY_OPTIONS = [
   'Manufacturing',

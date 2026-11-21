@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { STANDARD_VALUES } from '../utils/standards';
 import { UserPlus, X, CheckCircle2, Building2, Mail, Phone, MapPin, KeyRound, Copy } from 'lucide-react';
 import { addClient } from '../pages/AuditorCoordinator/utils/clientCredentials';
 import { ensureWorkflow } from '../utils/auditWorkflow';
@@ -10,14 +11,7 @@ interface Props {
   onClose: () => void;
 }
 
-const STANDARDS = [
-  'ISO 9001:2015',
-  'ISO 14001:2015',
-  'ISO 45001:2018',
-  'ISO 27001:2022',
-  'ISO 22000:2018',
-  'ISO 42001:2023',
-];
+const STANDARDS = STANDARD_VALUES;
 
 const AuditeeRegistration: React.FC<Props> = ({ onClose }) => {
   const auditTypeNames = useMemo(() => getAuditTypeNames(), []);

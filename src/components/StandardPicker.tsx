@@ -2,16 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ChevronDown, X, Check, Award } from 'lucide-react';
 import '../styles/StandardPicker.css';
 
-// Central list of supported standards — edit here to update everywhere
-export const STANDARDS: { value: string; title: string; subtitle: string }[] = [
-  { value: 'ISO 9001:2015', title: 'ISO 9001:2015', subtitle: 'Quality Management System' },
-  { value: 'ISO 14001:2015', title: 'ISO 14001:2015', subtitle: 'Environmental Management System' },
-  { value: 'ISO 45001:2018', title: 'ISO 45001:2018', subtitle: 'Occupational Health & Safety' },
-  { value: 'ISO 27001:2022', title: 'ISO 27001:2022', subtitle: 'Information Security Management' },
-  { value: 'ISO 42001:2023', title: 'ISO 42001:2023', subtitle: 'AI Management System' },
-];
-
-export const STANDARD_VALUES = STANDARDS.map((s) => s.value);
+// Central list of supported standards lives in utils/standards.ts — edit there to update everywhere
+import { STANDARDS, STANDARD_VALUES } from '../utils/standards';
+export { STANDARDS, STANDARD_VALUES };
 
 interface StandardPickerProps {
   value: string;

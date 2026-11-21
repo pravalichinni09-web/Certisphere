@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { STANDARD_VALUES } from '../../utils/standards';
 import {
   Workflow,
   Search,
@@ -35,14 +36,7 @@ import '../../styles/AuditorCoordinator/AuditWorkflow.css';
 import { AISuggestionBox } from '../../components/AIAssist';
 import { requirementsSuggestion, scheduleSuggestion } from '../../ai/workflowAI';
 
-const STANDARDS = [
-  'ISO 9001:2015',
-  'ISO 14001:2015',
-  'ISO 45001:2018',
-  'ISO 27001:2022',
-  'ISO 22000:2018',
-  'ISO 42001:2023',
-];
+const STANDARDS = STANDARD_VALUES;
 
 const AuditWorkflowPage: React.FC = () => {
   const [clients, setClients] = useState<ClientRecord[]>([]);

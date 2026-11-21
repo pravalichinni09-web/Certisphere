@@ -292,7 +292,10 @@ const run = async () => {
   await page.fill('input[name=email]', 'rk@qmics.test');
   await page.fill('input[name=registrationNumber]', 'REG-CS-01');
   await page.selectOption('select[name=clientType]', 'Initial Certification');
-  await page.locator('.standard-picker-trigger').click(); await page.locator('.standard-picker-option').first().click();
+  await page.locator('.standard-picker-trigger').click();
+  const stdOpts = (await page.locator('.standard-picker-option-title').allInnerTexts()).join('|');
+  check('F5a0', 'Client Registration offers CMMI, HACCP and GDP (approved by sir)', ['CMMI', 'HACCP', 'GDP', 'ISO 22000:2018'].every((x) => stdOpts.split('|').includes(x)), stdOpts);
+  await page.locator('.standard-picker-option').first().click();
   await page.locator('button.submit-btn').click(); await wait(1500);
   const note = await page.locator('body').innerText();
   const csReg = (await rowsOf('cms_client_registrations')).map((r) => r.data).find((r) => r.organizationName === 'Connect Solutions');

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { STANDARD_VALUES } from '../../utils/standards';
 import { isLiveMode, apiFetch } from '../../lib/liveAuth';
 import {
   MailOpen,
@@ -77,16 +78,7 @@ const STORAGE_KEY = 'cms_client_enquiries_v1';
 const REGISTRATION_KEY = 'cms_client_registrations';
 const DISPATCH_KEY = 'cms_application_dispatch_v7';
 
-const STANDARDS_OPTIONS = [
-  'ISO 9001:2015',
-  'ISO 14001:2015',
-  'ISO 45001:2018',
-  'ISO 27001:2022',
-  'ISO 22000:2018',
-  'ISO 13485:2016',
-  'ISO 50001:2018',
-  'ISO 42001:2023',
-];
+const STANDARDS_OPTIONS = STANDARD_VALUES;
 
 const STATUS_COLORS: Record<EnquiryStatus, { bg: string; fg: string }> = {
   New: { bg: '#dbeafe', fg: '#1e40af' },
