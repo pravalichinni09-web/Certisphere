@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { isAIOn, setAIOn } from '../lib/aiSwitch';
 import { NavLink, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
@@ -555,6 +556,12 @@ const Sidebar: React.FC<SidebarProps> = ({ role, onLogout }) => {
           </nav>
 
           <div className="vertical-sidebar-footer">
+            <button type="button" onClick={() => setAIOn(!isAIOn())} data-testid="ai-toggle"
+              title={isAIOn() ? 'Hide all AI features (manual mode)' : 'Show AI features again'}
+              style={{ width: '100%', marginBottom: 8, padding: '7px 10px', borderRadius: 8, border: '1px solid rgba(255,255,255,.25)', background: isAIOn() ? 'rgba(250,204,21,.12)' : 'rgba(148,163,184,.15)', color: '#e2e8f0', fontSize: 12.5, fontWeight: 700, cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>AI assistance</span>
+              <span style={{ padding: '1px 8px', borderRadius: 999, background: isAIOn() ? '#facc15' : '#64748b', color: isAIOn() ? '#1e293b' : '#fff', fontSize: 11 }}>{isAIOn() ? 'ON' : 'OFF'}</span>
+            </button>
             <button className="logout-btn" onClick={handleLogout}>
               <LogOut size={18} />
               <span>Logout</span>

@@ -8,6 +8,7 @@
  * Everything works without an API key (built-in rules over real data).
  */
 import React, { useEffect, useState } from 'react';
+import { withAI } from '../lib/aiSwitch';
 import { Sparkles, AlertTriangle, CheckCircle2, Info, XCircle, Bot, type LucideIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { isClaudeConfigured, completeSafe, onClaudeConfigChange } from '../ai/claudeClient';
@@ -53,7 +54,7 @@ const ClaudeMore: React.FC<{ ask: string; facts: string[] }> = ({ ask, facts }) 
   );
 };
 
-export const AISuggestionBox: React.FC<{ s: Suggestion | null; onApply?: (values: Record<string, string>) => void; claudeAsk?: string; testId?: string }> = ({ s, onApply, claudeAsk, testId }) => {
+const AISuggestionBoxInner: React.FC<{ s: Suggestion | null; onApply?: (values: Record<string, string>) => void; claudeAsk?: string; testId?: string }> = ({ s, onApply, claudeAsk, testId }) => {
   if (!s) return null;
   const t = TONE[s.tone] || TONE.info;
   return (
@@ -81,7 +82,7 @@ export const AISuggestionBox: React.FC<{ s: Suggestion | null; onApply?: (values
   );
 };
 
-export const CaQualityBadge: React.FC<{ text?: string; severity?: string; showTips?: boolean }> = ({ text, severity, showTips }) => {
+const CaQualityBadgeInner: React.FC<{ text?: string; severity?: string; showTips?: boolean }> = ({ text, severity, showTips }) => {
   const r = reviewCorrectiveAction(text, severity);
   const col = r.verdict === 'good' ? '#047857' : r.verdict === 'weak' ? '#b45309' : '#be123c';
   return (
@@ -92,7 +93,7 @@ export const CaQualityBadge: React.FC<{ text?: string; severity?: string; showTi
   );
 };
 
-export const RoleAIInsights: React.FC<{ role: string }> = ({ role }) => {
+const RoleAIInsightsInner: React.FC<{ role: string }> = ({ role }) => {
   const navigate = useNavigate();
   const [items, setItems] = useState<Insight[]>(() => roleInsights(role));
   useEffect(() => {
@@ -125,3 +126,8 @@ export const RoleAIInsights: React.FC<{ role: string }> = ({ role }) => {
     </section>
   );
 };
+
+// Hidden when AI is switched off (Sidebar → AI assistance)
+export const AISuggestionBox = withAI(AISuggestionBoxInner);
+export const CaQualityBadge = withAI(CaQualityBadgeInner);
+export const RoleAIInsights = withAI(RoleAIInsightsInner);

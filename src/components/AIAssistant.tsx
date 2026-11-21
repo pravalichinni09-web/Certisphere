@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, KeyboardEvent } from 'react';
+import { withAI } from '../lib/aiSwitch';
 import { ragAnswer, ragAnswerWithClaude } from '../ai/models';
 import { useNavigate } from 'react-router-dom';
 import {
@@ -710,4 +711,4 @@ function formatText(s: string): string {
     .replace(/\n/g, '<br />');
 }
 
-export default AIAssistant;
+export default withAI(AIAssistant);

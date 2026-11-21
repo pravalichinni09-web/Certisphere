@@ -4,6 +4,7 @@
  * current application data, or jump straight to the page that hosts it.
  */
 import React, { useMemo } from 'react';
+import { withAI } from '../lib/aiSwitch';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, Play, ExternalLink, ChevronDown } from 'lucide-react';
 import AIPanel from './AIPanel';
@@ -287,4 +288,4 @@ const RoleAIGuide: React.FC = () => {
   );
 };
 
-export default RoleAIGuide;
+export default withAI(RoleAIGuide);

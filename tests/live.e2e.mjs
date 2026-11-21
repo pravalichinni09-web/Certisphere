@@ -307,6 +307,14 @@ const run = async () => {
   await page.goto(`${APP}/management/client-onboarding`, { waitUntil: 'networkidle' }); await wait(1200);
   const onb = page.locator(`[data-wf-row="${csReg?.id}"]`);
   check('F5b', 'Management sees the manually registered client in Client Onboarding with its Application box', await onb.isVisible() && (await onb.innerText()).includes('Filled application from client'));
+  // Manual mode: AI switched off hides every AI feature, the workflow still works
+  const aiBefore = await page.locator('[data-testid^=ai-], [data-testid=role-ai-insights]').count();
+  await page.locator('[data-testid=ai-toggle]').click(); await page.waitForLoadState('networkidle'); await wait(1500);
+  const aiAfter = await page.locator('[data-testid^=ai-]:not([data-testid=ai-toggle]), [data-testid=role-ai-insights]').count();
+  const qcsai = await page.getByText('QCSAI', { exact: true }).count();
+  const assignBtn = await page.locator(`[data-wf-row="${csReg?.id}"]`).getByRole('button', { name: 'Assign coordinator' }).isVisible().catch(() => false);
+  check('F5b1', 'AI switch OFF hides all AI (suggestions, insights, QCSAI) while workflow buttons still work', aiBefore > 0 && aiAfter === 0 && qcsai === 0 && assignBtn && /OFF/.test(await page.locator('[data-testid=ai-toggle]').innerText()), `ai before ${aiBefore}, after ${aiAfter}, QCSAI ${qcsai}`);
+  await page.locator('[data-testid=ai-toggle]').click(); await page.waitForLoadState('networkidle'); await wait(1500);
   await onb.getByRole('button', { name: 'Assign coordinator' }).first().click(); await wait(400);
   const coordOpts = await onb.locator('select option').allInnerTexts().catch(() => []);
   await onb.getByRole('button', { name: /Cancel/ }).first().click().catch(() => {});

@@ -6,6 +6,7 @@
  * analysis, anchored to whichever side of the symbol has room.
  */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { withAI } from '../lib/aiSwitch';
 import { Sparkles, RefreshCw, X } from 'lucide-react';
 import '../styles/AIPanel.css';
 
@@ -203,4 +204,4 @@ const AIPanel: React.FC<AIPanelProps> = ({
   );
 };
 
-export default AIPanel;
+export default withAI(AIPanel);

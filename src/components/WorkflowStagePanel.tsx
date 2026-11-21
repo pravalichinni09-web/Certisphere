@@ -21,6 +21,7 @@
  *   cc-certificates    Client Coordinator · Certifications  (read-only)
  */
 import React, { useEffect, useMemo, useState } from 'react';
+import { isAIOn } from '../lib/aiSwitch';
 import { CheckCircle2, AlertCircle, ArrowRight, Workflow, ChevronDown, ChevronUp, Download } from 'lucide-react';
 import { readWorkflows, WorkflowRecord, WorkflowStage, STAGE_ORDER } from '../utils/auditWorkflow';
 import {
@@ -491,11 +492,11 @@ const WorkflowStagePanel: React.FC<{ step: WorkflowStepKey }> = ({ step }) => {
                               style={{ ...inp, width: '100%', marginTop: 4, fontFamily: 'inherit' }}
                             />
                             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, alignItems: 'flex-start', marginTop: 3 }}>
-                              <button type="button" aria-label={`Draft with AI for ${f.description}`}
+                              {isAIOn() && <button type="button" aria-label={`Draft with AI for ${f.description}`}
                                 onClick={() => setEdits((x) => ({ ...x, [`${w.clientId}|ca-${f.id}`]: (x[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction ?? '').trim() ? (x[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction ?? '') : draftCorrectiveAction(f, clientName(w.clientId)) }))}
                                 style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 8px', borderRadius: 7, border: '1px solid #c4b5fd', background: '#f5f3ff', color: '#5b21b6', cursor: 'pointer' }}>
                                 ✨ Draft with AI
-                              </button>
+                              </button>}
                               <CaQualityBadge text={edits[`${w.clientId}|ca-${f.id}`] ?? f.correctiveAction} severity={f.severity} showTips />
                             </div>
                           </>) : (
