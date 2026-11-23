@@ -23,7 +23,7 @@ export interface OnboardingLetterData {
   letterDate?: string;
 }
 
-const COMPANY = 'QMICS SOLUTIONS PVT. LTD.';
+const COMPANY = 'QMICS Solutions Pvt. Ltd.';
 const CONTACT = 'Hyderabad, Telangana, India  |  rk@qmicssolutions.com  |  +91 98494 99111  |  qmicscertifications.com';
 const GREEN: [number, number, number] = [20, 83, 45];
 const GREEN2: [number, number, number] = [22, 101, 52];
@@ -87,7 +87,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
   };
 
   // ── subject ──
-  band(`Subject: Welcome to QMICS Certification – ${d.standard}${d.auditType ? ` (${d.auditType})` : ''}`, 12);
+  band(`Subject: Welcome to QMICS Solutions Pvt. Ltd. – ${d.standard}${d.auditType ? ` (${d.auditType})` : ''}`, 12);
 
   // ── body ──
   doc.setFont('helvetica', 'normal'); doc.setFontSize(10);
@@ -105,7 +105,7 @@ export const onboardingLetterPdf = (d: OnboardingLetterData): jsPDF => {
     ['Type of audit', d.auditType || 'Initial Certification'],
     ['Scope of certification', d.scope || 'To be confirmed during the application review'],
     ['Registration date', fmtDate(d.registrationDate)],
-    ['Point of contact', 'Audit Coordinator, QMICS Certification'],
+    ['Point of contact', 'Audit Coordinator, QMICS Solutions Pvt. Ltd.'],
   ];
   const c1 = 52, rowPad = 1.9;
   rows.forEach(([k, v], i) => {

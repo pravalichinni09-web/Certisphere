@@ -178,7 +178,7 @@ export const draftEnquiryReply = (e: any): string => {
     '',
     'Best regards,',
     'Audit Coordinator',
-    'Qmics Certification',
+    'QMICS Solutions Pvt. Ltd.',
   ].join('\n');
 };
 
@@ -472,7 +472,7 @@ export const buildEmailDraft = (purpose: EmailPurpose, client: any): EmailDraft 
   const code = client?.clientCode ? ` (Client Code: ${client.clientCode})` : '';
   const usedData: string[] = [`Client: ${org}`, `Contact: ${contact}`, `Standard: ${standard}`];
 
-  const signature = ['Best regards,', 'Audit Coordinator', 'Qmics Certification'].join('\n');
+  const signature = ['Best regards,', 'Audit Coordinator', 'QMICS Solutions Pvt. Ltd.'].join('\n');
 
   if (purpose === 'dispatch') {
     return {
@@ -481,7 +481,7 @@ export const buildEmailDraft = (purpose: EmailPurpose, client: any): EmailDraft 
       body: [
         `Dear ${contact},`,
         '',
-        `Thank you for choosing Qmics Certification for ${org}${code}.`,
+        `Thank you for choosing QMICS Solutions Pvt. Ltd. for ${org}${code}.`,
         `Please find attached the digital Application for Certification covering ${standard} (${client?.clientType || 'Initial Certification'}).`,
         '',
         'Kindly complete and return the form at your earliest convenience. You can also fill it directly in your Auditee portal under "Pending Applications".',

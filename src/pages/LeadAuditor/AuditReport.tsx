@@ -699,7 +699,7 @@ const AuditReport: React.FC = () => {
             <div className="modal-body">
                <div className="preview-paper">
                  <div className="paper-header">
-                   <span>QMICS SOLUTIONS LLP</span>
+                   <span>QMICS Solutions Pvt. Ltd.</span>
                    <span>CONFIDENTIAL</span>
                  </div>
                  <hr/>

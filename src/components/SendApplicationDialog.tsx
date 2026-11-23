@@ -40,16 +40,16 @@ const SendApplicationDialog: React.FC<{
   const [picked, setPicked] = useState<File | null>(input.presetFile || null);
   const [saveAsStandard, setSaveAsStandard] = useState<boolean>(!standard && !letter);
   const [to, setTo] = useState(input.to);
-  const [subject, setSubject] = useState(letter ? `Welcome to QMICS Certification — ${input.company}` : `Application for Certification — ${input.company}`);
+  const [subject, setSubject] = useState(letter ? `Welcome to QMICS Solutions Pvt. Ltd. — ${input.company}` : `Application for Certification — ${input.company}`);
   const [message, setMessage] = useState(() => letter ? [
     `Dear ${input.contactName || 'Sir/Madam'},`,
     '',
-    `Welcome to QMICS Certification. We are pleased to confirm the registration of ${input.company} for ${input.standards?.length ? input.standards.join(', ') : 'certification'}.`,
+    `Welcome to QMICS Solutions Pvt. Ltd. We are pleased to confirm the registration of ${input.company} for ${input.standards?.length ? input.standards.join(', ') : 'certification'}.`,
     'Please find your Client Onboarding Letter below. It contains your client code, your registration details and the next steps.',
     '',
     'Best regards,',
     'Audit Coordinator',
-    'QMICS Certification',
+    'QMICS Solutions Pvt. Ltd.',
   ].join('\n') : [
     `Dear ${input.contactName || 'Sir/Madam'},`,
     '',
@@ -60,7 +60,7 @@ const SendApplicationDialog: React.FC<{
     '',
     'Best regards,',
     'Audit Coordinator',
-    'QMICS Certification',
+    'QMICS Solutions Pvt. Ltd.',
   ].join('\n'));
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);

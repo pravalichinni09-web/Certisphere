@@ -335,7 +335,7 @@ const ClientRegistration: React.FC = () => {
         '',
         'Best regards,',
         'Audit Coordinator',
-        'Qmics Certification',
+        'QMICS Solutions Pvt. Ltd.',
       ].join('\n')
     );
     window.open(`mailto:${to}?subject=${subject}&body=${body}`, '_blank');

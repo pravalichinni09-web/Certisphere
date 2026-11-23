@@ -275,7 +275,7 @@ const PublicEnquiry: React.FC = () => {
             </div>
             <div>
               <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.3 }}>
-                Qmics Certification
+                QMICS Solutions Pvt. Ltd.
               </div>
               <div style={{ fontSize: 12, opacity: 0.7 }}>
                 ISO certification body · 9001 / 14001 / 45001 / 27001 / 22000 / 42001
@@ -472,7 +472,7 @@ const PublicEnquiry: React.FC = () => {
             }}
           >
             <div style={{ fontSize: 11, color: '#64748b' }}>
-              By submitting you agree to be contacted by Qmics Certification regarding your
+              By submitting you agree to be contacted by QMICS Solutions Pvt. Ltd. regarding your
               enquiry. We never share your details with third parties.
             </div>
             <button
@@ -506,7 +506,7 @@ const PublicEnquiry: React.FC = () => {
             opacity: 0.7,
           }}
         >
-          © {new Date().getFullYear()} Qmics Certification · qmicscertification.com
+          © {new Date().getFullYear()} QMICS Solutions Pvt. Ltd. · qmicscertifications.com
         </div>
       </div>
     </div>

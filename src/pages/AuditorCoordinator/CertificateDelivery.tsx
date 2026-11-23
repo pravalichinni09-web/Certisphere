@@ -420,8 +420,8 @@ const CertificateDelivery: React.FC = () => {
     doc.setFont("times", "bold");
     doc.setFontSize(20);
     doc.setTextColor(20, 83, 45);
-    doc.text("QMICS SOLUTIONS PVT. LTD.", centerX, 27, { align: "center" });
-    const qw = doc.getTextWidth("QMICS SOLUTIONS PVT. LTD.");
+    doc.text("QMICS Solutions Pvt. Ltd.", centerX, 27, { align: "center" });
+    const qw = doc.getTextWidth("QMICS Solutions Pvt. Ltd.");
     doc.setDrawColor(201, 151, 0); doc.setLineWidth(0.7);
     doc.line(centerX - qw / 2, 29.2, centerX + qw / 2, 29.2);
     doc.setLineWidth(0.3);
@@ -556,7 +556,7 @@ const CertificateDelivery: React.FC = () => {
     doc.setFont("helvetica", "bold");
     doc.setFontSize(7.5);
     doc.setTextColor(0);
-    doc.text("QMICS SOLUTIONS PVT. LTD.", centerX, 273, { align: "center" });
+    doc.text("QMICS Solutions Pvt. Ltd.", centerX, 273, { align: "center" });
     doc.setFont("helvetica", "normal");
     doc.setFontSize(7.5);
     doc.text("REGISTERED OFFICE: Rainbow Vistas Phase 2, 604, Green Hills Rd, Block O, Moosapet,", centerX, 277, { align: "center" });

@@ -43,7 +43,7 @@ export const DEFAULT_CONFIG: GlobalConfig = {
   defaultLanguage: 'en',
   supportedLanguages: ['en', 'es', 'pt', 'de', 'fr', 'ar', 'zh', 'hi', 'ja'],
   supportedCountries: ['India', 'USA', 'UK', 'Germany', 'UAE', 'Singapore', 'Australia', 'Brazil'],
-  contactEmail: 'info@certification.com',
+  contactEmail: 'rk@qmicssolutions.com',
   contactPhone: '+91 98494 99111',
   website: 'https://qmicscertifications.com',
   taxId: '',

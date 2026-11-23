@@ -344,7 +344,7 @@ const AIAssistant: React.FC<AIAssistantProps> = ({ role }) => {
 
     // Claude is configured and the rule engine had no confident answer — go general-purpose.
     const generalSystem =
-      'You are QCSAI (Qmics Certification & Standards AI), a friendly and capable assistant. ' +
+      'You are QCSAI (QMICS Certification & Standards AI), a friendly and capable assistant. ' +
       'You help users with the Certification Management System (CMS), ISO standards (9001, 14001, 45001, 27001, 42001), ' +
       'audits, and certification workflows. You can ALSO answer general-knowledge questions on any topic ' +
       '(science, history, math, coding, language, etc.) — be helpful, concise, and accurate. ' +

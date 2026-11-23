@@ -366,7 +366,7 @@ const AuditorRequests: React.FC = () => {
     const subject = encodeURIComponent(`Auditor Application — ${r.name}`);
     const body = encodeURIComponent([
       `Dear ${r.name},`, '',
-      'Thank you for your interest in joining Qmics Certification as an auditor.',
+      'Thank you for your interest in joining QMICS Solutions Pvt. Ltd. as an auditor.',
       'Please complete the digital application form below and return it with the required documents.',
       '',
       '──────────────────────────────────────',
@@ -387,7 +387,7 @@ const AuditorRequests: React.FC = () => {
       '  • Recent audit logs',
       '──────────────────────────────────────',
       '', 'Reply with the completed form and attachments.',
-      '', 'Best regards,', 'Audit Coordinator', 'Qmics Certification',
+      '', 'Best regards,', 'Audit Coordinator', 'QMICS Solutions Pvt. Ltd.',
     ].join('\n'));
     window.open(`mailto:${r.email}?subject=${subject}&body=${body}`, '_blank');
     setStatus(r.id, 'Form Sent', { formSentAt: new Date().toISOString() });

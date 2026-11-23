@@ -146,7 +146,7 @@ const Home: React.FC = () => {
               </a>
             </div>
             <span style={{ fontSize: 10, fontWeight: 500, color: 'rgba(246,216,120,0.6)', letterSpacing: '0.05em', paddingLeft: 2 }}>
-              A product by <strong style={{ color: '#f6d878', fontWeight: 800 }}>QMICS Solutions</strong>
+              A product by <strong style={{ color: '#f6d878', fontWeight: 800 }}>QMICS Solutions Pvt. Ltd.</strong>
             </span>
           </div>
           <nav className="cs-home-nav">
@@ -577,7 +577,7 @@ const Home: React.FC = () => {
             </div>
             <h3 className="cs-founder-name">Mr. Ramakrishna Chinmaya</h3>
             <span className="cs-founder-role">Founder &amp; CEO</span>
-            <p className="cs-founder-org">QMICS Group</p>
+            <p className="cs-founder-org">QMICS Solutions Pvt. Ltd.</p>
             <div className="cs-founder-exp">
               <strong>35+</strong>
               <span>Years of<br />Industry Experience</span>
